@@ -1,0 +1,276 @@
+[
+  {
+    "name": "Toyota",
+    "code": 1,
+    "codename": "toyota",
+    "models": [
+      {
+        "name": "Camry",
+        "code": 1,
+        "codename": "camry",
+        "trims": [
+          {
+            "name": "LE",
+            "code": 1,
+            "codename": "le"
+          },
+          {
+            "name": "SE",
+            "code": 2,
+            "codename": "se"
+          },
+          {
+            "name": "XLE",
+            "code": 3,
+            "codename": "xle"
+          },
+          {
+            "name": "XSE",
+            "code": 4,
+            "codename": "xse"
+          }
+        ]
+      },
+      {
+        "name": "Corolla",
+        "code": 2,
+        "codename": "corolla",
+        "trims": [
+          {
+            "name": "L",
+            "code": 1,
+            "codename": "l"
+          },
+          {
+            "name": "LE",
+            "code": 2,
+            "codename": "le"
+          },
+          {
+            "name": "SE",
+            "code": 3,
+            "codename": "se"
+          },
+          {
+            "name": "XLE",
+            "code": 4,
+            "codename": "xle"
+          },
+          {
+            "name": "XSE",
+            "code": 5,
+            "codename": "xse"
+          }
+        ]
+      },
+      {
+        "name": "RAV4",
+        "code": 3,
+        "codename": "rav4",
+        "trims": [
+          {
+            "name": "LE",
+            "code": 1,
+            "codename": "le"
+          },
+          {
+            "name": "XLE",
+            "code": 2,
+            "codename": "xle"
+          },
+          {
+            "name": "XLE Premium",
+            "code": 3,
+            "codename": "xle_premium"
+          },
+          {
+            "name": "Adventure",
+            "code": 4,
+            "codename": "adventure"
+          },
+          {
+            "name": "TRD Off-Road",
+            "code": 5,
+            "codename": "trd_off_road"
+          },
+          {
+            "name": "Limited",
+            "code": 6,
+            "codename": "limited"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Honda",
+    "code": 2,
+    "codename": "honda",
+    "models": [
+      {
+        "name": "Civic",
+        "code": 1,
+        "codename": "civic",
+        "trims": [
+          {
+            "name": "LX",
+            "code": 1,
+            "codename": "lx"
+          },
+          {
+            "name": "Sport",
+            "code": 2,
+            "codename": "sport"
+          },
+          {
+            "name": "EX",
+            "code": 3,
+            "codename": "ex"
+          },
+          {
+            "name": "Touring",
+            "code": 4,
+            "codename": "touring"
+          }
+        ]
+      },
+      {
+        "name": "Accord",
+        "code": 2,
+        "codename": "accord",
+        "trims": [
+          {
+            "name": "LX",
+            "code": 1,
+            "codename": "lx"
+          },
+          {
+            "name": "Sport",
+            "code": 2,
+            "codename": "sport"
+          },
+          {
+            "name": "EX-L",
+            "code": 3,
+            "codename": "ex_l"
+          },
+          {
+            "name": "Touring",
+            "code": 4,
+            "codename": "touring"
+          }
+        ]
+      },
+      {
+        "name": "CR-V",
+        "code": 3,
+        "codename": "cr_v",
+        "trims": [
+          {
+            "name": "LX",
+            "code": 1,
+            "codename": "lx"
+          },
+          {
+            "name": "EX",
+            "code": 2,
+            "codename": "ex"
+          },
+          {
+            "name": "EX-L",
+            "code": 3,
+            "codename": "ex_l"
+          },
+          {
+            "name": "Touring",
+            "code": 4,
+            "codename": "touring"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Ford",
+    "code": 3,
+    "codename": "ford",
+    "models": [
+      {
+        "name": "Fiesta",
+        "code": 1,
+        "codename": "fiesta",
+        "trims": [
+          {
+            "name": "S",
+            "code": 1,
+            "codename": "s"
+          },
+          {
+            "name": "SE",
+            "code": 2,
+            "codename": "se"
+          },
+          {
+            "name": "Titanium",
+            "code": 3,
+            "codename": "titanium"
+          }
+        ]
+      },
+      {
+        "name": "Focus",
+        "code": 2,
+        "codename": "focus",
+        "trims": [
+          {
+            "name": "S",
+            "code": 1,
+            "codename": "s"
+          },
+          {
+            "name": "SE",
+            "code": 2,
+            "codename": "se"
+          },
+          {
+            "name": "SEL",
+            "code": 3,
+            "codename": "sel"
+          },
+          {
+            "name": "Titanium",
+            "code": 4,
+            "codename": "titanium"
+          }
+        ]
+      },
+      {
+        "name": "Mustang",
+        "code": 3,
+        "codename": "mustang",
+        "trims": [
+          {
+            "name": "EcoBoost",
+            "code": 1,
+            "codename": "ecoboost"
+          },
+          {
+            "name": "GT",
+            "code": 2,
+            "codename": "gt"
+          },
+          {
+            "name": "Mach 1",
+            "code": 3,
+            "codename": "mach_1"
+          },
+          {
+            "name": "Shelby GT500",
+            "code": 4,
+            "codename": "shelby_gt500"
+          }
+        ]
+      }
+    ]
+  }
+]

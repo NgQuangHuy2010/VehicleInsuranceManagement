@@ -1,7 +1,16 @@
+using Microsoft.EntityFrameworkCore;
+using Project3.Models;
+using Project3.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+var connectionString = builder.Configuration.GetConnectionString("VehicleInsuranceManagementContext");
+builder.Services.AddDbContext<VehicleInsuranceManagementContext>(x => x.UseSqlServer(connectionString));
+
+builder.Services.AddSingleton<CarService>();
 
 var app = builder.Build();
 
@@ -21,7 +30,8 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+	name: "default",
+	pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapControllers();
 app.Run();

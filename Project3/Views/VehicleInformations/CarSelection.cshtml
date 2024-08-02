@@ -1,0 +1,160 @@
+﻿@model Project3.Models.VehicleInformation
+@{
+    ViewData["Title"] = "Chọn xe";
+    Layout = "~/Views/LayoutUser/LayoutUser.cshtml";
+}
+
+<div class="container">
+    <h1 class="mb-4">Your car information</h1>
+    <form asp-action="SaveVehicleInformation" asp-controller="VehicleInformations" method="post">
+        <div class="form-group">
+            <label for="manufacturerSelect">Manufacturer</label>
+            <select id="manufacturerSelect" name="VehicleName" class="form-control">
+                <option value="">Chọn hãng xe</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="modelSelect">VehicleModel</label>
+            <select id="modelSelect" name="VehicleModel" class="form-control" disabled>
+                <option value="">Chọn mẫu xe</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="trimSelect">VehicleVersion</label>
+            <select id="trimSelect" name="VehicleVersion" class="form-control" disabled>
+                <option value="">Chọn phiên bản</option>
+            </select>
+        </div>
+
+        <!-- Existing fields -->
+        <div class="form-group">
+            <label asp-for="VehicleOwnerName" class="control-label"></label>
+            <input asp-for="VehicleOwnerName" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="VehicleRate" class="control-label"></label>
+            <input asp-for="VehicleRate" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="VehicleBodyNumber" class="control-label"></label>
+            <input asp-for="VehicleBodyNumber" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="VehicleEngineNumber" class="control-label"></label>
+            <input asp-for="VehicleEngineNumber" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="VehicleNumber" class="control-label"></label>
+            <input asp-for="VehicleNumber" class="form-control" />
+        </div>
+
+        <!-- New Fields -->
+        <div class="form-group">
+            <label asp-for="Usage" class="control-label"></label>
+            <select asp-for="Usage" class="form-control">
+                <option value="Daily">Daily</option>
+                <option value="Occasional">Occasional</option>
+                <option value="Business">Business</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Location" class="control-label"></label>
+            <select asp-for="Location" class="form-control">
+                <option value="Urban">Urban</option>
+                <option value="Suburban">Suburban</option>
+                <option value="Rural">Rural</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="WarrantyType" class="control-label"></label>
+            <select asp-for="WarrantyType" class="form-control">
+                <option value="Manufacturer">Manufacturer</option>
+                <option value="Extended">Extended</option>
+                <option value="None">None</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="PolicyType" class="control-label"></label>
+            <select asp-for="PolicyType" class="form-control">
+                <option value="Comprehensive">Comprehensive</option>
+                <option value="ThirdParty">Third Party</option>
+                <option value="ThirdPartyFireTheft">Third Party, Fire and Theft</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Save" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
+
+<script>
+    let carData = [];
+
+    // Fetch car data and populate the manufacturer dropdown
+    async function loadCarData() {
+        try {
+            const response = await fetch('/api/cars');
+            carData = await response.json();
+            populateSelect('manufacturerSelect', carData, 'codename', 'name');
+        } catch (error) {
+            console.error('Error loading data:', error);
+        }
+    }
+
+    // Generic function to populate a dropdown
+    function populateSelect(selectId, data, valueField, textField) {
+        const select = document.getElementById(selectId);
+        select.innerHTML = '<option value="">Chọn</option>' + data.map(item => `<option value="${item[valueField]}">${item[textField]}</option>`).join('');
+    }
+
+    // Event listener for manufacturer dropdown change
+    document.getElementById('manufacturerSelect').addEventListener('change', function () {
+        const manufacturerCode = this.value;
+        const modelSelect = document.getElementById('modelSelect');
+        const trimSelect = document.getElementById('trimSelect');
+
+        // Enable/disable dropdowns and clear previous options
+        modelSelect.disabled = !manufacturerCode;
+        trimSelect.disabled = true;
+        modelSelect.innerHTML = '<option value="">Chọn mẫu xe</option>';
+        trimSelect.innerHTML = '<option value="">Chọn phiên bản</option>';
+
+        // Populate models if a manufacturer is selected
+        if (manufacturerCode) {
+            const manufacturer = carData.find(m => m.codename == manufacturerCode);
+            if (manufacturer) {
+                populateSelect('modelSelect', manufacturer.models, 'codename', 'name');
+            }
+        }
+    });
+
+    // Event listener for model dropdown change
+    document.getElementById('modelSelect').addEventListener('change', function () {
+        const manufacturerCode = document.getElementById('manufacturerSelect').value;
+        const modelCode = this.value;
+        const trimSelect = document.getElementById('trimSelect');
+
+        // Enable/disable trim dropdown and clear previous options
+        trimSelect.disabled = !modelCode;
+        trimSelect.innerHTML = '<option value="">Chọn phiên bản</option>';
+
+        // Populate trims if a model is selected
+        if (modelCode) {
+            const manufacturer = carData.find(m => m.codename == manufacturerCode);
+            const model = manufacturer.models.find(m => m.codename == modelCode);
+            if (model) {
+                populateSelect('trimSelect', model.trims, 'codename', 'name');
+            }
+        }
+    });
+
+    // Load car data when the page loads
+    loadCarData();
+</script>
+
