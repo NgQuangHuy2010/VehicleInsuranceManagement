@@ -63,8 +63,34 @@
 						<li class="nav-item"><a class="nav-link" asp-controller="AboutUs" asp-action="Index">About us</a></li>
 						<li class="nav-item"><a class="nav-link" href="service.html">Types of  insurance </a></li>
 						<li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="ContactUs" >Contact us</a></li>
-						<li class="nav-item "><a asp-controller="Account" asp-action="Login" class="btn btn-main-2 btn-icon btn-round-full">Login <i class="icofont-user pl-1  "></i></a></li>
+						@using Project3.ModelsView.Identity
+						@using Microsoft.AspNetCore.Identity
+						@inject SignInManager<ApplicationUser> SignInManager
+						@inject UserManager<ApplicationUser> UserManager
+						@{
+							var user = await UserManager.GetUserAsync(User);
+							var userFullname = user?.Fullname ?? "Người dùng không xác định"; // Sử dụng toán tử ba ngôi để check null
+						}
+						@if (SignInManager.IsSignedIn(User))
+                        {
+							<div class="dropdown">
+							<li class="nav-item "><a href="" class="btn btn-main-2 btn-icon btn-round-full">@userFullname <i class="icofont-user pl-1  "></i></a></li>
+							<div class="dropdown-menu">
+								<form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post">
+										@Html.AntiForgeryToken()
+									<button type="submit" class="btn btn-link ">Logout</button>
+								</form>
+							</div>
+							</div>
 
+							  
+
+						}
+						else
+						{
+							<li class="nav-item "><a asp-controller="Account" asp-action="Login" class="btn btn-main-2 btn-icon btn-round-full">Login <i class="icofont-user pl-1  "></i></a></li>
+
+						}
 						@* <li class="nav-item dropdown">
 							<a class="nav-link dropdown-toggle" href="department.html" id="dropdown02" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Department <i class="icofont-thin-down"></i></a>
 							<ul class="dropdown-menu" aria-labelledby="dropdown02">
