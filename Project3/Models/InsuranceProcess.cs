@@ -7,7 +7,7 @@ public partial class InsuranceProcess
 {
     public int Id { get; set; }
 
-    public int? CustomerId { get; set; }
+    public string? CustomerId { get; set; }
 
     public string? CustomerName { get; set; }
 
@@ -38,4 +38,6 @@ public partial class InsuranceProcess
     public string? VehicleEngineNumber { get; set; }
 
     public string? CustomerAddProve { get; set; }
+
+    public virtual AspNetUser? Customer { get; set; }
 }

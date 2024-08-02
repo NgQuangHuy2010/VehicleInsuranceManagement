@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Project3.Models;
 
@@ -15,6 +13,20 @@ public partial class VehicleInsuranceManagementContext : DbContext
     {
     }
 
+    public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
+
+    public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; }
+
+    public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+
+    public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
+
+    public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
+
+    public virtual DbSet<AspNetUserRole> AspNetUserRoles { get; set; }
+
+    public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; }
+
     public virtual DbSet<ClaimDetail> ClaimDetails { get; set; }
 
     public virtual DbSet<CompanyBillingPolicy> CompanyBillingPolicies { get; set; }
@@ -25,6 +37,10 @@ public partial class VehicleInsuranceManagementContext : DbContext
 
     public virtual DbSet<InsuranceProcess> InsuranceProcesses { get; set; }
 
+    public virtual DbSet<NameRole> NameRoles { get; set; }
+
+    public virtual DbSet<RolePermission> RolePermissions { get; set; }
+
     public virtual DbSet<VehicleInformation> VehicleInformations { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -33,6 +49,77 @@ public partial class VehicleInsuranceManagementContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AspNetRole>(entity =>
+        {
+            entity.HasIndex(e => e.NormalizedName, "RoleNameIndex")
+                .IsUnique()
+                .HasFilter("([NormalizedName] IS NOT NULL)");
+
+            entity.Property(e => e.Name).HasMaxLength(256);
+            entity.Property(e => e.NormalizedName).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<AspNetRoleClaim>(entity =>
+        {
+            entity.HasIndex(e => e.RoleId, "IX_AspNetRoleClaims_RoleId");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.AspNetRoleClaims).HasForeignKey(d => d.RoleId);
+        });
+
+        modelBuilder.Entity<AspNetUser>(entity =>
+        {
+            entity.HasIndex(e => e.NormalizedEmail, "EmailIndex");
+
+            entity.HasIndex(e => e.NormalizedUserName, "UserNameIndex")
+                .IsUnique()
+                .HasFilter("([NormalizedUserName] IS NOT NULL)");
+
+            entity.Property(e => e.Email).HasMaxLength(256);
+            entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
+            entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
+            entity.Property(e => e.UserName).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<AspNetUserClaim>(entity =>
+        {
+            entity.HasIndex(e => e.UserId, "IX_AspNetUserClaims_UserId");
+
+            entity.HasOne(d => d.User).WithMany(p => p.AspNetUserClaims).HasForeignKey(d => d.UserId);
+        });
+
+        modelBuilder.Entity<AspNetUserLogin>(entity =>
+        {
+            entity.HasKey(e => new { e.LoginProvider, e.ProviderKey });
+
+            entity.HasIndex(e => e.UserId, "IX_AspNetUserLogins_UserId");
+
+            entity.HasOne(d => d.User).WithMany(p => p.AspNetUserLogins).HasForeignKey(d => d.UserId);
+        });
+
+        modelBuilder.Entity<AspNetUserRole>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_AspNetUserRoles_1");
+
+            entity.HasIndex(e => e.RoleId, "IX_AspNetUserRoles_RoleId");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.UserId).HasMaxLength(450);
+
+            entity.HasOne(d => d.Role).WithMany(p => p.AspNetUserRoles)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("AspNetUserRoles__Role_id__NameRole_id");
+
+            entity.HasOne(d => d.User).WithMany(p => p.AspNetUserRoles).HasForeignKey(d => d.UserId);
+        });
+
+        modelBuilder.Entity<AspNetUserToken>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
+
+            entity.HasOne(d => d.User).WithMany(p => p.AspNetUserTokens).HasForeignKey(d => d.UserId);
+        });
+
         modelBuilder.Entity<ClaimDetail>(entity =>
         {
             entity.ToTable("claim_details");
@@ -69,7 +156,9 @@ public partial class VehicleInsuranceManagementContext : DbContext
                 .HasColumnType("numeric(18, 0)")
                 .HasColumnName("bill_no");
             entity.Property(e => e.CustomerAddProve).HasColumnName("customer_add_prove");
-            entity.Property(e => e.CustomerId).HasColumnName("customer_id");
+            entity.Property(e => e.CustomerId)
+                .HasMaxLength(450)
+                .HasColumnName("customer_id");
             entity.Property(e => e.CustomerName).HasColumnName("customer_name");
             entity.Property(e => e.CustomerPhoneNumber)
                 .HasColumnType("numeric(18, 0)")
@@ -87,6 +176,10 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.Property(e => e.VehicleRate)
                 .HasColumnType("numeric(18, 0)")
                 .HasColumnName("vehicle_rate");
+
+            entity.HasOne(d => d.Customer).WithMany(p => p.CompanyBillingPolicies)
+                .HasForeignKey(d => d.CustomerId)
+                .HasConstraintName("company_billing_policy_user_id_AspNetUsers");
         });
 
         modelBuilder.Entity<CompanyExpense>(entity =>
@@ -106,7 +199,9 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.ToTable("estimate");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CustomerId).HasColumnName("customer_id");
+            entity.Property(e => e.CustomerId)
+                .HasMaxLength(450)
+                .HasColumnName("customer_id");
             entity.Property(e => e.CustomerName).HasColumnName("customer_name");
             entity.Property(e => e.CustomerPhoneNumber)
                 .HasColumnType("numeric(18, 0)")
@@ -121,6 +216,10 @@ public partial class VehicleInsuranceManagementContext : DbContext
                 .HasColumnType("numeric(18, 0)")
                 .HasColumnName("vehicle_rate");
             entity.Property(e => e.VehicleWarranty).HasColumnName("vehicle_warranty");
+
+            entity.HasOne(d => d.AspNetUser).WithMany(p => p.Estimates)
+                .HasForeignKey(d => d.CustomerId)
+                .HasConstraintName("estimate_user_id_AspNetUsers");
         });
 
         modelBuilder.Entity<InsuranceProcess>(entity =>
@@ -130,7 +229,9 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CustomerAdd).HasColumnName("customer_add");
             entity.Property(e => e.CustomerAddProve).HasColumnName("customer_add_prove");
-            entity.Property(e => e.CustomerId).HasColumnName("customer_id");
+            entity.Property(e => e.CustomerId)
+                .HasMaxLength(450)
+                .HasColumnName("customer_id");
             entity.Property(e => e.CustomerName).HasColumnName("customer_name");
             entity.Property(e => e.CustomerPhoneNumber)
                 .HasColumnType("numeric(18, 0)")
@@ -154,6 +255,39 @@ public partial class VehicleInsuranceManagementContext : DbContext
                 .HasColumnName("vehicle_rate");
             entity.Property(e => e.VehicleVersion).HasColumnName("vehicle_version");
             entity.Property(e => e.VehicleWarranty).HasColumnName("vehicle_warranty");
+
+            entity.HasOne(d => d.Customer).WithMany(p => p.InsuranceProcesses)
+                .HasForeignKey(d => d.CustomerId)
+                .HasConstraintName("insurance_process_user_id_AspNetUsers");
+        });
+
+        modelBuilder.Entity<NameRole>(entity =>
+        {
+            entity.ToTable("NameRole");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.NameRole1).HasColumnName("name_role");
+        });
+
+        modelBuilder.Entity<RolePermission>(entity =>
+        {
+            entity.ToTable("Role_Permissions");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.PermissionsId)
+                .HasMaxLength(450)
+                .HasColumnName("permissions_id");
+            entity.Property(e => e.RoleId)
+                .HasMaxLength(450)
+                .HasColumnName("role_id");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.RolePermissions)
+                .HasForeignKey(d => d.RoleId)
+                .HasConstraintName("Role_Permissions__role_id__AspNetRoles_Id");
+
+            entity.HasOne(d => d.RoleNavigation).WithMany(p => p.RolePermissions)
+                .HasForeignKey(d => d.RoleId)
+                .HasConstraintName("Role_Permissions__Role_id__NameRole_id");
         });
 
         modelBuilder.Entity<VehicleInformation>(entity =>
