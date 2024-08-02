@@ -1,11 +1,8 @@
-using Microsoft.EntityFrameworkCore;
-using Project3.Models;
-using Project3.Services;
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Project3.Models;
 using Project3.ModelsView.Identity;
+using Project3.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,10 +32,6 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 
-
-
-
-var connectionString = builder.Configuration.GetConnectionString("VehicleInsuranceManagementContext");
 builder.Services.AddDbContext<VehicleInsuranceManagementContext>(x => x.UseSqlServer(connectionString));
 
 builder.Services.AddSingleton<CarService>();
@@ -61,8 +54,8 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-	name: "default",
-	pattern: "{controller=Home}/{action=Index}/{id?}");
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllers();
 app.Run();
