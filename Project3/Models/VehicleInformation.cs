@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Project3.Models
-{
+namespace Project3.Models;
+
 public partial class VehicleInformation
 {
     public int Id { get; set; }
@@ -22,9 +22,4 @@ public partial class VehicleInformation
     public string? VehicleEngineNumber { get; set; }
 
     public decimal? VehicleNumber { get; set; }
-        public string? Location { get; set; } // New field
-        public string? Usage { get; set; } // New field
-        public string? WarrantyType { get; set; } // New field
-        public string? PolicyType { get; set; } // New field
-    }
 }
