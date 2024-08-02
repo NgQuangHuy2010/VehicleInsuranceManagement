@@ -1,9 +1,8 @@
-﻿
+﻿@model Project3.ModelsView.Identity.LoginUserViewModel;
+
 @{
     Layout = null;
 }
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -44,16 +43,18 @@
                 <div class="card border-0 shadow rounded-3 my-5">
                     <div class="card-body p-4 p-sm-5">
                         <h2 class="card-title text-center mb-5 ">Login</h2>
-                        <form>
+                        <form asp-action="Login" method="post">
                             <div class="form-floating mb-3">
-                                <input class="form-control"  placeholder="name@email.com">
-                                <span  class="text-danger"></span>
+                                <input class="form-control" asp-for="Email" placeholder="name@email.com">
+                                <span asp-validation-for="Email" class="text-danger"></span>
+
 
                                 <label for="floatingInput">Email </label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="password" class="form-control"  placeholder="Password">
-                                <span  class="text-danger"></span>
+                                <input type="password" class="form-control" asp-for="Password" placeholder="Password">
+                                <span asp-validation-for="Password" class="text-danger"></span>
+
 
                                 <label for="floatingPassword">Password</label>
                             </div>
@@ -63,7 +64,7 @@
                                     <a class="text-dark">Forgot Password?</a>
                                 </div>
                                 <div class="text-wrap">
-                                    <span>Do not have an account ?</span> <a class="text-dark">Register</a>
+                                    <span>Do not have an account ?</span> <a asp-controller="Account" asp-action="Register" class="text-dark">Register</a>
                                 </div>
                             </div>
 

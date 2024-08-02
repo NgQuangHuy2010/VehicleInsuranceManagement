@@ -14,11 +14,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 // ??ng ký Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
+	options.SignIn.RequireConfirmedEmail = true;
 	options.Password.RequireDigit = false;
-	options.Password.RequireLowercase = false;
+	options.Password.RequireLowercase = true;
 	options.Password.RequireNonAlphanumeric = false;
 	options.Password.RequireUppercase = false;
-	options.Password.RequiredLength = 3;
+	options.Password.RequiredLength = 6;
 	options.Password.RequiredUniqueChars = 1;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -33,9 +34,13 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
-
 builder.Services.AddTransient<IEmail, Email>();
-
+builder.Services.AddSession(options =>
+{
+	options.IdleTimeout = TimeSpan.FromMinutes(30);
+	options.Cookie.HttpOnly = true;
+	options.Cookie.IsEssential = true;
+});
 
 
 builder.Services.AddSingleton<CarService>();
