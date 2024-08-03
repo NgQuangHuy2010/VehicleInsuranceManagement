@@ -144,9 +144,10 @@ namespace Project3.Controllers
                     // Gửi email xác nhận với liên kết xác nhận bằng SendEmailAsync email.cs trong model
                     await _emailService.SendEmailAsync(register.Email, "Confirm Email",
                         $"Please confirm your account by clicking this link: {confirmationLink}");
-
+                    //gui thong bao den viewlogin
+                    TempData["ConfirmEmailSent"] = "Please check your email to login.";
                     // Chuyển hướng đến trang thông báo đã gửi email.
-                    return RedirectToAction("ConfirmEmailSent");
+                    return RedirectToAction("Login");
                 }
 
                 // Xử lý các lỗi trả về từ quá trình đăng ký không thành công.
@@ -193,18 +194,15 @@ namespace Project3.Controllers
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (result.Succeeded)
             {
-                return View("ConfirmEmailSuccess");
+                TempData["ConfirmEmailSuccess"] = "Email verification successful. You can now login.";
+
+                return View("Login");
             }
 
             return View("Error");
         }
 
-        [Route("confirm-email-sent")]
-        public IActionResult ConfirmEmailSent()
-        {
-            // Trả về view thông báo rằng email xác nhận đã được gửi thành công.
-            return View();
-        }
+      
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -214,6 +212,134 @@ namespace Project3.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Tìm kiếm người dùng bằng email
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                // Kiểm tra xem người dùng có tồn tại ko và đã dc xác thực email chưa
+                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                {
+                    ModelState.AddModelError("Email", "Email does not exist!!!");
+                    return View(model);
+                }
+                // tạo token để reset pass
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var callbackUrl = Url.Action(  //callback tới url có action ResetPassword với url là token + email 
+                    "ResetPassword",
+                    "Account",
+                    new { token, email = user.Email },
+                protocol: HttpContext.Request.Scheme);
+
+                // gửi mail bằng email.cs (trong model) đã dc cấu hình 
+                await _emailService.SendEmailAsync(
+                    model.Email,
+                    "Reset Password",
+                    $"Please reset your password by clicking here: {callbackUrl}");
+
+                TempData["ForgotPasswordMessage"] = "Password reset link has been sent to your email.";
+
+                // Redirect to the Login action
+                return RedirectToAction("Login");
+            }
+
+            // Nếu có lỗi, hiển thị lại biểu mẫu
+            return View(model);
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> ResetPassword(string token = null, string email = null)
+        {
+            // kiểm tra xem token và email có null ko
+            if (token == null || email == null)
+            {
+                return RedirectToAction("Error");
+
+            }
+            //tìm email 
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return RedirectToAction("Error");
+            }
+            // xử lý vô hiệu hóa token đã dc dùng
+            var tokenIsValid = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultProvider, "ResetPassword", token);
+            if (!tokenIsValid)
+            {
+                return RedirectToAction("Error");
+            }
+            //gửi về view token và email (có input hidden ở view)
+            var model = new ResetPasswordViewModel { Token = token, Email = email };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // tìm email 
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+
+                return RedirectToAction("Login");
+            }
+
+            // Reset password với token và pass mới 
+            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            if (result.Succeeded)
+            {
+                //lưu thông báo bằng tempdata
+                TempData["ResetPasswordConfirmation"] = "Your password has been reset";
+
+                // Redirect to the Login action
+                return RedirectToAction("Login");
+
+            }
+
+            foreach (var error in result.Errors)
+            {
+                if (error.Code == "PasswordTooShort")
+                {
+                    ModelState.AddModelError("PasswordTooShort", error.Description);
+                }
+                else if (error.Code == "PasswordRequiresLower")
+                {
+                    ModelState.AddModelError("PasswordRequiresLower", error.Description);
+                }
+                else
+                {
+                    // Thêm lỗi vào ModelState để hiển thị cho người dùng.
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+
+            }
+
+            return View(model);
+        }
+
+
+
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
+        }
 
 
     }
