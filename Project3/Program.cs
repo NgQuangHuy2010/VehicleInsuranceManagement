@@ -32,6 +32,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<UserRoleService, UserRoleService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddTransient<IEmail, Email>();
@@ -46,20 +47,27 @@ builder.Services.AddSession(options =>
 builder.Services.AddSingleton<CarService>();
 
 var app = builder.Build();
-
+// Tạo vai trò và tài khoản admin mặc định khi khởi động ứng dụng
+//CreateRolesAndAdminUser có nhiệm vụ tạo vai trò "Admin" và "User" nếu chúng chưa tồn tại trong hệ thống
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    await CreateRolesAndAdminUser(roleManager, userManager);
+}
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
@@ -73,3 +81,41 @@ app.MapControllerRoute(
 
 
 app.Run();
+
+// Tạo vai trò và tài khoản admin mặc định
+//CreateRolesAndAdminUser có nhiệm vụ tạo vai trò "Admin" và "User" nếu chúng chưa tồn tại trong hệ thống
+async Task CreateRolesAndAdminUser(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
+{
+    string[] roleNames = { "Admin", "User" };  //có thể thêm quyền và chạy https để update
+    IdentityResult roleResult;
+
+    foreach (var roleName in roleNames)
+    {
+        var roleExist = await roleManager.RoleExistsAsync(roleName);
+        if (!roleExist)
+        {
+            roleResult = await roleManager.CreateAsync(new IdentityRole(roleName));
+        }
+    }
+
+    // Tạo một tài khoản admin mặc định
+    //var admin = new ApplicationUser
+    //{
+    //    UserName = "huy2010@gmail.com",
+    //    Email = "huy2010@gmail.com",
+    //    Fullname = "Quang Huy",
+    //    Phone = "0123456789"
+    //};
+
+    //string adminPassword = "201000";
+    //var _admin = await userManager.FindByEmailAsync("huy2010@gmail.com");
+
+    //if (_admin == null)
+    //{
+    //    var createAdmin = await userManager.CreateAsync(admin, adminPassword);
+    //    if (createAdmin.Succeeded)
+    //    {
+    //        await userManager.AddToRoleAsync(admin, "Admin");
+    //    }
+    //}
+}
