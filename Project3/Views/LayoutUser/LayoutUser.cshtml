@@ -20,7 +20,6 @@
 
     <!-- Main Stylesheet -->
 	<link rel="stylesheet" href="~/FE/css/style.css">
-
 </head>
 <body id="top">
 
@@ -62,7 +61,7 @@
 						</li>
 						<li class="nav-item"><a class="nav-link" asp-controller="AboutUs" asp-action="Index">About us</a></li>
 						<li class="nav-item"><a class="nav-link" href="service.html">Types of  insurance </a></li>
-						<li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="ContactUs" >Contact us</a></li>
+						<li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="ContactUsUser">Contact us</a></li>
 						@using Project3.ModelsView.Identity
 						@using Microsoft.AspNetCore.Identity
 						@inject SignInManager<ApplicationUser> SignInManager
@@ -76,6 +75,7 @@
 							<div class="dropdown">
 							<li class="nav-item "><a href="" class="btn btn-main-2 btn-icon btn-round-full">@userFullname <i class="icofont-user pl-1  "></i></a></li>
 								<div class="dropdown-menu">
+								<a href="#" class="btn btn-link">Profile</a>
 								<form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post">
 										@Html.AntiForgeryToken()
 									<button type="submit" class="btn btn-link ">Logout</button>
