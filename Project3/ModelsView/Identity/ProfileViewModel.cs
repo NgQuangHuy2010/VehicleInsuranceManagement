@@ -12,5 +12,8 @@ namespace Project3.ModelsView.Identity
 
         [RegularExpression(@"^(?!0000000000$)(?!\d{11,}$)(?!\d*([0-9])\1{9})0[2-9][0-9]{8}$", ErrorMessage = "Incorrect phone number format ")]
         public string? Phone { get; set; }
+
+        public ApplicationUser? User { get; set; }
+        public bool IsGoogleLogin { get; set; }
     }
 }

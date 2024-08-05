@@ -19,12 +19,15 @@ namespace Project3.Controllers
             {
                 return NotFound("User not found");
             }
-            var profile = new ProfileViewModel  // sau đó gọi riêng model profile  
+            //check xem user login bằng gì thông qua GetLoginsAsync (bảng AspNetUserLogins)
+            var logins = await _userManager.GetLoginsAsync(user);
+            var isGoogleLogin = logins.Any(l => l.LoginProvider == "Google");
+            var profile = new ProfileViewModel  
             {
                 Fullname = user.Fullname,
                 Email = user.Email,
-                Phone = user.Phone
-
+                Phone = user.Phone,
+                IsGoogleLogin = isGoogleLogin
             };
             return View(profile);
         }

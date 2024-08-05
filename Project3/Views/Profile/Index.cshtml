@@ -1,6 +1,5 @@
 ﻿@model Project3.ModelsView.Identity.ProfileViewModel;
 
-;
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/LayoutUser/LayoutUser.cshtml";
@@ -18,7 +17,12 @@
                     </label>
                     <label class=" text-left  px-4 mt-3">
                         <h6>
-                            <a asp-action="ChangePassword" asp-controller="Profile">Change Password</a>
+                            @if (!Model.IsGoogleLogin)
+                            {
+                                <a asp-action="ChangePassword" asp-controller="Profile">Change Password</a>
+
+                            }
+                         
 
                         </h6>
                     </label>
