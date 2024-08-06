@@ -147,8 +147,41 @@ namespace Project3.Controllers
                         new { userId = user.Id, token = token }, Request.Scheme);
 
                     // Gửi email xác nhận với liên kết xác nhận bằng SendEmailAsync email.cs trong model
-                    await _emailService.SendEmailAsync(register.Email, "Confirm Email",
-                        $"Please confirm your account by clicking this link: {confirmationLink}");
+                    var emailBody = $@"
+                    <!DOCTYPE html>
+                    <html lang='en'>
+                    <head>
+                        <meta charset='UTF-8'>
+                        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+                        <style>
+                            body {{
+                                font-family: Arial, sans-serif;
+                            }}
+                            .email-container {{
+                                padding: 20px;
+                                text-align: center;
+                            }}
+                            .email-button {{
+                                display: inline-block;
+                                padding: 10px 20px;
+                                color: white !important;
+                                background-color: #007BFF;
+                                text-decoration: none;
+                                border-radius: 5px;
+                                font-size: 16px;
+                            }}
+                        </style>
+                    </head>
+                    <body>
+                        <div class='email-container'>
+                            <h3>Please confirm your account by clicking this link</h3>
+                            <a href='{confirmationLink}' class='email-button'>Verify Email</a>
+                        </div>
+                    </body>
+                    </html>";
+
+                    await _emailService.SendEmailAsync(register.Email, "Confirm Email", emailBody);
+
                     //gui thong bao den viewlogin
                     TempData["ConfirmEmailSent"] = "Please check your email to login.";
                     // Chuyển hướng đến trang thông báo đã gửi email.
@@ -398,6 +431,14 @@ namespace Project3.Controllers
                         return RedirectToAction("Index", "Home"); // hoặc trả về một view lỗi
                     }
                 }
+                // Kiểm tra xem vai trò "User" đã tồn tại chưa.
+                if (!await _roleManager.RoleExistsAsync("User"))
+                {
+                    // Tạo vai trò "User" nếu chưa tồn tại.
+                    await _roleManager.CreateAsync(new IdentityRole("User"));
+                }
+                // Gán vai trò "User" cho người dùng mới.
+                await _userManager.AddToRoleAsync(user, "User");
                 // Đăng nhập người dùng vào hệ thống
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 TempData["SuccessMessage"] = "Login success !!";

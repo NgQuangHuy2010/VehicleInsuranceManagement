@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Project3.Authorization;
 using Project3.Models;
 using Project3.ModelsView.Identity;
 using Project3.Services;
@@ -35,7 +37,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 //builder.Services.AddAuthentication(options =>
 //{
 //    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
 //    //options.DefaultScheme = GoogleDefaults.AuthenticationScheme;
 //    //options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
 //})
@@ -50,6 +52,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<UserRoleService, UserRoleService>();
+builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddTransient<IEmail, Email>();

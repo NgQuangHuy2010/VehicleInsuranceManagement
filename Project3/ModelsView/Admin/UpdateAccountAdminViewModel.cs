@@ -5,7 +5,7 @@ namespace Project3.ModelsView.Admin
 {
     public class UpdateAccountAdminViewModel : NameRole
     {
-        [Required(ErrorMessage = "Chọn vai trò")]
+        [Required(ErrorMessage = "Please select role")]
         public string? RoleId { get; set; }
         public string? Id { get; set; }
         [Required]
@@ -19,7 +19,7 @@ namespace Project3.ModelsView.Admin
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "Xác nhận mật khẩu không trùng khớp")]
+        [Compare("Password", ErrorMessage = "Confirm password does not match")]
         public string? ConfirmPassword { get; set; }
 
         [Required]
