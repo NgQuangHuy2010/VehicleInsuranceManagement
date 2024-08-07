@@ -49,7 +49,5 @@ public partial class AspNetUser
 
     public virtual ICollection<CompanyBillingPolicy> CompanyBillingPolicies { get; set; } = new List<CompanyBillingPolicy>();
 
-    public virtual ICollection<Estimate> Estimates { get; set; } = new List<Estimate>();
-
     public virtual ICollection<InsuranceProcess> InsuranceProcesses { get; set; } = new List<InsuranceProcess>();
 }
