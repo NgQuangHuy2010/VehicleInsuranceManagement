@@ -26,6 +26,7 @@ namespace Project3.Areas.System.Controllers
             // Lọc ra vai trò "Admin"
             var roles = _context.NameRoles
                 .Where(role => role.NameRole1 != "Admin")
+                .Where(role => role.NameRole1 != "User")
                 .ToList();
 
             return View(roles);

@@ -99,7 +99,8 @@ namespace Project3.Areas.System.Controllers
                     UserName = register.Email,
                     Email = register.Email,
                     Fullname = register.Fullname,
-                    Phone = register.Phone
+                    Phone = register.Phone,
+                    EmailConfirmed = true   //confirm email trong admin
                 };
 
                 // Đăng ký người dùng mới với CreateAsync
@@ -256,9 +257,10 @@ namespace Project3.Areas.System.Controllers
             {
                 // Cập nhật thông tin người dùng
                 user.Email = model.Email;
+                user.UserName = model.Email;
                 user.Fullname = model.Fullname;
                 user.Phone = model.Phone;
-
+                user.EmailConfirmed = true;
                 // Cập nhật mật khẩu nếu có
                 if (!string.IsNullOrEmpty(model.Password))
                 {
