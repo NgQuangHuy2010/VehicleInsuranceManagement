@@ -35,11 +35,15 @@
                             </div>
                             <div class="form-floating mb-3">
                                 <input type="email" class="form-control" asp-for="Email" placeholder="name@example.com">
+                                <p class="text-drak">
+                                <i class="fa-solid fa-triangle-exclamation" style="color: #e6b919;"></i>
+                                Please enter a valid email address. An email will be sent for verification !!
+                                </p>
                                 <span asp-validation-for="Email" class="text-danger"></span>
                                 <label for="floatingInput">Email</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" asp-for="Phone" placeholder="Phone">
+                                <input type="number" class="form-control" asp-for="Phone" placeholder="Phone">
                                 <span asp-validation-for="Phone" class="text-danger"></span>
                                 <label for="floatingPhone">Phone</label>
                             </div>
