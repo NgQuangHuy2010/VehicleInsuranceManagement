@@ -1,0 +1,56 @@
+﻿@model EstimateViewModel
+@{
+    ViewData["Title"] = "Estimation";
+    Layout = "~/Views/LayoutUser/LayoutUser.cshtml";
+}
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="CustomerId" class="control-label"></label>
+        <input asp-for="CustomerId" class="form-control" />
+        <span asp-validation-for="CustomerId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CustomerName" class="control-label"></label>
+        <input asp-for="CustomerName" class="form-control" />
+        <span asp-validation-for="CustomerName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CustomerPhoneNumber" class="control-label"></label>
+        <input asp-for="CustomerPhoneNumber" class="form-control" />
+        <span asp-validation-for="CustomerPhoneNumber" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="VehicleId" class="control-label"></label>
+        <input asp-for="VehicleId" class="form-control" readonly />
+        <span asp-validation-for="VehicleId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="VehicleRate" class="control-label"></label>
+        <input asp-for="VehicleRate" class="form-control" />
+        <span asp-validation-for="VehicleRate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="WarrantyId" class="control-label"></label>
+        <select asp-for="WarrantyId" class="form-control" asp-items="Model.Warranties"></select>
+        <span asp-validation-for="WarrantyId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="PolicyTypeId" class="control-label"></label>
+        <select asp-for="PolicyTypeId" class="form-control" asp-items="Model.PolicyTypes"></select>
+        <span asp-validation-for="PolicyTypeId" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>
+<div>
+    <a asp-controller="VehicleInformation" asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -31,7 +31,9 @@ public partial class CompanyBillingPolicy
 
     public DateTime? Date { get; set; }
 
-    public decimal? Amount { get; set; }
+    public decimal Amount { get; set; }
 
     public virtual AspNetUser? Customer { get; set; }
+
+    public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 }

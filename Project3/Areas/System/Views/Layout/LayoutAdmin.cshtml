@@ -7,7 +7,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Ecommerce</title>
+    <title>Vehicle Insurance</title>
+
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16"
           href="~/FE/img/Remove-bg.ai_1718535780539.png">
@@ -39,7 +40,7 @@
             <a href="index.html" class="brand-logo d-flex justify-content-center mx-0">
 
 
-                <img class="brand-title " src="" alt="">
+                <img class="brand-title " src="~/FE/images/logovehicle.png" alt="">
 
 
             </a>
@@ -59,12 +60,12 @@
                                 <span class="search_icon p-3 c-pointer" >
                                     <i class="mdi mdi-magnify"></i>
                                 </span>
-                                <div class="dropdown-menu p-0 m-0">
+                               @*  <div class="dropdown-menu p-0 m-0">
                                     <form>
                                         <input class="form-control" type="search" placeholder="Search"
                                                aria-label="Search">
                                     </form>
-                                </div>
+                                </div> *@
                             </div>
                         </div>
                         <ul class="navbar-nav header-right">
@@ -164,6 +165,16 @@
                         <a  asp-controller="Dashboard" asp-action="Index"  aria-expanded="false">
                             <i class="fa fa-file-image-o mr-2"></i><span class="nav-text">Dashboard</span>
                         </a>
+                    </li>
+                    <li>
+                        <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                            <i class="fa fa-user mr-2"></i>
+                            <span class="nav-text">Account Management</span>
+                        </a>
+                        <ul aria-expanded="false">
+                            <li><a asp-action="Index" asp-controller="AccountManagement">List of accounts</a></li>
+                            <li><a asp-controller="Role" asp-action="Index">Decentralization</a></li>
+                        </ul>
                     </li>
                     <li>
                         <a  aria-expanded="false">
