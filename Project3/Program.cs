@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Project3.Models;
+using Project3.ModelsView;
 using Project3.ModelsView.Identity;
 using Project3.Services;
 
@@ -39,7 +40,10 @@ builder.Services.AddTransient<IEmail, Email>();
 
 
 builder.Services.AddSingleton<CarService>();
-
+//load thông tin c?u hình và l?u vào ??i t??ng MailSetting
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+//add dependency inject cho MailService
+builder.Services.AddTransient<IMailService, MailService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

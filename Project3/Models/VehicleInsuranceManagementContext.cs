@@ -35,6 +35,8 @@ public partial class VehicleInsuranceManagementContext : DbContext
 
     public virtual DbSet<CompanyExpense> CompanyExpenses { get; set; }
 
+    public virtual DbSet<ContactUs> ContactUs { get; set; }
+
     public virtual DbSet<Estimate> Estimates { get; set; }
 
     public virtual DbSet<InsuranceProcess> InsuranceProcesses { get; set; }
@@ -194,6 +196,12 @@ public partial class VehicleInsuranceManagementContext : DbContext
                 .HasColumnName("amount_of_expense");
             entity.Property(e => e.DateOfExpenses).HasColumnName("date_of_expenses");
             entity.Property(e => e.TypeOfExpense).HasColumnName("type_of_expense");
+        });
+
+        modelBuilder.Entity<ContactUs>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Topic).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Estimate>(entity =>
