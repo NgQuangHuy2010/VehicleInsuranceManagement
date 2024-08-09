@@ -1,61 +1,71 @@
-﻿ @model Project3.Models.VehicleInformation
+﻿@model Project3.ModelsView.VehicleInformationViewModel
 @{
     ViewData["Title"] = "Chọn xe";
     Layout = "~/Views/LayoutUser/LayoutUser.cshtml";
 }
 
-<div class="container">
-    <h1 class="mb-4">Your car information</h1>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Your Car Information</h1>
     <form asp-action="SaveVehicleInformation" asp-controller="VehicleInformations" method="post">
-        <div class="form-group">
-            <label for="manufacturerSelect">Manufacturer</label>
-            <select id="manufacturerSelect" name="VehicleName" class="form-control">
-                <option value="">Chọn hãng xe</option>
-            </select>
-        </div>
+        <div class="row">
+            <!-- Left Column for Dropdowns -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="manufacturerSelect">Manufacturer</label>
+                    <select id="manufacturerSelect" name="VehicleName" class="form-control">
+                        <option value="">Chọn hãng xe</option>
+                    </select>
+                </div>
 
-        <div class="form-group">
-            <label for="modelSelect">VehicleModel</label>
-            <select id="modelSelect" name="VehicleModel" class="form-control" disabled>
-                <option value="">Chọn mẫu xe</option>
-            </select>
-        </div>
+                <div class="form-group">
+                    <label for="modelSelect">Vehicle Model</label>
+                    <select id="modelSelect" name="VehicleModel" class="form-control" disabled>
+                        <option value="">Chọn mẫu xe</option>
+                    </select>
+                </div>
 
-        <div class="form-group">
-            <label for="trimSelect">VehicleVersion</label>
-            <select id="trimSelect" name="VehicleVersion" class="form-control" disabled>
-                <option value="">Chọn phiên bản</option>
-            </select>
-        </div>
+                <div class="form-group">
+                    <label for="trimSelect">Vehicle Version</label>
+                    <select id="trimSelect" name="VehicleVersion" class="form-control" disabled>
+                        <option value="">Chọn phiên bản</option>
+                    </select>
+                </div>
+            </div>
 
-        <!-- Existing fields -->
-        <div class="form-group">
-            <label asp-for="VehicleOwnerName" class="control-label"></label>
-            <input asp-for="VehicleOwnerName" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="VehicleRate" class="control-label"></label>
-            <input asp-for="VehicleRate" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="VehicleBodyNumber" class="control-label"></label>
-            <input asp-for="VehicleBodyNumber" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="VehicleEngineNumber" class="control-label"></label>
-            <input asp-for="VehicleEngineNumber" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="VehicleNumber" class="control-label"></label>
-            <input asp-for="VehicleNumber" class="form-control" />
-        </div>
+            <!-- Right Column for Text Inputs -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="VehicleOwnerName" class="control-label">Owner Name</label>
+                    <input asp-for="VehicleOwnerName" class="form-control" />
+                </div>
 
-        <div class="form-group">
-            <input type="submit" value="Save" class="btn btn-primary" />
+                <div class="form-group">
+                    <label for="vehicleRate">Vehicle Rate</label>
+                    <input type="text" id="vehicleRate" name="VehicleRate" value="@ViewBag.VehicleRate" class="form-control" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="VehicleBodyNumber" class="control-label">Body Number</label>
+                    <input asp-for="VehicleBodyNumber" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="VehicleEngineNumber" class="control-label">Engine Number</label>
+                    <input asp-for="VehicleEngineNumber" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="VehicleNumber" class="control-label">Vehicle Number</label>
+                    <input asp-for="VehicleNumber" class="form-control" />
+                </div>
+
+                <div class="form-group text-center">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </div>
         </div>
     </form>
 </div>
-
 <script>
     let carData = [];
 
