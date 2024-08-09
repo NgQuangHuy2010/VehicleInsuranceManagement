@@ -35,7 +35,7 @@ public partial class VehicleInsuranceManagementContext : DbContext
 
     public virtual DbSet<CompanyExpense> CompanyExpenses { get; set; }
 
-    public virtual DbSet<ContactUs> ContactUs { get; set; }
+    public virtual DbSet<ContactU> ContactUs { get; set; }
 
     public virtual DbSet<Estimate> Estimates { get; set; }
 
@@ -53,7 +53,7 @@ public partial class VehicleInsuranceManagementContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-AU9QS0E;Initial Catalog=VehicleInsuranceManagement;Persist Security Info=True;User ID=sa;Password=chuong123;Encrypt=True;Trust Server Certificate=True");
+        => optionsBuilder.UseSqlServer("Data Source=HUY;Initial Catalog=VehicleInsuranceManagement;Persist Security Info=True;User ID=sa;Password=123;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -192,7 +192,12 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.Property(e => e.TypeOfExpense).HasColumnName("type_of_expense");
         });
 
-        
+        modelBuilder.Entity<ContactU>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Topic).HasMaxLength(50);
+        });
+
         modelBuilder.Entity<Estimate>(entity =>
         {
             entity.HasKey(e => e.EstimateNumber).HasName("PK__Estimate__0B3C03911EA713CC");
@@ -301,14 +306,6 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.Property(e => e.RoleId)
                 .HasMaxLength(450)
                 .HasColumnName("role_id");
-
-            entity.HasOne(d => d.Role).WithMany(p => p.RolePermissions)
-                .HasForeignKey(d => d.RoleId)
-                .HasConstraintName("Role_Permissions__role_id__AspNetRoles_Id");
-
-            entity.HasOne(d => d.RoleNavigation).WithMany(p => p.RolePermissions)
-                .HasForeignKey(d => d.RoleId)
-                .HasConstraintName("Role_Permissions__Role_id__NameRole_id");
         });
 
         modelBuilder.Entity<VehicleInformation>(entity =>
