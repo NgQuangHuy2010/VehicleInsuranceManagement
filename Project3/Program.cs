@@ -73,7 +73,7 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddSingleton<CarService>();
-//load thông tin c?u hình và l?u vào ??i t??ng MailSetting
+//load thï¿½ng tin c?u hï¿½nh vï¿½ l?u vï¿½o ??i t??ng MailSetting
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 //add dependency inject cho MailService
 builder.Services.AddTransient<IMailService, MailService>();

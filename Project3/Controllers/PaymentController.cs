@@ -43,7 +43,7 @@ namespace Project3.Controllers
                 payment.PaymentDate = DateTime.Now;
                 payment.IsConfirmed = false; // Admin will confirm later
 
-                _context.Payments.Add(payment);
+                _context.Pa
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("Index", "CompanyBillingPolicy");

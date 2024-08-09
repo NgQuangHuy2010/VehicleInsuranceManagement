@@ -28,7 +28,7 @@ namespace Project3.Controllers
             _context = context;
         }
 
-        //GET: VehicleInformations/CarSelection
+        GET: VehicleInformations/CarSelection
         [HttpGet("CarSelection")]
 
         public async Task<IActionResult> CarSelection()
@@ -48,14 +48,14 @@ namespace Project3.Controllers
         }
 
 
-//        [HttpPost]
-//        [Route("LoadData")]
-//        public async Task<IActionResult> LoadData()
-//        {
-//            var cars = await _carService.GetAllCarsAsync();
-//            await _carService.SaveCarsAsync(cars);
-//            return RedirectToAction(nameof(CarSelection));
-//        }
+                [HttpPost]
+                [Route("LoadData")]
+                public async Task<IActionResult> LoadData()
+                {
+                    var cars = await _carService.GetAllCarsAsync();
+                    await _carService.SaveCarsAsync(cars);
+                    return RedirectToAction(nameof(CarSelection));
+                }
 
 
         [HttpPost]
@@ -73,7 +73,7 @@ namespace Project3.Controllers
                 _context.VehicleInformations.Add(vehicleInformation);
                 await _context.SaveChangesAsync();
 
-                // Redirect to the Estimate form with vehicle information as query parameters
+                 Redirect to the Estimate form with vehicle information as query parameters
                 return RedirectToAction("Create", "Estimates", new
                 {
                     VehicleId = vehicleInformation.Id,
@@ -97,20 +97,20 @@ namespace Project3.Controllers
                 return NotFound();
             }
 
-//            var cars = await _carService.GetAllCarsAsync();
-//            ViewBag.Manufacturers = cars.Select(c => new { c.Code, c.Name }).Distinct().ToList();
-//            return View(vehicleInformation);
-//        }
+                        var cars = await _carService.GetAllCarsAsync();
+                        ViewBag.Manufacturers = cars.Select(c => new { c.Code, c.Name }).Distinct().ToList();
+                        return View(vehicleInformation);
+                    }
 
-//        [Route("edit")]
-//        [HttpPost]
-//        [ValidateAntiForgeryToken]
-//        public async Task<IActionResult> Edit(int id, [Bind("Id,VehicleName,VehicleOwnerName,VehicleModel,VehicleVersion,VehicleRate,VehicleBodyNumber,VehicleEngineNumber,VehicleNumber,Location,Usage,WarrantyType,PolicyType")] VehicleInformation vehicleInformation)
-//        {
-//            if (id != vehicleInformation.Id)
-//            {
-//                return NotFound();
-//            }
+                    [Route("edit")]
+                    [HttpPost]
+                    [ValidateAntiForgeryToken]
+                    public async Task<IActionResult> Edit(int id, [Bind("Id,VehicleName,VehicleOwnerName,VehicleModel,VehicleVersion,VehicleRate,VehicleBodyNumber,VehicleEngineNumber,VehicleNumber,Location,Usage,WarrantyType,PolicyType")] VehicleInformation vehicleInformation)
+                    {
+                        if (id != vehicleInformation.Id)
+                        {
+                            return NotFound();
+                        }
 
             if (ModelState.IsValid)
             {
@@ -126,66 +126,66 @@ namespace Project3.Controllers
                     vehicleToUpdate.VehicleBodyNumber = vehicleInformation.VehicleBodyNumber;
                     vehicleToUpdate.VehicleEngineNumber = vehicleInformation.VehicleEngineNumber;
                     vehicleToUpdate.VehicleNumber = vehicleInformation.VehicleNumber;
-                    
 
-//                    await SaveVehicleInformationsAsync(vehicleList);
-//                    return RedirectToAction(nameof(Index));
-//                }
-//                return NotFound();
-//            }
-//            return View(vehicleInformation);
-//        }
 
-//        [Route("delete")]
-//        public async Task<IActionResult> Delete(int id)
-//        {
-//            var vehicleInformation = await _carService.GetVehicleInformationById(id);
-//            if (vehicleInformation == null)
-//            {
-//                return NotFound();
-//            }
-//            return View(vehicleInformation);
-//        }
+                                        await SaveVehicleInformationsAsync(vehicleList);
+                                        return RedirectToAction(nameof(Index));
+                                    }
+                                    return NotFound();
+                                }
+                                return View(vehicleInformation);
+                            }
 
-//        // POST: VehicleInformations/Delete/5
-//        [Route("delete")]
-//        [HttpPost]
-//        [ValidateAntiForgeryToken]
-//        public async Task<IActionResult> DeleteConfirmed(int id)
-//        {
-//            var vehicleList = await _carService.GetAllVehicleInformationsAsync();
-//            var vehicleToDelete = vehicleList.FirstOrDefault(v => v.Id == id);
-//            if (vehicleToDelete != null)
-//            {
-//                vehicleList.Remove(vehicleToDelete);
-//                await SaveVehicleInformationsAsync(vehicleList);
-//            }
-//            return RedirectToAction(nameof(Index));
-//        }
+                            [Route("delete")]
+                            public async Task<IActionResult> Delete(int id)
+                            {
+                                var vehicleInformation = await _carService.GetVehicleInformationById(id);
+                                if (vehicleInformation == null)
+                                {
+                                    return NotFound();
+                                }
+                                return View(vehicleInformation);
+                            }
 
-//        // GET: VehicleInformations
-//        [Route("index")]
-//        public async Task<IActionResult> Index()
-//        {
-//            //var vehicleList = await _carService.GetAllVehicleInformationsAsync();
-//            var vehicleList = await _context.VehicleInformations.ToListAsync();
-//            return View(vehicleList);
-//        }
+                            // POST: VehicleInformations/Delete/5
+                            [Route("delete")]
+                            [HttpPost]
+                            [ValidateAntiForgeryToken]
+                            public async Task<IActionResult> DeleteConfirmed(int id)
+                            {
+                                var vehicleList = await _carService.GetAllVehicleInformationsAsync();
+                                var vehicleToDelete = vehicleList.FirstOrDefault(v => v.Id == id);
+                                if (vehicleToDelete != null)
+                                {
+                                    vehicleList.Remove(vehicleToDelete);
+                                    await SaveVehicleInformationsAsync(vehicleList);
+                                }
+                                return RedirectToAction(nameof(Index));
+                            }
 
-        private async Task SaveVehicleInformationsAsync(List<VehicleInformation> vehicleInformations)
-        {
-            var cars = vehicleInformations.GroupBy(v => v.VehicleName).Select(g => new Car
-            {
-                Name = g.Key,
-                Models = g.Select(v => new Model
-                {
-                    Name = v.VehicleModel,
-                    Codename = v.VehicleVersion,
-                    //Price = v.VehicleRate.ToString()
-                }).ToList()
-            }).ToList();
+                            // GET: VehicleInformations
+                            [Route("index")]
+                            public async Task<IActionResult> Index()
+                            {
+                                //var vehicleList = await _carService.GetAllVehicleInformationsAsync();
+                                var vehicleList = await _context.VehicleInformations.ToListAsync();
+                                return View(vehicleList);
+                            }
 
-//            await _carService.SaveCarsAsync(cars);
-//        }
-//    }
-//}
+                    private async Task SaveVehicleInformationsAsync(List<VehicleInformation> vehicleInformations)
+                    {
+                        var cars = vehicleInformations.GroupBy(v => v.VehicleName).Select(g => new Car
+                        {
+                            Name = g.Key,
+                            Models = g.Select(v => new Model
+                            {
+                                Name = v.VehicleModel,
+                                Codename = v.VehicleVersion,
+                                Price = v.VehicleRate.ToString()
+                            }).ToList()
+                        }).ToList();
+
+            await _carService.SaveCarsAsync(cars);
+        }
+    }
+}
