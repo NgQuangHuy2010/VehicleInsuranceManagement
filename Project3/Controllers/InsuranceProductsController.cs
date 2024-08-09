@@ -36,7 +36,7 @@ public class InsuranceProductsController : Controller
             foreach (var warranty in warranties)
             {
                 // Adjust the rate based on the warranty type or duration
-                double? adjustedRate = policy.VehicleRate;
+                float adjustedRate = (float)policy.VehicleRate;
 
                 if (warranty.WarrantyDuration.Contains("3"))
                 {
@@ -60,7 +60,7 @@ public class InsuranceProductsController : Controller
                     WarrantyType = warranty.WarrantyType,
                     WarrantyDuration = warranty.WarrantyDuration,
                     WarrantyDetails = warranty.WarrantyDetails,
-                    VehicleRate = (float)adjustedRate // Use the adjusted rate
+                    VehicleRate = adjustedRate // Use the adjusted rate
                 });
             }
         }
@@ -110,7 +110,20 @@ public class InsuranceProductsController : Controller
         {
             return NotFound("Policy or Warranty not found.");
         }
+        float adjustedRate = (float)policy.VehicleRate;
 
+        if (warranty.WarrantyDuration.Contains("3"))
+        {
+            adjustedRate = adjustedRate;  // Add $50 for 5-year warranties
+        }
+        if (warranty.WarrantyDuration.Contains("5"))
+        {
+            adjustedRate += 50;  // Add $50 for 5-year warranties
+        }
+        else if (warranty.WarrantyDuration.Contains("7"))
+        {
+            adjustedRate += 100; // Add $100 for 7-year warranties
+        }
         // Create a session object to store the selected product
         var productSession = new InsuranceProductViewModel
         {
@@ -121,7 +134,7 @@ public class InsuranceProductsController : Controller
             WarrantyType = warranty.WarrantyType,
             WarrantyDuration = warranty.WarrantyDuration,
             WarrantyDetails = warranty.WarrantyDetails,
-            VehicleRate = (float)policy.VehicleRate
+            VehicleRate = (float)adjustedRate
         };
 
         // Save the productSession into the session

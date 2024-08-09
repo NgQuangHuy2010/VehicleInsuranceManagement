@@ -8,40 +8,41 @@ using Project3.ModelsView.Identity;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Project3.Controllers
+namespace Project3.Areas.System.Controllers
 {
-    [Authorize]
-    [Route("InsuranceProcess")]
-    public class InsuranceProcessController : Controller
+    
+    [Area("system")]
+    [Route("system/insuranceprocess")]
+    public class AdminInsuranceProcessController : Controller
     {
         private readonly VehicleInsuranceManagementContext _context;
-        private readonly ILogger<EstimatesController> _logger;
+        private readonly ILogger<AdminInsuranceProcessController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
-        public InsuranceProcessController(UserManager<ApplicationUser> userManager,ILogger<EstimatesController> logger, VehicleInsuranceManagementContext context)
+
+        public AdminInsuranceProcessController(UserManager<ApplicationUser> userManager, ILogger<AdminInsuranceProcessController> logger, VehicleInsuranceManagementContext context)
         {
             _context = context;
             _logger = logger;
             _userManager = userManager;
         }
+
         [HttpGet("CollectInfo")]
         public async Task<IActionResult> CollectInfo()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return RedirectToAction("Login", "Account");  // Redirect to a login page if user is not authenticated
+                return RedirectToAction("Login", "Account", new { area = "" });  // Redirect to the login page if the user is not authenticated
             }
             var vehicleinfo = HttpContext.Session.GetObject<VehicleInformationViewModel>("VehicleInformationData");
             var estimate = HttpContext.Session.GetObject<EstimateModelView>("EstimateData");
             if (estimate == null)
             {
-                return RedirectToAction("Create", "Estimate"); // or any appropriate action
+                return RedirectToAction("Create", "Estimate", new { area = "System" }); // or any appropriate action
             }
             var collectinfo = new CollectInfoViewModel
             {
                 VehicleRate = estimate.VehicleRate,
-                
-
             };
             return View(collectinfo);
         }
@@ -53,9 +54,9 @@ namespace Project3.Controllers
             var estimate = HttpContext.Session.GetObject<EstimateModelView>("EstimateData");
             if (estimate == null)
             {
-                return RedirectToAction("Index", "Home"); // or any appropriate action
+                return RedirectToAction("Index", "Home", new { area = "System" }); // or any appropriate action
             }
-            
+
             if (ModelState.IsValid)
             {
                 var collectinfo = new CollectInfoViewModel
@@ -64,7 +65,7 @@ namespace Project3.Controllers
                     DriverAge = viewModel.DriverAge,
                     DrivingHistory = viewModel.DrivingHistory,
                     CustomerAdd = viewModel.CustomerAdd,
-                    Usage  = viewModel.Usage,
+                    Usage = viewModel.Usage,
                     AntiTheftDevice = viewModel.AntiTheftDevice,
                     MultiPolicy = viewModel.MultiPolicy,
                     SafeDriver = viewModel.SafeDriver,
@@ -76,7 +77,7 @@ namespace Project3.Controllers
                 var sessionData = HttpContext.Session.GetObject<CollectInfoViewModel>("CollectInfoData");
                 _logger.LogInformation("Session Insurance Input Data: {@SessionData}", sessionData);
 
-                return RedirectToAction("Create", "InsuranceProcess");
+                return RedirectToAction("Create", "SystemInsuranceProcess", new { area = "System" });
             }
 
             return View(viewModel);
@@ -91,7 +92,7 @@ namespace Project3.Controllers
 
             if (estimate == null)
             {
-                return RedirectToAction("Index", "Home"); // or any appropriate action
+                return RedirectToAction("Index", "Home", new { area = "System" }); // or any appropriate action
             }
 
             var insuranceProcess = new InsuranceProcessViewModel
@@ -109,7 +110,6 @@ namespace Project3.Controllers
                 PolicyDuration = 12, // Default duration, can be adjusted
                 VehicleBodyNumber = vehicleinfo.VehicleBodyNumber,
                 VehicleEngineNumber = vehicleinfo.VehicleEngineNumber
-                  
             };
 
             return View(insuranceProcess);
@@ -126,7 +126,7 @@ namespace Project3.Controllers
 
             var estimate = HttpContext.Session.GetObject<EstimateModelView>("EstimateData");
             var vehicleinfo = HttpContext.Session.GetObject<VehicleInformationViewModel>("VehicleInformationData");
-            
+
             if (ModelState.IsValid)
             {
                 var insurances = new InsuranceProcessViewModel
@@ -138,7 +138,6 @@ namespace Project3.Controllers
                     VehicleName = insuranceProcess.VehicleName,
                     VehicleModel = insuranceProcess.VehicleModel,
                     VehicleRate = insuranceProcess.VehicleRate,
-                    
                     WarrantyId = insuranceProcess.WarrantyId,
                     PolicyNumber = randomNumber,
                     PolicyTypeId = insuranceProcess.PolicyTypeId,
@@ -154,20 +153,15 @@ namespace Project3.Controllers
                 var sessionData = HttpContext.Session.GetObject<InsuranceProcessViewModel>("InsuranceData");
                 var sessionData1 = HttpContext.Session.GetObject<EstimateModelView>("EstimateData");
                 var sessionData2 = HttpContext.Session.GetObject<VehicleInformationViewModel>("VehicleInformationData");
-                
 
                 _logger.LogInformation("Session Insurance Process: {@SessionData}", sessionData);
                 _logger.LogInformation("Session Estimate: {@SessionData}", sessionData1);
                 _logger.LogInformation("Session Vehicleinfo: {@SessionData}", sessionData2);
-                
 
-
-                return RedirectToAction("Create","CompanyBillingPolicy");
+                return RedirectToAction("Create", "SystemCompanyBillingPolicy", new { area = "System" });
             }
 
             return View(insuranceProcess);
         }
-
-        
     }
 }

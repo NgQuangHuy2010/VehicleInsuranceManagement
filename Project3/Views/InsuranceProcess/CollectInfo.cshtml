@@ -14,7 +14,7 @@
             <div class="col-md-6">
             <div class="form-group">
                 <label asp-for="VehicleRate" class="control-label"></label>
-                <input asp-for="VehicleRate" class="form-control" />
+                <input asp-for="VehicleRate" class="form-control" readonly/>
                 <span asp-validation-for="VehicleRate" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -73,7 +73,7 @@
             
             <div class="form-group">
                 <input type="submit" value="Submit" class="btn btn-primary" />
-                    <a asp-controller="Estimate" asp-action="Create" class="btn btn-primary">Back</a>
+                    <a asp-controller="Estimate" asp-action="Create" class="btn btn-default">Back</a>
             </div>
                 
             </div>

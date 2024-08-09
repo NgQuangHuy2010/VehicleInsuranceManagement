@@ -12,21 +12,24 @@ namespace Project3.ModelsView
         [Required]
         public string CustomerName { get; set; }
 
+        public string? CustomerAdd { get; set; }
         [Required]
         [Phone]
         public string CustomerPhoneNumber { get; set; }
         [Required]
         public int VehicleId { get; set; }
         public string? PolicyNumber { get; set; }
+        public string? PolicyDate { get; set; }
+        public decimal? VehicleNumber { get; set; }
 
-        [Required]
-        public string VehicleName { get; set; }
-
+        public string? VehicleName { get; set; }
         [Required]
         public string VehicleModel { get; set; }
-
+        public string? VehicleVersion { get; set; }
         [Required]
         public float VehicleRate { get; set; }
+        public string? VehicleWarranty { get; set; }
+        
         [Required]
         public int PolicyTypeId { get; set; }
         [Required]
@@ -37,8 +40,8 @@ namespace Project3.ModelsView
 
         [Required]
         public string VehicleEngineNumber { get; set; }
+        public string? CustomerAddProve { get; set; }
         [Required]
-        public string? PolicyDate { get; set; }
         
         public decimal? PolicyDuration { get; set; }
 
