@@ -2,21 +2,28 @@
 
 @{
     ViewData["Title"] = "Confirmation";
+    Layout = "~/Views/LayoutUser/LayoutUser.cshtml";
 }
 
-<h2>Purchase Confirmation</h2>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Purchase Confirmation</h2>
+                    <p class="card-text">Thank you for your purchase!</p>
 
-<p>Thank you for your purchase!</p>
+                    <h3 class="mb-3">Estimation</h3>
+                    <h5 class="card-title">@Model.PolicyName</h5>
+                    <p class="card-text">@Model.PolicyDetails</p>
+                    <p class="card-text"><strong>Warranty:</strong> @Model.WarrantyType (@Model.WarrantyDuration)</p>
+                    <p class="card-text"><strong>Warranty Details:</strong> @Model.WarrantyDetails</p>
+                    <p class="card-text"><strong>Rate:</strong> $@Model.VehicleRate</p>
 
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">@Model.PolicyName</h5>
-        <p class="card-text">@Model.PolicyDetails</p>
-        <p class="card-text"><strong>Warranty:</strong> @Model.WarrantyType (@Model.WarrantyDuration)</p>
-        <p class="card-text"><strong>Warranty Details:</strong> @Model.WarrantyDetails</p>
-        <p class="card-text"><strong>Rate:</strong> $@Model.VehicleRate</p>
+                    <p class="mt-4">You can now proceed to fill in your vehicle information.</p>
+                    <a asp-action="CarSelection" asp-controller="VehicleInformations" class="btn btn-primary">Continue to Vehicle Information</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
-<p>You can now proceed to fill in your vehicle information.</p>
-<a asp-action="CarSelection" asp-controller="VehicleInformations" class="btn btn-primary">Continue to Vehicle Information</a>

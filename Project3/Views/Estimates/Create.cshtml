@@ -7,7 +7,7 @@
     <h1 class="text-center mb-4">Estimation</h1>
     <form asp-action="Create" method="post">
         <div class="row">
-            <!-- Left Column for Dropdowns -->
+            <!-- Left Column for Inputs -->
             <div class="col-md-6">
                 <div class="form-group">
                     <label asp-for="CustomerId" class="control-label"></label>
@@ -41,55 +41,39 @@
                     <span asp-validation-for="VehicleName" class="text-danger"></span>
                 </div>
             </div>
-            <div class="col-md-6">
-                   
-                    <div class="form-group">
-                        <label asp-for="VehicleModel" class="control-label"></label>
-                        <input asp-for="VehicleModel" class="form-control" readonly />
-                        <span asp-validation-for="VehicleModel" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="VehicleVersion" class="control-label"></label>
-                        <input asp-for="VehicleVersion" class="form-control" readonly />
-                        <span asp-validation-for="VehicleVersion" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="WarrantyId" class="control-label"></label>
-                        <select asp-for="WarrantyId" class="form-control" >
-                            <option>Warranty</option>
-                            @foreach (var warranties in ViewBag.warranty)
-                            {
-                                <option value="@warranties.WarrantyId">
-                                    @warranties.WarrantyType
-                                </option>
-                            }
-                        </select>
-                        <span asp-validation-for="WarrantyId" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="PolicyTypeId" class="control-label"></label>
-                        <select asp-for="PolicyTypeId" class="form-control">
-                            <option>PolityType</option>
-                            @foreach (var policies in ViewBag.policytype)
-                            {
-                                <option value="@policies.PolicyTypeId">
-                                    @policies.PolicyName
-                                </option>
-                            }
-                        </select>
-                        <span asp-validation-for="PolicyTypeId" class="text-danger"></span>
-                    </div>
 
-                    <div class="form-group">
-                        <input type="submit" value="Create" class="btn btn-primary" />
-                        <a asp-controller="VehicleInformations" asp-action="CarSelection" class="btn btn-default">Back to Car Selection </a>
-                    </div>
+            <!-- Right Column for Inputs -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="VehicleModel" class="control-label"></label>
+                    <input asp-for="VehicleModel" class="form-control" readonly />
+                    <span asp-validation-for="VehicleModel" class="text-danger"></span>
                 </div>
-             
+                <div class="form-group">
+                    <label asp-for="VehicleVersion" class="control-label"></label>
+                    <input asp-for="VehicleVersion" class="form-control" readonly />
+                    <span asp-validation-for="VehicleVersion" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="WarrantyId" class="control-label"></label>
+                    <input asp-for="WarrantyId" class="form-control" readonly />
+                    <span asp-validation-for="WarrantyId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PolicyTypeId" class="control-label"></label>
+                    <input asp-for="PolicyTypeId" class="form-control" readonly />
+                    <span asp-validation-for="PolicyTypeId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group text-center">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                    <a asp-controller="VehicleInformations" asp-action="CarSelection" class="btn btn-default">Back to Car Selection</a>
+                </div>
+            </div>
         </div>
     </form>
 </div>
-
 
 @section Scripts {
     @{

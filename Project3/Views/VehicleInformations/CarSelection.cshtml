@@ -34,29 +34,35 @@
 
             <!-- Right Column for Text Inputs -->
             <div class="col-md-6">
-                <div class="form-group">
+                @* <div class="form-group">
                     <label asp-for="VehicleOwnerName" class="control-label">Owner Name</label>
-                    <input asp-for="VehicleOwnerName" class="form-control" />
-                </div>
+                    <input asp-for="VehicleOwnerName" class="form-control" readonly />
+                </div> *@
 
                 <div class="form-group">
                     <label for="vehicleRate">Vehicle Rate</label>
-                    <input type="text" id="vehicleRate" name="VehicleRate" value="@ViewBag.VehicleRate" class="form-control" readonly />
+                    <input name="VehicleRate" asp-for="VehicleRate" class="form-control" value="@ViewBag.VehicleRate" readonly />
+                    <span asp-validation-for="VehicleRate" class="text-danger" ></span>
                 </div>
+
 
                 <div class="form-group">
                     <label asp-for="VehicleBodyNumber" class="control-label">Body Number</label>
                     <input asp-for="VehicleBodyNumber" class="form-control" />
+                    <span asp-validation-for="VehicleBodyNumber" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
                     <label asp-for="VehicleEngineNumber" class="control-label">Engine Number</label>
                     <input asp-for="VehicleEngineNumber" class="form-control" />
+                    <span asp-validation-for="VehicleEngineNumber" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
                     <label asp-for="VehicleNumber" class="control-label">Vehicle Number</label>
                     <input asp-for="VehicleNumber" class="form-control" />
+                    <span asp-validation-for="VehicleNumber" class="text-danger"></span>
+
                 </div>
 
                 <div class="form-group text-center">
