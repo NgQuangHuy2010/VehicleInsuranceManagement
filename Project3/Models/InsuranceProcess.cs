@@ -13,9 +13,9 @@ public partial class InsuranceProcess
 
     public string? CustomerAdd { get; set; }
 
-    public decimal? CustomerPhoneNumber { get; set; }
+    public string? CustomerPhoneNumber { get; set; }
 
-    public decimal? PolicyNumber { get; set; }
+    public string? PolicyNumber { get; set; }
 
     public string? PolicyDate { get; set; }
 
@@ -29,7 +29,7 @@ public partial class InsuranceProcess
 
     public string? VehicleVersion { get; set; }
 
-    public decimal? VehicleRate { get; set; }
+    public double VehicleRate { get; set; }
 
     public string? VehicleWarranty { get; set; }
 
@@ -39,5 +39,17 @@ public partial class InsuranceProcess
 
     public string? CustomerAddProve { get; set; }
 
+    public int VehicleId { get; set; }
+
+    public int? WarrantyId { get; set; }
+
+    public int PolicyTypeId { get; set; }
+
     public virtual AspNetUser? Customer { get; set; }
+
+    public virtual VehiclePolicyType PolicyType { get; set; } = null!;
+
+    public virtual VehicleInformation Vehicle { get; set; } = null!;
+
+    public virtual VehicleWarranty? Warranty { get; set; }
 }

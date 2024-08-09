@@ -5,15 +5,23 @@ using Project3.Authorization;
 using Project3.Models;
 using Project3.ModelsView.Identity;
 using Project3.Services;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
-
+builder.Host.UseSerilog();
 // sử dụng 1 chuỗi chung cho EcommerceContext và ApplicationDbContext
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<VehicleInsuranceManagementContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-// ??ng ký Identity
+
+
+// Register Identity services
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedEmail = true;
@@ -26,11 +34,12 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
-// C?u hình cookie
+
+// Configure application cookie
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    //options.LoginPath = "/account/login";  //???ng d?n mà ng??i dùng s? ???c chuy?n h??ng ??n khi h? c?n ph?i ??ng nh?p ?? truy c?p vào m?t ph?n c?a ?ng d?ng yêu c?u xác th?c(n?u ch?a login)
-    //options.AccessDeniedPath = "/"; // Chuy?n h??ng v? trang ch? c?a User khi b? t? ch?i quy?n truy c?p
+    // options.LoginPath = "/account/login";
+    // options.AccessDeniedPath = "/";
 });
 
 //đăng ký login google
@@ -56,6 +65,11 @@ builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddTransient<IEmail, Email>();
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<BillingCalculationService>();
+builder.Services.AddSingleton<CarService>();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -64,24 +78,25 @@ builder.Services.AddSession(options =>
 });
 
 
-builder.Services.AddSingleton<CarService>();
 
 var app = builder.Build();
-// Tạo vai trò và tài khoản admin mặc định khi khởi động ứng dụng
-//CreateRolesAndAdminUser có nhiệm vụ tạo vai trò "Admin" và "User" nếu chúng chưa tồn tại trong hệ thống
+
+// Create roles and admin user on startup
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();//ApplicationUser
     await CreateRolesAndAdminUser(roleManager, userManager);
 }
-// Configure the HTTP request pipeline.
+
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
@@ -93,20 +108,16 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-
 app.MapControllerRoute(
-  name: "areas",
-  pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-);
-
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
 
-// Tạo vai trò và tài khoản admin mặc định
-//CreateRolesAndAdminUser có nhiệm vụ tạo vai trò "Admin" và "User" nếu chúng chưa tồn tại trong hệ thống
-async Task CreateRolesAndAdminUser(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
+// Method to create roles and admin user
+async Task CreateRolesAndAdminUser(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager) //ApplicationUser
 {
-    string[] roleNames = { "Admin", "User" };  //có thể thêm quyền và chạy https để update
+    string[] roleNames = { "Admin", "User" };
     IdentityResult roleResult;
 
     foreach (var roleName in roleNames)
@@ -118,17 +129,37 @@ async Task CreateRolesAndAdminUser(RoleManager<IdentityRole> roleManager, UserMa
         }
     }
 
-    // Tạo một tài khoản admin mặc định
+    // Create a default admin user if it does not exist
+    // var admin = new ApplicationUser
+    // {
+    //     UserName = "huy2010@gmail.com",
+    //     Email = "huy2010@gmail.com",
+    //     Fullname = "Quang Huy",
+    //     Phone = "0123456789"
+    // };
+
+    // string adminPassword = "201000";
+    // var _admin = await userManager.FindByEmailAsync("huy2010@gmail.com");
+
+    // if (_admin == null)
+    // {
+    //     var createAdmin = await userManager.CreateAsync(admin, adminPassword);
+    //     if (createAdmin.Succeeded)
+    //     {
+    //         await userManager.AddToRoleAsync(admin, "Admin");
+    //     }
+    // }
+    // Create a default admin user if it does not exist
     //var admin = new ApplicationUser
     //{
-    //    UserName = "huy2010@gmail.com",
-    //    Email = "huy2010@gmail.com",
-    //    Fullname = "Quang Huy",
-    //    Phone = "0123456789"
+    //    UserName = "admin@example.com",
+    //    Email = "admin@example.com",
+    //    Fullname = "Admin User",
+    //    PhoneNumber = "0123456789"
     //};
 
-    //string adminPassword = "201000";
-    //var _admin = await userManager.FindByEmailAsync("huy2010@gmail.com");
+    //string adminPassword = "Admin@123";
+    //var _admin = await userManager.FindByEmailAsync("admin@example.com");
 
     //if (_admin == null)
     //{

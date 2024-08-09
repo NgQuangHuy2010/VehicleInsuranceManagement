@@ -22,6 +22,219 @@ namespace Project3.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Project3.Models.AspNetRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "NormalizedName" }, "RoleNameIndex")
+                        .IsUnique()
+                        .HasFilter("([NormalizedName] IS NOT NULL)");
+
+                    b.ToTable("AspNetRoles");
+                });
+
+            modelBuilder.Entity("Project3.Models.AspNetRoleClaim", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "RoleId" }, "IX_AspNetRoleClaims_RoleId");
+
+                    b.ToTable("AspNetRoleClaims");
+                });
+
+            modelBuilder.Entity("Project3.Models.AspNetUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Fullname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "NormalizedEmail" }, "EmailIndex");
+
+                    b.HasIndex(new[] { "NormalizedUserName" }, "UserNameIndex")
+                        .IsUnique()
+                        .HasFilter("([NormalizedUserName] IS NOT NULL)");
+
+                    b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("Project3.Models.AspNetUserClaim", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "UserId" }, "IX_AspNetUserClaims_UserId");
+
+                    b.ToTable("AspNetUserClaims");
+                });
+
+            modelBuilder.Entity("Project3.Models.AspNetUserLogin", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex(new[] { "UserId" }, "IX_AspNetUserLogins_UserId");
+
+                    b.ToTable("AspNetUserLogins");
+                });
+
+            modelBuilder.Entity("Project3.Models.AspNetUserRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id")
+                        .HasName("PK_AspNetUserRoles_1");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex(new[] { "RoleId" }, "IX_AspNetUserRoles_RoleId");
+
+                    b.ToTable("AspNetUserRoles");
+                });
+
+            modelBuilder.Entity("Project3.Models.AspNetUserToken", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens");
+                });
+
             modelBuilder.Entity("Project3.Models.ClaimDetail", b =>
                 {
                     b.Property<int>("Id")
@@ -43,8 +256,8 @@ namespace Project3.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("customer_name");
 
-                    b.Property<DateTime?>("DateOfAccident")
-                        .HasColumnType("datetime2")
+                    b.Property<string>("DateOfAccident")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("date_of_accident");
 
                     b.Property<decimal?>("InsuredAmount")
@@ -55,16 +268,16 @@ namespace Project3.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("place_of_accident");
 
-                    b.Property<DateTime?>("PolicyEndDate")
-                        .HasColumnType("datetime2")
+                    b.Property<DateOnly?>("PolicyEndDate")
+                        .HasColumnType("date")
                         .HasColumnName("policy_end_date");
 
                     b.Property<decimal?>("PolicyNumber")
                         .HasColumnType("numeric(18, 0)")
                         .HasColumnName("policy_number");
 
-                    b.Property<DateTime?>("PolicyStartDate")
-                        .HasColumnType("datetime2")
+                    b.Property<DateOnly?>("PolicyStartDate")
+                        .HasColumnType("date")
                         .HasColumnName("policy_start_date");
 
                     b.HasKey("Id");
@@ -93,8 +306,9 @@ namespace Project3.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("customer_add_prove");
 
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int")
+                    b.Property<string>("CustomerId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)")
                         .HasColumnName("customer_id");
 
                     b.Property<string>("CustomerName")
@@ -134,6 +348,8 @@ namespace Project3.Migrations
                         .HasColumnName("vehicle_rate");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("company_billing_policy", (string)null);
                 });
@@ -176,8 +392,9 @@ namespace Project3.Migrations
                     b.Property<bool>("AntiTheftDevice")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int")
+                    b.Property<string>("CustomerId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)")
                         .HasColumnName("customer_id");
 
                     b.Property<string>("CustomerName")
@@ -203,7 +420,8 @@ namespace Project3.Migrations
                         .HasColumnName("estimate_number");
 
                     b.Property<decimal>("EstimatedCost")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)")
+                        .HasColumnName("estimated_cost");
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -238,7 +456,8 @@ namespace Project3.Migrations
                         .HasColumnName("vehicle_name");
 
                     b.Property<decimal?>("VehicleNumber")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 0)")
+                        .HasColumnName("vehicle_number");
 
                     b.Property<string>("VehiclePolicyType")
                         .HasColumnType("nvarchar(max)")
@@ -256,6 +475,8 @@ namespace Project3.Migrations
                         .HasColumnName("vehicle_warranty");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("estimate", (string)null);
                 });
@@ -277,8 +498,9 @@ namespace Project3.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("customer_add_prove");
 
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int")
+                    b.Property<string>("CustomerId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)")
                         .HasColumnName("customer_id");
 
                     b.Property<string>("CustomerName")
@@ -335,7 +557,50 @@ namespace Project3.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CustomerId");
+
                     b.ToTable("insurance_process", (string)null);
+                });
+
+            modelBuilder.Entity("Project3.Models.NameRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("id");
+
+                    b.Property<string>("NameRole1")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("name_role");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NameRole", (string)null);
+                });
+
+            modelBuilder.Entity("Project3.Models.RolePermission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("PermissionsId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("permissions_id");
+
+                    b.Property<string>("RoleId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("role_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("Role_Permissions", (string)null);
                 });
 
             modelBuilder.Entity("Project3.Models.VehicleInformation", b =>
@@ -348,13 +613,16 @@ namespace Project3.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("location");
 
                     b.Property<string>("PolicyType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("policy_type");
 
                     b.Property<string>("Usage")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("usage");
 
                     b.Property<string>("VehicleBodyNumber")
                         .HasColumnType("nvarchar(max)")
@@ -373,7 +641,7 @@ namespace Project3.Migrations
                         .HasColumnName("vehicle_name");
 
                     b.Property<decimal?>("VehicleNumber")
-                        .HasColumnType("numeric(18, 0)")
+                        .HasColumnType("decimal(18, 2)")
                         .HasColumnName("vehicle_number");
 
                     b.Property<string>("VehicleOwnerName")
@@ -381,7 +649,7 @@ namespace Project3.Migrations
                         .HasColumnName("vehicle_owner_name");
 
                     b.Property<decimal?>("VehicleRate")
-                        .HasColumnType("numeric(18, 0)")
+                        .HasColumnType("decimal(18, 2)")
                         .HasColumnName("vehicle_rate");
 
                     b.Property<string>("VehicleVersion")
@@ -389,11 +657,153 @@ namespace Project3.Migrations
                         .HasColumnName("vehicle_version");
 
                     b.Property<string>("WarrantyType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("warranty_type");
 
                     b.HasKey("Id");
 
                     b.ToTable("vehicle_information", (string)null);
+                });
+
+            modelBuilder.Entity("Project3.Models.AspNetRoleClaim", b =>
+                {
+                    b.HasOne("Project3.Models.AspNetRole", "Role")
+                        .WithMany("AspNetRoleClaims")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("Project3.Models.AspNetUserClaim", b =>
+                {
+                    b.HasOne("Project3.Models.AspNetUser", "User")
+                        .WithMany("AspNetUserClaims")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Project3.Models.AspNetUserLogin", b =>
+                {
+                    b.HasOne("Project3.Models.AspNetUser", "User")
+                        .WithMany("AspNetUserLogins")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Project3.Models.AspNetUserRole", b =>
+                {
+                    b.HasOne("Project3.Models.NameRole", "Role")
+                        .WithMany("AspNetUserRoles")
+                        .HasForeignKey("RoleId")
+                        .IsRequired()
+                        .HasConstraintName("AspNetUserRoles__Role_id__NameRole_id");
+
+                    b.HasOne("Project3.Models.AspNetUser", "User")
+                        .WithMany("AspNetUserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Project3.Models.AspNetUserToken", b =>
+                {
+                    b.HasOne("Project3.Models.AspNetUser", "User")
+                        .WithMany("AspNetUserTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Project3.Models.CompanyBillingPolicy", b =>
+                {
+                    b.HasOne("Project3.Models.AspNetUser", "Customer")
+                        .WithMany("CompanyBillingPolicies")
+                        .HasForeignKey("CustomerId")
+                        .HasConstraintName("company_billing_policy_user_id_AspNetUsers");
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Project3.Models.Estimate", b =>
+                {
+                    b.HasOne("Project3.Models.AspNetUser", "Customer")
+                        .WithMany("Estimates")
+                        .HasForeignKey("CustomerId")
+                        .HasConstraintName("estimate_user_id_AspNetUsers");
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Project3.Models.InsuranceProcess", b =>
+                {
+                    b.HasOne("Project3.Models.AspNetUser", "Customer")
+                        .WithMany("InsuranceProcesses")
+                        .HasForeignKey("CustomerId")
+                        .HasConstraintName("insurance_process_user_id_AspNetUsers");
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Project3.Models.RolePermission", b =>
+                {
+                    b.HasOne("Project3.Models.AspNetRole", "Role")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("RoleId")
+                        .HasConstraintName("Role_Permissions__role_id__AspNetRoles_Id");
+
+                    b.HasOne("Project3.Models.NameRole", "RoleNavigation")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("RoleId")
+                        .HasConstraintName("Role_Permissions__Role_id__NameRole_id");
+
+                    b.Navigation("Role");
+
+                    b.Navigation("RoleNavigation");
+                });
+
+            modelBuilder.Entity("Project3.Models.AspNetRole", b =>
+                {
+                    b.Navigation("AspNetRoleClaims");
+
+                    b.Navigation("RolePermissions");
+                });
+
+            modelBuilder.Entity("Project3.Models.AspNetUser", b =>
+                {
+                    b.Navigation("AspNetUserClaims");
+
+                    b.Navigation("AspNetUserLogins");
+
+                    b.Navigation("AspNetUserRoles");
+
+                    b.Navigation("AspNetUserTokens");
+
+                    b.Navigation("CompanyBillingPolicies");
+
+                    b.Navigation("Estimates");
+
+                    b.Navigation("InsuranceProcesses");
+                });
+
+            modelBuilder.Entity("Project3.Models.NameRole", b =>
+                {
+                    b.Navigation("AspNetUserRoles");
+
+                    b.Navigation("RolePermissions");
                 });
 #pragma warning restore 612, 618
         }

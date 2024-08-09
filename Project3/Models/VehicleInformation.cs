@@ -15,11 +15,15 @@ public partial class VehicleInformation
 
     public string? VehicleVersion { get; set; }
 
-    public decimal? VehicleRate { get; set; }
+    public double VehicleRate { get; set; }
 
     public string? VehicleBodyNumber { get; set; }
 
     public string? VehicleEngineNumber { get; set; }
 
     public decimal? VehicleNumber { get; set; }
+
+    public virtual ICollection<Estimate> Estimates { get; set; } = new List<Estimate>();
+
+    public virtual ICollection<InsuranceProcess> InsuranceProcesses { get; set; } = new List<InsuranceProcess>();
 }

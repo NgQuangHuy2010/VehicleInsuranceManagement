@@ -1,158 +1,254 @@
-﻿//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using Project3.Models;
-//using System;
-//using System.Linq;
-//using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Project3.Models;
+using System.Linq;
+using System.Threading.Tasks;
+using Project3.ModelsView;
+using Microsoft.AspNetCore.Identity;
+using Project3.ModelsView.Identity;
+using Humanizer;
+namespace Project3.Controllers
+{
+    [Route("Estimates")]
+    public class EstimatesController : Controller
+    {
+        private readonly VehicleInsuranceManagementContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<EstimatesController> _logger;
+        public EstimatesController(UserManager<ApplicationUser> userManager, VehicleInsuranceManagementContext context, ILogger<EstimatesController> logger)
+        {
+            _userManager = userManager;
+            _context = context;
+            _logger = logger;
+        }
 
-//namespace Project3.Controllers
-//{
-//    [Route("[controller]")]
-//    public class EstimateController : Controller
-//    {
-//        private readonly VehicleInsuranceManagementContext _context;
+        // GET: Estimates/Create
+        //[HttpGet("Create")]
+        //public IActionResult Create(int vehicleId, string vehicleName, string vehicleModel, decimal vehicleRate, string customerId, string customerName, string customerPhoneNumber)
+        //{
+        //    var vehicle = _context.VehicleInformations
+        //        .FirstOrDefault(v => v.Id == vehicleId && v.VehicleName == vehicleName && v.VehicleModel == vehicleModel && v.VehicleRate == vehicleRate);
 
-//        public EstimateController(VehicleInsuranceManagementContext context)
-//        {
-//            _context = context;
-//        }
+        //    if (vehicle == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-//        [Route("Index")]
-//        public async Task<IActionResult> Index()
-//        {
-//            var estimates = await _context.Estimates.ToListAsync();
-//            return View(estimates);
-//        }
-//        [HttpGet]
-//        public IActionResult Create(string VehicleName, string VehicleModel, string VehicleVersion, decimal? VehicleRate, string VehicleBodyNumber, string VehicleEngineNumber, decimal? VehicleNumber, string Usage, string Location, string WarrantyType, string PolicyType)
-//        {
-//            var estimate = new Estimate
-//            {
-//                VehicleName = VehicleName,
-//                VehicleModel = VehicleModel,
-//                VehicleVersion = VehicleVersion,
-//                VehicleRate = VehicleRate,
-//                VehicleBodyNumber = VehicleBodyNumber,
-//                VehicleEngineNumber = VehicleEngineNumber,
-//                VehicleNumber = VehicleNumber,
-//                Usage = Usage,
-//                Location = Location,
-//                VehicleWarranty = WarrantyType,
-//                VehiclePolicyType = PolicyType,
-//                SelectedCoverages = new List<string>() // Ensure this is initialized
-//            };
+        //    var viewModel = new EstimateViewModel
+        //    {
+        //        VehicleId = vehicle.Id,
+        //        VehicleName = vehicle.VehicleName,
+        //        VehicleModel = vehicle.VehicleModel,
+        //        VehicleRate = vehicle.VehicleRate,
+        //        CustomerId = customerId,
+        //        CustomerName = customerName,
+        //        CustomerPhoneNumber = customerPhoneNumber,
+        //        Warranties = _context.VehicleWarranties.Select(w => new SelectListItem
+        //        {
+        //            Value = w.WarrantyId.ToString(),
+        //            Text = w.WarrantyType
+        //        }).ToList(),
+        //        PolicyTypes = _context.VehiclePolicyTypes.Select(p => new SelectListItem
+        //        {
+        //            Value = p.PolicyTypeId.ToString(),
+        //            Text = p.PolicyName
+        //        }).ToList()
+        //    };
 
-//            estimate.EstimatedCost = CalculateEstimateCost(estimate);
+        //    return View(viewModel);
+        //}
+        [HttpGet("Create")]
+        public async Task<IActionResult> Create() {
+            
+            var policytypename = await _context.VehiclePolicyTypes.ToListAsync();
+            var warrantyname = await _context.VehicleWarranties.ToListAsync();
+            var sessionData = HttpContext.Session.GetObject<VehicleInformationViewModel>("VehicleInformationData");
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
-//            return View(estimate);
-//        }
+            var viewModel = new EstimateModelView
+            {
+                CustomerId = user.Id,
+                CustomerName = user.Fullname,
+                CustomerPhoneNumber = user.Phone,
+                VehicleId = sessionData.Id,
+                VehicleName = sessionData.VehicleName,
+                VehicleModel = sessionData.VehicleModel,
+                VehicleVersion = sessionData.VehicleVersion,
+                VehicleRate = sessionData.VehicleRate,
 
-//        [HttpPost]
-//        [ValidateAntiForgeryToken]
-//        public async Task<IActionResult> Create([Bind("VehicleName,VehicleModel,VehicleVersion,VehicleRate,VehicleBodyNumber,VehicleEngineNumber,VehicleNumber,DriverAge,DriverGender,Location,Usage,AntiTheftDevice,SelectedCoverages,DrivingHistory,MultiPolicy,SafeDriver,VehicleWarranty,VehiclePolicyType,EstimatedCost")] Estimate estimate)
-//        {
-//            if (ModelState.IsValid)
-//            {
-//                var baseRate = CalculateBaseRate(estimate);
-//                var totalCost = ApplyRiskFactors(baseRate, estimate);
-//                var finalEstimate = ApplyDiscountsAndSurcharges(totalCost, estimate);
+                
+            };
+            ViewBag.policytype = policytypename;
+            ViewBag.warranty = warrantyname;
+            return View(viewModel);
+        }
 
-//                estimate.EstimatedCost = finalEstimate;
+        [HttpPost("Create")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(EstimateModelView viewModel)
+        {
 
-//                _context.Estimates.Add(estimate);
-//                await _context.SaveChangesAsync();
+            if (ModelState.IsValid)
+            {
+                
+                try
+                {
+                    viewModel.Policies = await _context.VehiclePolicyTypes.AnyAsync(c => c.PolicyTypeId == viewModel.PolicyTypeId);
+                    //var sessionVehicle = HttpContext.Session.GetObject<VehicleInformation>("VehicleInformationData");
+                    var estimate = new EstimateModelView
+                    {
+                        CustomerId = viewModel.CustomerId,
+                        EstimateNumber = viewModel.EstimateNumber,
+                        CustomerName = viewModel.CustomerName,
+                        CustomerPhoneNumber = viewModel.CustomerPhoneNumber,
+                        VehicleName = viewModel.VehicleName,
+                        VehicleModel = viewModel.VehicleModel,
+                        VehicleVersion = viewModel.VehicleVersion, // Ensure VehicleVersion is assigned
+                        VehicleRate = viewModel.VehicleRate,
+                        VehicleId = viewModel.VehicleId,
+                        PolicyTypeId = viewModel.PolicyTypeId,
+                        WarrantyId = viewModel.WarrantyId
 
-//                return RedirectToAction(nameof(Index));
-//            }
-//            return View(estimate);
-//        }
+                    };
+                    // Log successful creation
+                    _logger.LogInformation("Estimate created successfully with ID {EstimateId}", estimate.EstimateNumber);
 
-//        private decimal CalculateBaseRate(Estimate estimate)
-//        {
-//            decimal baseRate = estimate.VehicleRate ?? 0m;
+                    // Save estimate data into session
+                    HttpContext.Session.SetObject("EstimateData", estimate);
 
-//            if (estimate.VehicleRate.HasValue)
-//            {
-//                baseRate *= estimate.VehicleRate.Value / 1000;
-//            }
+                    // Log the session data to console
+                    var sessionData = HttpContext.Session.GetObject<EstimateModelView>("EstimateData");
+                    _logger.LogInformation("Session Estimate: {@SessionData}", sessionData);
 
-//            if (estimate.DriverAge < 25 || estimate.DriverAge > 65)
-//            {
-//                baseRate *= 1.2m;
-//            }
-//            if (estimate.DriverGender == "Male")
-//            {
-//                baseRate *= 1.1m;
-//            }
-//            if (estimate.DrivingHistory > 0)
-//            {
-//                baseRate *= 1 + (estimate.DrivingHistory * 0.05m);
-//            }
-
-//            return baseRate;
-//        }
-
-//        private decimal ApplyRiskFactors(decimal baseRate, Estimate estimate)
-//        {
-//            if (estimate.Location == "Urban")
-//            {
-//                baseRate *= 1.2m;
-//            }
-
-//            if (estimate.Usage == "Daily")
-//            {
-//                baseRate *= 1.15m;
-//            }
-
-//            if (estimate.AntiTheftDevice)
-//            {
-//                baseRate *= 0.95m;
-//            }
-
-//            return baseRate;
-//        }
-
-//        private decimal ApplyDiscountsAndSurcharges(decimal totalCost, Estimate estimate)
-//        {
-//            if (estimate.SelectedCoverages != null)
-//            {
-//                foreach (var coverage in estimate.SelectedCoverages)
-//                {
-//                    switch (coverage)
-//                    {
-//                        case "Liability":
-//                            totalCost *= 1.1m; // 10% increase for liability coverage
-//                            break;
-//                        case "Collision":
-//                            totalCost *= 1.2m; // 20% increase for collision coverage
-//                            break;
-//                        case "Comprehensive":
-//                            totalCost *= 1.15m; // 15% increase for comprehensive coverage
-//                            break;
-//                    }
-//                }
-//            }
-
-//            if (estimate.MultiPolicy.HasValue && estimate.MultiPolicy.Value)
-//            {
-//                totalCost *= 0.9m; // 10% discount for multi-policy
-//            }
-
-//            if (estimate.SafeDriver.HasValue && estimate.SafeDriver.Value)
-//            {
-//                totalCost *= 0.85m; // 15% discount for safe driver
-//            }
-
-//            return totalCost;
-//        }
-
-//        private decimal CalculateEstimateCost(Estimate estimate)
-//        {
-//            var baseRate = CalculateBaseRate(estimate);
-//            var totalCost = ApplyRiskFactors(baseRate, estimate);
-//            return ApplyDiscountsAndSurcharges(totalCost, estimate);
-//        }
+                    // Redirect to InsuranceProcess Create view
+                    return RedirectToAction("CollectInfo", "InsuranceProcess");
+                }
+                catch (Exception ex)
+                {
+                    // Log the error
+                    _logger.LogError(ex, "Error occurred while creating estimate");
+                    ModelState.AddModelError(string.Empty, "An error occurred while creating the estimate.");
+                }
+            }
+            else
+            {
+                // Log validation errors
+                foreach (var state in ModelState)
+                {
+                    if (state.Value.Errors.Any())
+                    {
+                        foreach (var error in state.Value.Errors)
+                        {
+                            _logger.LogWarning("ModelState Error: {Key} - {ErrorMessage}", state.Key, error.ErrorMessage);
+                        }
+                    }
+                }
+            }
 
 
-//    }
-//}
+            return View(viewModel);
+        }
+        // GET: Estimates/Details/5
+        [HttpGet("Details/{id}")]
+        public async Task<IActionResult> Details(int id)
+        {
+            var estimate = await _context.Estimates
+                .Include(e => e.Vehicle)
+                .Include(e => e.Warranty)
+                .Include(e => e.PolicyType)
+                .FirstOrDefaultAsync(m => m.EstimateNumber == id);
+            if (estimate == null)
+            {
+                return NotFound();
+            }
+            return View(estimate);
+        }
+
+        // GET: Estimates/Edit/5
+        [HttpGet("Edit/{id}")]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var estimate = await _context.Estimates.FindAsync(id);
+            if (estimate == null)
+            {
+                return NotFound();
+            }
+            ViewBag.Warranties = new SelectList(_context.VehicleWarranties, "WarrantyId", "WarrantyType", estimate.WarrantyId);
+            ViewBag.PolicyTypes = new SelectList(_context.VehiclePolicyTypes, "PolicyTypeId", "PolicyName", estimate.PolicyTypeId);
+            return View(estimate);
+        }
+
+        // POST: Estimates/Edit/5
+        [HttpPost("Edit/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("CustomerId,EstimateNumber,CustomerName,CustomerPhoneNumber,VehicleName,VehicleModel,VehicleRate,WarrantyId,PolicyTypeId,VehicleId")] Estimate estimate)
+        {
+            if (id != estimate.EstimateNumber)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(estimate);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!EstimateExists(estimate.EstimateNumber))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            ViewBag.Warranties = new SelectList(_context.VehicleWarranties, "WarrantyId", "WarrantyType", estimate.WarrantyId);
+            ViewBag.PolicyTypes = new SelectList(_context.VehiclePolicyTypes, "PolicyTypeId", "PolicyName", estimate.PolicyTypeId);
+            return View(estimate);
+        }
+
+        // GET: Estimates/Delete/5
+        [HttpGet("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+
+            var estimate = await _context.Estimates
+                .Include(e => e.Vehicle)
+                .Include(e => e.Warranty)
+                .Include(e => e.PolicyType)
+                .FirstOrDefaultAsync(m => m.EstimateNumber == id);
+            if (estimate == null)
+            {
+                return NotFound();
+            }
+            return View(estimate);
+        }
+
+        // POST: Estimates/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var estimate = await _context.Estimates.FindAsync(id);
+            _context.Estimates.Remove(estimate);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool EstimateExists(int id)
+        {
+            return _context.Estimates.Any(e => e.EstimateNumber == id);
+        }
+    }
+}
