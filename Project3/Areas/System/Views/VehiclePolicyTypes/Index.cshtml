@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Project3.Models.VehiclePolicyType>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/System/Views/Layout/LayoutAdmin.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create" asp-controller="VehiclePolicyTypes" asp-area="System" class="btn btn-primary">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.PolicyName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PolicyDetails)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PolicyName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PolicyDetails)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.PolicyTypeId" asp-controller="VehiclePolicyTypes" asp-area="System">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.PolicyTypeId" asp-controller="VehiclePolicyTypes" asp-area="System">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.PolicyTypeId" asp-controller="VehiclePolicyTypes" asp-area="System">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

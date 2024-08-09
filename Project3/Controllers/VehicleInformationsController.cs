@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Project3.Models;
+using Project3.ModelsView;
 using Project3.ModelsView.Identity;
 using Project3.Services;
 using System.Collections.Generic;
@@ -20,12 +21,13 @@ namespace Project3.Controllers
         private readonly CarService _carService;
         private readonly VehicleInsuranceManagementContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-
-        public VehicleInformationsController(UserManager<ApplicationUser> userManager, CarService carService, VehicleInsuranceManagementContext context)
+        private readonly ILogger<EstimatesController> _logger;
+        public VehicleInformationsController(ILogger<EstimatesController> logger,UserManager<ApplicationUser> userManager, CarService carService, VehicleInsuranceManagementContext context)
         {
             _userManager = userManager;
             _carService = carService;
             _context = context;
+            _logger = logger;
         }
 
         //GET: VehicleInformations/CarSelection
@@ -36,8 +38,16 @@ namespace Project3.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return Challenge();
+                return RedirectToAction("Login", "Account");  // Redirect to a login page if user is not authenticated
             }
+
+            // Retrieve the product session
+            var productSession = HttpContext.Session.GetObject<InsuranceProductViewModel>("productSession");
+            if (productSession == null)
+            {
+                return RedirectToAction("Index", "InsuranceProducts"); // If no product is selected, redirect to product selection
+            }
+
 
             var cars = await _carService.GetAllCarsAsync();
             ViewBag.Manufacturers = cars.Select(c => new { c.Code, c.Name }).ToList();
@@ -61,7 +71,7 @@ namespace Project3.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("SaveVehicleInformation")]
-        public async Task<IActionResult> SaveVehicleInformation([FromForm] VehicleInformation vehicleInformation)
+        public async Task<IActionResult> SaveVehicleInformation([FromForm] VehicleInformationViewModel vehicleInformation)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -70,8 +80,12 @@ namespace Project3.Controllers
             }
             if (ModelState.IsValid)
             {
-                _context.VehicleInformations.Add(vehicleInformation);
-                await _context.SaveChangesAsync();
+                // Save vehicle information data into session
+                HttpContext.Session.SetObject("VehicleInformationData", vehicleInformation);
+
+                // Log the session data to console
+                var sessionData = HttpContext.Session.GetObject<VehicleInformation>("VehicleInformationData");
+                _logger.LogInformation("Session Vehicle: {@SessionData}", sessionData);
 
                 // Redirect to the Estimate form with vehicle information as query parameters
                 return RedirectToAction("Create", "Estimates", new
@@ -79,6 +93,7 @@ namespace Project3.Controllers
                     VehicleId = vehicleInformation.Id,
                     vehicleName = vehicleInformation.VehicleName,
                     vehicleModel = vehicleInformation.VehicleModel,
+                    vehicleVersion = vehicleInformation.VehicleVersion,
                     vehicleRate = vehicleInformation.VehicleRate,
                     customerId = user.Id,
                     customerName = user.Fullname,

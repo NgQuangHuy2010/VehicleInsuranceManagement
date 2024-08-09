@@ -15,7 +15,7 @@ public partial class InsuranceProcess
 
     public string? CustomerPhoneNumber { get; set; }
 
-    public int? PolicyNumber { get; set; }
+    public string? PolicyNumber { get; set; }
 
     public string? PolicyDate { get; set; }
 
@@ -29,7 +29,7 @@ public partial class InsuranceProcess
 
     public string? VehicleVersion { get; set; }
 
-    public decimal? VehicleRate { get; set; }
+    public double VehicleRate { get; set; }
 
     public string? VehicleWarranty { get; set; }
 

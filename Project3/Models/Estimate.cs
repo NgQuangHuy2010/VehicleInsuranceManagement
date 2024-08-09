@@ -17,7 +17,7 @@ public partial class Estimate
 
     public string? VehicleModel { get; set; }
 
-    public decimal? VehicleRate { get; set; }
+    public double VehicleRate { get; set; }
 
     public int? WarrantyId { get; set; }
 

@@ -1,17 +1,20 @@
-﻿@model Project3.Models.InsuranceProcess
+﻿@model Project3.ModelsView.InsuranceProcessViewModel;
 
 @{
     ViewData["Title"] = "Create Insurance Process";
     Layout = "~/Views/LayoutUser/LayoutUser.cshtml";
 }
 
-<h1>Create Insurance Process</h1>
-
 <h4>Insurance Process</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Summary</h1>
+   
+        <form asp-action="Create" method="post">
+            <div class="row">
+                <!-- Left Column for Dropdowns -->
+                <div class="col-md-6">
             <div class="form-group">
                 <label asp-for="CustomerId" class="control-label"></label>
                 <input asp-for="CustomerId" class="form-control" readonly />
@@ -26,16 +29,6 @@
                 <label asp-for="CustomerPhoneNumber" class="control-label"></label>
                 <input asp-for="CustomerPhoneNumber" class="form-control" readonly />
                 <span asp-validation-for="CustomerPhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PolicyDate" class="control-label"></label>
-                <input asp-for="PolicyDate" class="form-control" readonly />
-                <span asp-validation-for="PolicyDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PolicyDuration" class="control-label"></label>
-                <input asp-for="PolicyDuration" class="form-control" />
-                <span asp-validation-for="PolicyDuration" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="VehicleId" class="control-label"></label>
@@ -57,6 +50,9 @@
                 <input asp-for="VehicleRate" class="form-control" readonly />
                 <span asp-validation-for="VehicleRate" class="text-danger"></span>
             </div>
+            </div>
+            <!-- Right Column for Text Inputs -->
+            <div class="col-md-6">
             <div class="form-group">
                 <label asp-for="WarrantyId" class="control-label"></label>
                 <input asp-for="WarrantyId" class="form-control" readonly />
@@ -68,30 +64,38 @@
                 <span asp-validation-for="PolicyTypeId" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="PolicyDate" class="control-label"></label>
+                <input asp-for="PolicyDate" class="form-control" readonly />
+                <span asp-validation-for="PolicyDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PolicyDuration" class="control-label"></label>
+                <input asp-for="PolicyDuration" class="form-control" readonly />
+                <span asp-validation-for="PolicyDuration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="VehicleBodyNumber" class="control-label"></label>
-                <input asp-for="VehicleBodyNumber" class="form-control" />
+                <input asp-for="VehicleBodyNumber" class="form-control" readonly />
                 <span asp-validation-for="VehicleBodyNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="VehicleEngineNumber" class="control-label"></label>
-                <input asp-for="VehicleEngineNumber" class="form-control" />
+                <input asp-for="VehicleEngineNumber" class="form-control" readonly />
                 <span asp-validation-for="VehicleEngineNumber" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="CustomerAddProve" class="control-label"></label>
-                <input asp-for="CustomerAddProve" class="form-control" />
-                <span asp-validation-for="CustomerAddProve" class="text-danger"></span>
-            </div>
+            
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
+                    <a asp-controller="InsuranceProcess" asp-action="CollectInfo">Back</a>
             </div>
+                
+            </div>
+        </div>
         </form>
-    </div>
+ 
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
 
 @section Scripts {
     @{

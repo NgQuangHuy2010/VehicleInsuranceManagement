@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Project3.ModelsView;
 using Microsoft.AspNetCore.Identity;
 using Project3.ModelsView.Identity;
+using Humanizer;
 namespace Project3.Controllers
 {
     [Route("Estimates")]
@@ -58,47 +59,48 @@ namespace Project3.Controllers
         //    return View(viewModel);
         //}
         [HttpGet("Create")]
-        public async Task<IActionResult> Create(int vehicleId, string vehicleName, string vehicleModel, decimal vehicleRate, string customerId, string customerName, string customerPhoneNumber)
-        {
+        public async Task<IActionResult> Create() {
+            
+            var policytypename = await _context.VehiclePolicyTypes.ToListAsync();
+            var warrantyname = await _context.VehicleWarranties.ToListAsync();
+            var sessionData = HttpContext.Session.GetObject<VehicleInformationViewModel>("VehicleInformationData");
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            var viewModel = new EstimateViewModel
+            var viewModel = new EstimateModelView
             {
                 CustomerId = user.Id,
                 CustomerName = user.Fullname,
                 CustomerPhoneNumber = user.Phone,
-                VehicleId = vehicleId,
-                VehicleName = vehicleName,
-                VehicleModel = vehicleModel,
-                VehicleRate = vehicleRate,
-                Warranties = _context.VehicleWarranties.Select(w => new SelectListItem
-                {
-                    Value = w.WarrantyId.ToString(),
-                    Text = w.WarrantyType
-                }).ToList(),
-                PolicyTypes = _context.VehiclePolicyTypes.Select(p => new SelectListItem
-                {
-                    Value = p.PolicyTypeId.ToString(),
-                    Text = p.PolicyName
-                }).ToList()
-            };
+                VehicleId = sessionData.Id,
+                VehicleName = sessionData.VehicleName,
+                VehicleModel = sessionData.VehicleModel,
+                VehicleVersion = sessionData.VehicleVersion,
+                VehicleRate = sessionData.VehicleRate,
 
+                
+            };
+            ViewBag.policytype = policytypename;
+            ViewBag.warranty = warrantyname;
             return View(viewModel);
         }
 
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(EstimateViewModel viewModel)
+        public async Task<IActionResult> Create(EstimateModelView viewModel)
         {
+
             if (ModelState.IsValid)
             {
+                
                 try
                 {
-                    var estimate = new Estimate
+                    viewModel.Policies = await _context.VehiclePolicyTypes.AnyAsync(c => c.PolicyTypeId == viewModel.PolicyTypeId);
+                    //var sessionVehicle = HttpContext.Session.GetObject<VehicleInformation>("VehicleInformationData");
+                    var estimate = new EstimateModelView
                     {
                         CustomerId = viewModel.CustomerId,
                         EstimateNumber = viewModel.EstimateNumber,
@@ -106,30 +108,25 @@ namespace Project3.Controllers
                         CustomerPhoneNumber = viewModel.CustomerPhoneNumber,
                         VehicleName = viewModel.VehicleName,
                         VehicleModel = viewModel.VehicleModel,
+                        VehicleVersion = viewModel.VehicleVersion, // Ensure VehicleVersion is assigned
                         VehicleRate = viewModel.VehicleRate,
-                        WarrantyId = viewModel.WarrantyId,
+                        VehicleId = viewModel.VehicleId,
                         PolicyTypeId = viewModel.PolicyTypeId,
-                        VehicleId = viewModel.VehicleId
-                    };
+                        WarrantyId = viewModel.WarrantyId
 
-                    _context.Add(estimate);
-                    await _context.SaveChangesAsync();
+                    };
                     // Log successful creation
                     _logger.LogInformation("Estimate created successfully with ID {EstimateId}", estimate.EstimateNumber);
 
+                    // Save estimate data into session
+                    HttpContext.Session.SetObject("EstimateData", estimate);
 
-                    return RedirectToAction("Create", "InsuranceProcess", new
-                    {
-                        customerId = estimate.CustomerId,
-                        customerName = estimate.CustomerName,
-                        customerPhoneNumber = estimate.CustomerPhoneNumber,
-                        vehicleId = estimate.VehicleId,
-                        vehicleName = estimate.VehicleName,
-                        vehicleModel = estimate.VehicleModel,
-                        vehicleRate = estimate.VehicleRate,
-                        warrantyId = estimate.WarrantyId ?? 0,
-                        policyTypeId = estimate.PolicyTypeId
-                    });
+                    // Log the session data to console
+                    var sessionData = HttpContext.Session.GetObject<EstimateModelView>("EstimateData");
+                    _logger.LogInformation("Session Estimate: {@SessionData}", sessionData);
+
+                    // Redirect to InsuranceProcess Create view
+                    return RedirectToAction("CollectInfo", "InsuranceProcess");
                 }
                 catch (Exception ex)
                 {
@@ -153,23 +150,9 @@ namespace Project3.Controllers
                 }
             }
 
-            viewModel.Warranties = _context.VehicleWarranties.Select(w => new SelectListItem
-            {
-                Value = w.WarrantyId.ToString(),
-                Text = w.WarrantyType
-            }).ToList();
-            viewModel.PolicyTypes = _context.VehiclePolicyTypes.Select(p => new SelectListItem
-            {
-                Value = p.PolicyTypeId.ToString(),
-                Text = p.PolicyName
-            }).ToList();
 
             return View(viewModel);
         }
-
-        
-
-
         // GET: Estimates/Details/5
         [HttpGet("Details/{id}")]
         public async Task<IActionResult> Details(int id)
@@ -239,6 +222,7 @@ namespace Project3.Controllers
         [HttpGet("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
+
             var estimate = await _context.Estimates
                 .Include(e => e.Vehicle)
                 .Include(e => e.Warranty)
