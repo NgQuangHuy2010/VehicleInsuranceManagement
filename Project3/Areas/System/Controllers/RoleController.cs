@@ -20,7 +20,6 @@ namespace Project3.Areas.System.Controllers
             _context = context;
         }
         [Route("index")]
-
         public IActionResult Index()
         {
             // Lọc ra vai trò "Admin"
