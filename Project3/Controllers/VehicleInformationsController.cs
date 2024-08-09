@@ -58,14 +58,14 @@ namespace Project3.Controllers
         }
 
 
-        [HttpPost]
-        [Route("LoadData")]
-        public async Task<IActionResult> LoadData()
-        {
-            var cars = await _carService.GetAllCarsAsync();
-            await _carService.SaveCarsAsync(cars);
-            return RedirectToAction(nameof(CarSelection));
-        }
+//        [HttpPost]
+//        [Route("LoadData")]
+//        public async Task<IActionResult> LoadData()
+//        {
+//            var cars = await _carService.GetAllCarsAsync();
+//            await _carService.SaveCarsAsync(cars);
+//            return RedirectToAction(nameof(CarSelection));
+//        }
 
 
         [HttpPost]
@@ -112,20 +112,20 @@ namespace Project3.Controllers
                 return NotFound();
             }
 
-            var cars = await _carService.GetAllCarsAsync();
-            ViewBag.Manufacturers = cars.Select(c => new { c.Code, c.Name }).Distinct().ToList();
-            return View(vehicleInformation);
-        }
+//            var cars = await _carService.GetAllCarsAsync();
+//            ViewBag.Manufacturers = cars.Select(c => new { c.Code, c.Name }).Distinct().ToList();
+//            return View(vehicleInformation);
+//        }
 
-        [Route("edit")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,VehicleName,VehicleOwnerName,VehicleModel,VehicleVersion,VehicleRate,VehicleBodyNumber,VehicleEngineNumber,VehicleNumber,Location,Usage,WarrantyType,PolicyType")] VehicleInformation vehicleInformation)
-        {
-            if (id != vehicleInformation.Id)
-            {
-                return NotFound();
-            }
+//        [Route("edit")]
+//        [HttpPost]
+//        [ValidateAntiForgeryToken]
+//        public async Task<IActionResult> Edit(int id, [Bind("Id,VehicleName,VehicleOwnerName,VehicleModel,VehicleVersion,VehicleRate,VehicleBodyNumber,VehicleEngineNumber,VehicleNumber,Location,Usage,WarrantyType,PolicyType")] VehicleInformation vehicleInformation)
+//        {
+//            if (id != vehicleInformation.Id)
+//            {
+//                return NotFound();
+//            }
 
             if (ModelState.IsValid)
             {
@@ -143,49 +143,49 @@ namespace Project3.Controllers
                     vehicleToUpdate.VehicleNumber = vehicleInformation.VehicleNumber;
                     
 
-                    await SaveVehicleInformationsAsync(vehicleList);
-                    return RedirectToAction(nameof(Index));
-                }
-                return NotFound();
-            }
-            return View(vehicleInformation);
-        }
+//                    await SaveVehicleInformationsAsync(vehicleList);
+//                    return RedirectToAction(nameof(Index));
+//                }
+//                return NotFound();
+//            }
+//            return View(vehicleInformation);
+//        }
 
-        [Route("delete")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var vehicleInformation = await _carService.GetVehicleInformationById(id);
-            if (vehicleInformation == null)
-            {
-                return NotFound();
-            }
-            return View(vehicleInformation);
-        }
+//        [Route("delete")]
+//        public async Task<IActionResult> Delete(int id)
+//        {
+//            var vehicleInformation = await _carService.GetVehicleInformationById(id);
+//            if (vehicleInformation == null)
+//            {
+//                return NotFound();
+//            }
+//            return View(vehicleInformation);
+//        }
 
-        // POST: VehicleInformations/Delete/5
-        [Route("delete")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var vehicleList = await _carService.GetAllVehicleInformationsAsync();
-            var vehicleToDelete = vehicleList.FirstOrDefault(v => v.Id == id);
-            if (vehicleToDelete != null)
-            {
-                vehicleList.Remove(vehicleToDelete);
-                await SaveVehicleInformationsAsync(vehicleList);
-            }
-            return RedirectToAction(nameof(Index));
-        }
+//        // POST: VehicleInformations/Delete/5
+//        [Route("delete")]
+//        [HttpPost]
+//        [ValidateAntiForgeryToken]
+//        public async Task<IActionResult> DeleteConfirmed(int id)
+//        {
+//            var vehicleList = await _carService.GetAllVehicleInformationsAsync();
+//            var vehicleToDelete = vehicleList.FirstOrDefault(v => v.Id == id);
+//            if (vehicleToDelete != null)
+//            {
+//                vehicleList.Remove(vehicleToDelete);
+//                await SaveVehicleInformationsAsync(vehicleList);
+//            }
+//            return RedirectToAction(nameof(Index));
+//        }
 
-        // GET: VehicleInformations
-        [Route("index")]
-        public async Task<IActionResult> Index()
-        {
-            //var vehicleList = await _carService.GetAllVehicleInformationsAsync();
-            var vehicleList = await _context.VehicleInformations.ToListAsync();
-            return View(vehicleList);
-        }
+//        // GET: VehicleInformations
+//        [Route("index")]
+//        public async Task<IActionResult> Index()
+//        {
+//            //var vehicleList = await _carService.GetAllVehicleInformationsAsync();
+//            var vehicleList = await _context.VehicleInformations.ToListAsync();
+//            return View(vehicleList);
+//        }
 
         private async Task SaveVehicleInformationsAsync(List<VehicleInformation> vehicleInformations)
         {
@@ -200,7 +200,7 @@ namespace Project3.Controllers
                 }).ToList()
             }).ToList();
 
-            await _carService.SaveCarsAsync(cars);
-        }
-    }
-}
+//            await _carService.SaveCarsAsync(cars);
+//        }
+//    }
+//}

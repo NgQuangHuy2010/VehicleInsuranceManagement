@@ -35,13 +35,15 @@ public partial class VehicleInsuranceManagementContext : DbContext
 
     public virtual DbSet<CompanyExpense> CompanyExpenses { get; set; }
 
-    public virtual DbSet<ContactU> ContactUs { get; set; }
+    public virtual DbSet<ContactUs> ContactUs { get; set; }
 
     public virtual DbSet<Estimate> Estimates { get; set; }
 
     public virtual DbSet<InsuranceProcess> InsuranceProcesses { get; set; }
 
     public virtual DbSet<NameRole> NameRoles { get; set; }
+
+    public virtual DbSet<Payment> Payments { get; set; }
 
     public virtual DbSet<RolePermission> RolePermissions { get; set; }
 
@@ -157,23 +159,33 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.ToTable("company_billing_policy");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Amount).HasColumnName("amount");
-            entity.Property(e => e.BillNo).HasColumnName("bill_no");
+            entity.Property(e => e.Amount)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("amount");
+            entity.Property(e => e.BillNo)
+                .HasColumnType("numeric(18, 0)")
+                .HasColumnName("bill_no");
             entity.Property(e => e.CustomerAddProve).HasColumnName("customer_add_prove");
             entity.Property(e => e.CustomerId)
                 .HasMaxLength(450)
                 .HasColumnName("customer_id");
             entity.Property(e => e.CustomerName).HasColumnName("customer_name");
-            entity.Property(e => e.CustomerPhoneNumber).HasColumnName("customer_phone_number");
+            entity.Property(e => e.CustomerPhoneNumber)
+                .HasColumnType("numeric(18, 0)")
+                .HasColumnName("customer_phone_number");
             entity.Property(e => e.Date)
                 .HasColumnType("datetime")
                 .HasColumnName("date");
-            entity.Property(e => e.PolicyNumber).HasColumnName("policy_number");
+            entity.Property(e => e.PolicyNumber)
+                .HasColumnType("numeric(18, 0)")
+                .HasColumnName("policy_number");
             entity.Property(e => e.VehicleBodyNumber).HasColumnName("vehicle_body_number");
             entity.Property(e => e.VehicleEngineNumber).HasColumnName("vehicle_engine_number");
             entity.Property(e => e.VehicleModel).HasColumnName("vehicle_model");
             entity.Property(e => e.VehicleName).HasColumnName("vehicle_name");
-            entity.Property(e => e.VehicleRate).HasColumnName("vehicle_rate");
+            entity.Property(e => e.VehicleRate)
+                .HasColumnType("numeric(18, 0)")
+                .HasColumnName("vehicle_rate");
 
             entity.HasOne(d => d.Customer).WithMany(p => p.CompanyBillingPolicies)
                 .HasForeignKey(d => d.CustomerId)
@@ -192,7 +204,7 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.Property(e => e.TypeOfExpense).HasColumnName("type_of_expense");
         });
 
-        modelBuilder.Entity<ContactU>(entity =>
+        modelBuilder.Entity<ContactUs>(entity =>
         {
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Topic).HasMaxLength(50);
@@ -219,6 +231,7 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.Property(e => e.VehicleName)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+            entity.Property(e => e.VehicleRate).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.WarrantyId).HasColumnName("WarrantyID");
 
             entity.HasOne(d => d.PolicyType).WithMany(p => p.Estimates)
@@ -264,7 +277,9 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.Property(e => e.VehicleNumber)
                 .HasColumnType("numeric(18, 0)")
                 .HasColumnName("vehicle_number");
-            entity.Property(e => e.VehicleRate).HasColumnName("vehicle_rate");
+            entity.Property(e => e.VehicleRate)
+                .HasColumnType("numeric(18, 0)")
+                .HasColumnName("vehicle_rate");
             entity.Property(e => e.VehicleVersion).HasColumnName("vehicle_version");
             entity.Property(e => e.VehicleWarranty).HasColumnName("vehicle_warranty");
 
@@ -293,6 +308,22 @@ public partial class VehicleInsuranceManagementContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.NameRole1).HasColumnName("name_role");
+        });
+
+        modelBuilder.Entity<Payment>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Payment__3214EC0785AE42EB");
+
+            entity.ToTable("Payment");
+
+            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.PaymentDate).HasColumnType("datetime");
+            entity.Property(e => e.PaymentMethod).HasMaxLength(50);
+            entity.Property(e => e.TransactionId).HasMaxLength(100);
+
+            entity.HasOne(d => d.BillingPolicy).WithMany(p => p.Payments)
+                .HasForeignKey(d => d.BillingPolicyId)
+                .HasConstraintName("FK__Payment__Billing__3C34F16F");
         });
 
         modelBuilder.Entity<RolePermission>(entity =>
@@ -329,7 +360,9 @@ public partial class VehicleInsuranceManagementContext : DbContext
                 .HasColumnType("numeric(18, 0)")
                 .HasColumnName("vehicle_number");
             entity.Property(e => e.VehicleOwnerName).HasColumnName("vehicle_owner_name");
-            entity.Property(e => e.VehicleRate).HasColumnName("vehicle_rate");
+            entity.Property(e => e.VehicleRate)
+                .HasColumnType("numeric(18, 0)")
+                .HasColumnName("vehicle_rate");
             entity.Property(e => e.VehicleVersion).HasColumnName("vehicle_version");
         });
 
