@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Project3.Areas.System.Controllers
 {
-    
+
     [Area("system")]
     [Route("system/insuranceprocess")]
     public class AdminInsuranceProcessController : Controller
@@ -25,6 +25,39 @@ namespace Project3.Areas.System.Controllers
             _logger = logger;
             _userManager = userManager;
         }
+
+        [HttpGet("Index")]
+        public async Task<IActionResult> Index()
+        {
+            var insuranceProcesses = await _context.InsuranceProcesses.ToListAsync();
+            var companybillingpolicies = await _context.CompanyBillingPolicies.ToListAsync();
+            // Map the InsuranceProcess to InsuranceProcessViewModel
+            var viewModel = insuranceProcesses.Select(ip =>
+            {
+            var billingPolicy = companybillingpolicies.FirstOrDefault(cb => cb.PolicyNumber == ip.PolicyNumber);
+            return new InsuranceProcessViewModel
+            {
+                PolicyNumber = ip.PolicyNumber,
+                CustomerName = ip.CustomerName,
+                VehicleName = ip.VehicleName,
+                PolicyDate = ip.PolicyDate,
+                PolicyDuration = ip.PolicyDuration ?? 12,
+                VehicleModel = ip.VehicleModel,
+                VehicleRate = (float)ip.VehicleRate,
+                CustomerId = ip.CustomerId,
+                CustomerPhoneNumber = ip.CustomerPhoneNumber,
+                VehicleId = ip.VehicleId,
+                WarrantyId = ip.WarrantyId,
+                PolicyTypeId = ip.PolicyTypeId,
+                VehicleBodyNumber = ip.VehicleBodyNumber,
+                VehicleEngineNumber = ip.VehicleEngineNumber
+            };
+            }).ToList();
+
+            return View(viewModel);
+        }
+
+
 
         [HttpGet("CollectInfo")]
         public async Task<IActionResult> CollectInfo()
@@ -92,7 +125,7 @@ namespace Project3.Areas.System.Controllers
 
             if (estimate == null)
             {
-                return RedirectToAction("Index", "Home", new { area = "System" }); // or any appropriate action
+                return RedirectToAction("Index", "Dashboard", new { area = "System" }); // or any appropriate action
             }
 
             var insuranceProcess = new InsuranceProcessViewModel
@@ -163,5 +196,194 @@ namespace Project3.Areas.System.Controllers
 
             return View(insuranceProcess);
         }
+        // GET: system/insuranceprocess/Edit/5
+        [HttpGet("Edit/{policyNumber}")]
+        public async Task<IActionResult> Edit(string policyNumber)
+        {
+            if (string.IsNullOrEmpty(policyNumber))
+            {
+                return NotFound();
+            }
+
+            var insuranceProcess = await _context.InsuranceProcesses
+                .FirstOrDefaultAsync(m => m.PolicyNumber == policyNumber);
+
+            if (insuranceProcess == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new InsuranceProcessViewModel
+            {
+                CustomerId = insuranceProcess.CustomerId,
+                CustomerName = insuranceProcess.CustomerName,
+                CustomerPhoneNumber = insuranceProcess.CustomerPhoneNumber,
+                VehicleId = insuranceProcess.VehicleId,
+                VehicleName = insuranceProcess.VehicleName,
+                VehicleModel = insuranceProcess.VehicleModel,
+                //VehicleRate = insuranceProcess.VehicleRate,
+                WarrantyId = insuranceProcess.WarrantyId,
+                PolicyNumber = insuranceProcess.PolicyNumber,
+                PolicyTypeId = insuranceProcess.PolicyTypeId,
+                PolicyDate = insuranceProcess.PolicyDate,
+                PolicyDuration = insuranceProcess.PolicyDuration,
+                VehicleBodyNumber = insuranceProcess.VehicleBodyNumber,
+                VehicleEngineNumber = insuranceProcess.VehicleEngineNumber
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: system/insuranceprocess/Edit/5
+        [HttpPost("Edit/{policyNumber}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string policyNumber, InsuranceProcessViewModel viewModel)
+        {
+            if (policyNumber != viewModel.PolicyNumber)
+            {
+                return BadRequest();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var insuranceProcess = await _context.InsuranceProcesses
+                        .FirstOrDefaultAsync(m => m.PolicyNumber == policyNumber);
+
+                    if (insuranceProcess == null)
+                    {
+                        return NotFound();
+                    }
+
+                    insuranceProcess.CustomerName = viewModel.CustomerName;
+                    insuranceProcess.CustomerPhoneNumber = viewModel.CustomerPhoneNumber;
+                    insuranceProcess.VehicleName = viewModel.VehicleName;
+                    insuranceProcess.VehicleModel = viewModel.VehicleModel;
+                    insuranceProcess.VehicleRate = viewModel.VehicleRate;
+                    insuranceProcess.PolicyDate = viewModel.PolicyDate;
+                    insuranceProcess.PolicyDuration = viewModel.PolicyDuration;
+                    insuranceProcess.VehicleBodyNumber = viewModel.VehicleBodyNumber;
+                    insuranceProcess.VehicleEngineNumber = viewModel.VehicleEngineNumber;
+
+                    _context.Update(insuranceProcess);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction(nameof(Index));  // Redirect to a suitable action
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!InsuranceProcessExists(viewModel.PolicyNumber))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            return View(viewModel);
+        }
+        // GET: system/insuranceprocess/Details/5
+        [HttpGet("Details/{policyNumber}")]
+        public async Task<IActionResult> Details(string policyNumber)
+        {
+            if (string.IsNullOrEmpty(policyNumber))
+            {
+                return NotFound();
+            }
+
+            var insuranceProcess = await _context.InsuranceProcesses
+                .FirstOrDefaultAsync(m => m.PolicyNumber == policyNumber);
+
+            if (insuranceProcess == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new InsuranceProcessViewModel
+            {
+                CustomerId = insuranceProcess.CustomerId,
+                CustomerName = insuranceProcess.CustomerName,
+                CustomerPhoneNumber = insuranceProcess.CustomerPhoneNumber,
+                VehicleId = insuranceProcess.VehicleId,
+                VehicleName = insuranceProcess.VehicleName,
+                VehicleModel = insuranceProcess.VehicleModel,
+                //VehicleRate = insuranceProcess.VehicleRate,
+                WarrantyId = insuranceProcess.WarrantyId,
+                PolicyNumber = insuranceProcess.PolicyNumber,
+                PolicyTypeId = insuranceProcess.PolicyTypeId,
+                PolicyDate = insuranceProcess.PolicyDate,
+                PolicyDuration = insuranceProcess.PolicyDuration,
+                VehicleBodyNumber = insuranceProcess.VehicleBodyNumber,
+                VehicleEngineNumber = insuranceProcess.VehicleEngineNumber
+            };
+
+            return View(viewModel);
+        }
+        // GET: system/insuranceprocess/Delete/5
+        [HttpGet("Delete/{policyNumber}")]
+        public async Task<IActionResult> Delete(string policyNumber)
+        {
+            if (string.IsNullOrEmpty(policyNumber))
+            {
+                return NotFound();
+            }
+
+            var insuranceProcess = await _context.InsuranceProcesses
+                .FirstOrDefaultAsync(m => m.PolicyNumber == policyNumber);
+
+            if (insuranceProcess == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new InsuranceProcessViewModel
+            {
+                CustomerId = insuranceProcess.CustomerId,
+                CustomerName = insuranceProcess.CustomerName,
+                CustomerPhoneNumber = insuranceProcess.CustomerPhoneNumber,
+                VehicleId = insuranceProcess.VehicleId,
+                VehicleName = insuranceProcess.VehicleName,
+                VehicleModel = insuranceProcess.VehicleModel,
+                //VehicleRate = insuranceProcess.VehicleRate,
+                WarrantyId = insuranceProcess.WarrantyId,
+                PolicyNumber = insuranceProcess.PolicyNumber,
+                PolicyTypeId = insuranceProcess.PolicyTypeId,
+                PolicyDate = insuranceProcess.PolicyDate,
+                PolicyDuration = insuranceProcess.PolicyDuration,
+                VehicleBodyNumber = insuranceProcess.VehicleBodyNumber,
+                VehicleEngineNumber = insuranceProcess.VehicleEngineNumber
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: system/insuranceprocess/Delete/5
+        [HttpPost("Delete/{policyNumber}"), ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string policyNumber)
+        {
+            var insuranceProcess = await _context.InsuranceProcesses
+                .FirstOrDefaultAsync(m => m.PolicyNumber == policyNumber);
+
+            if (insuranceProcess == null)
+            {
+                return NotFound();
+            }
+
+            _context.InsuranceProcesses.Remove(insuranceProcess);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));  // Redirect to a suitable action
+        }
+
+        private bool InsuranceProcessExists(string policyNumber)
+        {
+            return _context.InsuranceProcesses.Any(e => e.PolicyNumber == policyNumber);
+        }
+
     }
 }

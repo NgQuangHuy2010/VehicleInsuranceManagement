@@ -58,7 +58,14 @@ builder.Services.ConfigureApplicationCookie(options =>
 //    options.ClientSecret = builder.Configuration["GoogleKeys:ClientSecret"];
 //});
 
+
 // Add services to the container.
+// Register HttpClient for MomoPaymentService
+builder.Services.AddHttpClient<MomoPaymentService>();
+
+// Register IPaymentService with MomoPaymentService
+builder.Services.AddScoped<IPaymentService, MomoPaymentService>();
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<UserRoleService, UserRoleService>();
 builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();

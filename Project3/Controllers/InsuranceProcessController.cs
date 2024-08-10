@@ -68,6 +68,7 @@ namespace Project3.Controllers
                     AntiTheftDevice = viewModel.AntiTheftDevice,
                     MultiPolicy = viewModel.MultiPolicy,
                     SafeDriver = viewModel.SafeDriver,
+                    SelectedCoverages = viewModel.SelectedCoverages,
                 };
                 // Store the viewModel data in session
                 HttpContext.Session.SetObject("CollectInfoData", collectinfo);

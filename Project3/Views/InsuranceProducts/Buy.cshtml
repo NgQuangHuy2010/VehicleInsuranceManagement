@@ -2,27 +2,34 @@
 
 @{
     ViewData["Title"] = "Confirm Your Purchase";
+    Layout = "~/Views/LayoutUser/LayoutUser.cshtml";
 }
 
-<h2>Confirm Your Insurance Product</h2>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <img src="~/images/confirm-purchase.jpg" class="card-img-top" alt="Confirm Purchase Image" />
+                <div class="card-body">
+                    <h2 class="card-title text-primary">@ViewData["Title"]</h2>
+                    <h5 class="card-title mt-3">@Model.PolicyName</h5>
+                    <p class="card-text">@Model.PolicyDetails</p>
+                    <p class="card-text"><strong>Warranty:</strong> @Model.WarrantyType (@Model.WarrantyDuration months)</p>
+                    <p class="card-text"><strong>Warranty Details:</strong> @Model.WarrantyDetails</p>
+                    <p class="card-text"><strong>Rate:</strong> $@Model.VehicleRate</p>
 
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">@Model.PolicyName</h5>
-        <p class="card-text">@Model.PolicyDetails</p>
-        <p class="card-text"><strong>Warranty:</strong> @Model.WarrantyType (@Model.WarrantyDuration)</p>
-        <p class="card-text"><strong>Warranty Details:</strong> @Model.WarrantyDetails</p>
-        <p class="card-text"><strong>Rate:</strong> $@Model.VehicleRate</p>
+                    <form asp-action="Buy" method="post" class="mt-4">
+                        <input type="hidden" name="policyTypeId" value="@Model.PolicyTypeId" />
+                        <input type="hidden" name="warrantyId" value="@Model.WarrantyId" />
 
-        <form asp-action="Buy" method="post">
-            <input type="hidden" name="policyTypeId" value="@Model.PolicyTypeId" />
-            <input type="hidden" name="warrantyId" value="@Model.WarrantyId" />
-
-            <div class="form-group">
-                <p>Are you sure you want to purchase this product?</p>
-                <button type="submit" value="Confirm Purchase" class="btn btn-primary">Confirm</button>
-                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                        <div class="form-group">
+                            <p>Are you sure you want to purchase this product?</p>
+                            <button type="submit" value="Confirm Purchase" class="btn btn-primary">Confirm Purchase</button>
+                            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>

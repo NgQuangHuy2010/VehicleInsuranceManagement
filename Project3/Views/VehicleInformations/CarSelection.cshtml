@@ -4,69 +4,65 @@
     Layout = "~/Views/LayoutUser/LayoutUser.cshtml";
 }
 
-<div class="container mt-4">
-    <h1 class="text-center mb-4">Your Car Information</h1>
+<div class="container mt-5">
+    <h1 class="text-center text-primary mb-4">@ViewData["Title"]</h1>
+
     <form asp-action="SaveVehicleInformation" asp-controller="VehicleInformations" method="post">
         <div class="row">
             <!-- Left Column for Dropdowns -->
             <div class="col-md-6">
                 <div class="form-group">
-                    <label for="manufacturerSelect">Manufacturer</label>
-                    <select id="manufacturerSelect" name="VehicleName" class="form-control">
-                        <option value="">Chọn hãng xe</option>
+                    <label for="manufacturerSelect">Manufacturer <i class="fa fa-car text-primary"></i></label>
+                    <select id="manufacturerSelect" name="VehicleName" class="form-control" data-bs-toggle="tooltip" data-bs-placement="top" title="Select the car manufacturer">
+                        <option value="">Choose Manufacturer</option>
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label for="modelSelect">Vehicle Model</label>
-                    <select id="modelSelect" name="VehicleModel" class="form-control" disabled>
-                        <option value="">Chọn mẫu xe</option>
+                <div class="form-group mt-3">
+                    <label for="modelSelect">Vehicle Model <i class="fa fa-cogs text-primary"></i></label>
+                    <select id="modelSelect" name="VehicleModel" class="form-control" disabled data-bs-toggle="tooltip" data-bs-placement="top" title="Select the vehicle model">
+                        <option value="">Choose Model</option>
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label for="trimSelect">Vehicle Version</label>
-                    <select id="trimSelect" name="VehicleVersion" class="form-control" disabled>
-                        <option value="">Chọn phiên bản</option>
+                <div class="form-group mt-3">
+                    <label for="trimSelect">Vehicle Version <i class="fa fa-info-circle text-primary"></i></label>
+                    <select id="trimSelect" name="VehicleVersion" class="form-control" disabled data-bs-toggle="tooltip" data-bs-placement="top" title="Select the vehicle version">
+                        <option value="">Choose Version</option>
                     </select>
                 </div>
             </div>
 
             <!-- Right Column for Text Inputs -->
             <div class="col-md-6">
-                @* <div class="form-group">
-                    <label asp-for="VehicleOwnerName" class="control-label">Owner Name</label>
-                    <input asp-for="VehicleOwnerName" class="form-control" readonly />
-                </div> *@
-
-                <div class="form-group">
-                    <label for="vehicleRate">Vehicle Rate</label>
-                    <input name="VehicleRate" asp-for="VehicleRate" class="form-control" value="@ViewBag.VehicleRate" readonly />
-                    <span asp-validation-for="VehicleRate" class="text-danger" ></span>
+                <div class="form-group mt-3 mt-md-0">
+                    <label for="vehicleRate">Vehicle Rate <i class="fa fa-dollar-sign text-primary"></i></label>
+                    <input name="VehicleRate" asp-for="VehicleRate" class="form-control" value="@ViewBag.VehicleRate" readonly data-bs-toggle="tooltip" data-bs-placement="top" title="This is the estimated rate of the vehicle" />
+                    <span asp-validation-for="VehicleRate" class="text-danger"></span>
                 </div>
 
-
-                <div class="form-group">
-                    <label asp-for="VehicleBodyNumber" class="control-label">Body Number</label>
-                    <input asp-for="VehicleBodyNumber" class="form-control" />
+                <div class="form-group mt-3">
+                    <label asp-for="VehicleBodyNumber" class="control-label">Body Number <i class="fa fa-hashtag text-primary"></i></label>
+                    <input asp-for="VehicleBodyNumber" class="form-control" data-bs-toggle="tooltip" data-bs-placement="top" title="Enter the body number of your vehicle" />
                     <span asp-validation-for="VehicleBodyNumber" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
-                    <label asp-for="VehicleEngineNumber" class="control-label">Engine Number</label>
-                    <input asp-for="VehicleEngineNumber" class="form-control" />
+                <div class="form-group mt-3">
+                    <label asp-for="VehicleEngineNumber" class="control-label">Engine Number <i class="fa fa-cogs text-primary"></i></label>
+                    <input asp-for="VehicleEngineNumber" class="form-control" data-bs-toggle="tooltip" data-bs-placement="top" title="Enter the engine number of your vehicle" />
                     <span asp-validation-for="VehicleEngineNumber" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
-                    <label asp-for="VehicleNumber" class="control-label">Vehicle Number</label>
-                    <input asp-for="VehicleNumber" class="form-control" />
+                <div class="form-group mt-3">
+                    <label asp-for="VehicleNumber" class="control-label">Vehicle Number <i class="fa fa-id-badge text-primary"></i></label>
+                    <input asp-for="VehicleNumber" class="form-control" data-bs-toggle="tooltip" data-bs-placement="top" title="Enter the registration number of your vehicle" />
                     <span asp-validation-for="VehicleNumber" class="text-danger"></span>
-
                 </div>
 
-                <div class="form-group text-center">
-                    <input type="submit" value="Save" class="btn btn-primary" />
+                <div class="form-group mt-4 text-center">
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="fa fa-save me-2"></i> Save Vehicle Information
+                    </button>
                 </div>
             </div>
         </div>

@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Project3.ModelsView.InsuranceProductViewModel>
+@{
+    ViewData["Title"] = "Insurance Products";
+    Layout = "~/Areas/System/Views/Layout/LayoutAdmin.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2>@ViewData["Title"]</h2>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Policy Name</th>
+                                <th>Policy Details</th>
+                                <th>Vehicle Rate</th>
+                                <th>Warranty Type</th>
+                                <th>Warranty Duration</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.PolicyName</td>
+                                    <td>@item.PolicyDetails</td>
+                                    <td>@item.VehicleRate</td>
+                                    <td>@item.WarrantyType</td>
+                                    <td>@item.WarrantyDuration</td>
+                                    <td>
+                                        <a href="@Url.Action("Details", new { id = item.PolicyTypeId })" class="btn btn-info btn-sm">Details</a>
+                                        <a href="@Url.Action("Edit", new { id = item.PolicyTypeId })" class="btn btn-warning btn-sm">Edit</a>
+                                        <a href="@Url.Action("Delete", new { id = item.PolicyTypeId })" class="btn btn-danger btn-sm">Delete</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

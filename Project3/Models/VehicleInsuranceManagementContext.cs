@@ -31,15 +31,19 @@ public partial class VehicleInsuranceManagementContext : DbContext
 
     public virtual DbSet<ClaimDetail> ClaimDetails { get; set; }
 
+    public virtual DbSet<CollectInfo> CollectInfos { get; set; }
+
     public virtual DbSet<CompanyBillingPolicy> CompanyBillingPolicies { get; set; }
 
     public virtual DbSet<CompanyExpense> CompanyExpenses { get; set; }
 
-    public virtual DbSet<ContactUs> ContactUs { get; set; }
+    public virtual DbSet<ContactU> ContactUs { get; set; }
 
     public virtual DbSet<Estimate> Estimates { get; set; }
 
     public virtual DbSet<InsuranceProcess> InsuranceProcesses { get; set; }
+
+    public virtual DbSet<InsuranceProduct> InsuranceProducts { get; set; }
 
     public virtual DbSet<NameRole> NameRoles { get; set; }
 
@@ -152,6 +156,17 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.Property(e => e.PolicyStartDate).HasColumnName("policy_start_date");
         });
 
+        modelBuilder.Entity<CollectInfo>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__CollectI__3214EC07862B6C0B");
+
+            entity.ToTable("CollectInfo");
+
+            entity.Property(e => e.CustomerAdd).HasMaxLength(255);
+            entity.Property(e => e.DriverGender).HasMaxLength(50);
+            entity.Property(e => e.Usage).HasMaxLength(255);
+        });
+
         modelBuilder.Entity<CompanyBillingPolicy>(entity =>
         {
             entity.ToTable("company_billing_policy");
@@ -192,14 +207,18 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.Property(e => e.TypeOfExpense).HasColumnName("type_of_expense");
         });
 
-        
+        modelBuilder.Entity<ContactU>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Topic).HasMaxLength(50);
+        });
+
         modelBuilder.Entity<Estimate>(entity =>
         {
             entity.HasKey(e => e.EstimateNumber).HasName("PK__Estimate__0B3C03911EA713CC");
 
             entity.ToTable("Estimate");
 
-            entity.Property(e => e.EstimateNumber).ValueGeneratedNever();
             entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
             entity.Property(e => e.CustomerName)
                 .HasMaxLength(100)
@@ -280,6 +299,23 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.HasOne(d => d.Warranty).WithMany(p => p.InsuranceProcesses)
                 .HasForeignKey(d => d.WarrantyId)
                 .HasConstraintName("FK_insurance_process_VehicleWarranty");
+        });
+
+        modelBuilder.Entity<InsuranceProduct>(entity =>
+        {
+            entity.HasKey(e => e.InsuranceProductId).HasName("PK__Insuranc__FC79FCCFBDC622B8");
+
+            entity.ToTable("InsuranceProduct");
+
+            entity.HasOne(d => d.PolicyType).WithMany(p => p.InsuranceProducts)
+                .HasForeignKey(d => d.PolicyTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Insurance__Polic__0E04126B");
+
+            entity.HasOne(d => d.Warranty).WithMany(p => p.InsuranceProducts)
+                .HasForeignKey(d => d.WarrantyId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Insurance__Warra__0EF836A4");
         });
 
         modelBuilder.Entity<NameRole>(entity =>

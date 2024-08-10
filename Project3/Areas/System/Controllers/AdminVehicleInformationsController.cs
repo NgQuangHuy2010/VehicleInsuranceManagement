@@ -4,8 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Project3.Models;
 using System.Threading.Tasks;
 
-[Authorize(Roles = "Admin")]
-[Route("admin/[controller]")]
+namespace Project3.Areas.System.Controllers { 
+[Area("system")]
+[Route("system/vehicleinformation")]
 public class AdminVehicleInformationsController : Controller
 {
     private readonly VehicleInsuranceManagementContext _context;
@@ -104,4 +105,5 @@ public class AdminVehicleInformationsController : Controller
         }
         return View(vehicle);
     }
+}
 }

@@ -25,13 +25,15 @@ namespace Project3.Controllers
         private readonly BillingCalculationService _billingCalculationService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<EstimatesController> _logger;
-        public PaymentController(ILogger<EstimatesController> logger, VehicleInsuranceManagementContext context, BillingCalculationService billingCalculationService, UserManager<ApplicationUser> userManager, CarService carService)
+        private readonly IPaymentService _paymentService;
+        public PaymentController(IPaymentService paymentService, ILogger<EstimatesController> logger, VehicleInsuranceManagementContext context, BillingCalculationService billingCalculationService, UserManager<ApplicationUser> userManager, CarService carService)
         {
             _context = context;
             _billingCalculationService = billingCalculationService;
             _userManager = userManager;
             _carService = carService;
             _logger = logger;
+            _paymentService = paymentService;
         }
         public IActionResult Index()
         {
@@ -49,15 +51,23 @@ namespace Project3.Controllers
             return View();
         }
 
-        private async Task SavePaymentDataAsync()
+        private async Task SavePaymentDataAsync(string paymentMethod)
         {
             // Retrieve session data
+            var insuranceProductSession = HttpContext.Session.GetObject<InsuranceProductViewModel>("productSession");
             var vehicleInformationSession = HttpContext.Session.GetObject<VehicleInformationViewModel>("VehicleInformationData");
             var estimateSession = HttpContext.Session.GetObject<EstimateModelView>("EstimateData");
+            var collectInfoSession = HttpContext.Session.GetObject<CollectInfoViewModel>("CollectInfoData");
             var insuranceProcessSession = HttpContext.Session.GetObject<InsuranceProcessViewModel>("InsuranceData");
             var companyBillingPolicySession = HttpContext.Session.GetObject<CompanyBillingPolicyViewModel>("companyBilling");
 
-
+            // Save insuranceProduct data
+            var insuranceProduct = new InsuranceProduct
+            {
+                PolicyTypeId = insuranceProductSession.PolicyTypeId,
+                WarrantyId = insuranceProductSession.WarrantyId,
+                VehicleRate = insuranceProductSession.VehicleRate,
+            };
             // Save VehicleInformation data
             var vehicleInformation = new VehicleInformation
             {
@@ -90,6 +100,21 @@ namespace Project3.Controllers
                 VehicleId = vehicleId
             };
             _context.Estimates.Add(estimate);
+
+            // Save CollectInfo data
+            var collectInfo = new CollectInfo
+            {
+                DriverAge = collectInfoSession.DriverAge,
+                DriverGender = collectInfoSession.DriverGender,
+                DrivingHistory = collectInfoSession.DrivingHistory,
+                CustomerAdd = collectInfoSession.CustomerAdd,
+                Usage = collectInfoSession.Usage,
+                AntiTheftDevice = collectInfoSession.AntiTheftDevice,
+                MultiPolicy = collectInfoSession.MultiPolicy,
+                SafeDriver = collectInfoSession.SafeDriver,
+                SelectedCoverages = collectInfoSession.SelectedCoverages,
+            };
+
 
             // Save InsuranceProcess data
             var insuranceProcess = new InsuranceProcess
@@ -126,7 +151,7 @@ namespace Project3.Controllers
                 VehicleEngineNumber = companyBillingPolicySession.VehicleEngineNumber,
                 Date = companyBillingPolicySession.Date,
                 Amount = companyBillingPolicySession.Amount,
-                PaymentStatus = "Paid With PayPal"
+                PaymentStatus = $"Paid With {paymentMethod}"
             };
             _context.CompanyBillingPolicies.Add(companyBillingPolicy);
             
@@ -137,10 +162,32 @@ namespace Project3.Controllers
 
         [Route("PaymentSuccess")]
         [HttpGet]
-        public IActionResult PaymentSuccess()
+        public async Task<IActionResult> PaymentSuccess()
         {
+            // Check for specific payment gateway indication if needed (e.g., query parameter, session state)
+            var paymentMethod = Request.Query["paymentMethod"]; // Assuming a query parameter indicating payment method
+
+            //if (paymentMethod == "MoMo")
+            //{
+            //    // If payment is successful, update the status of the billing policy and save data
+            //    await SavePaymentDataAsync(paymentMethod);
+            //}
+            //else if (paymentMethod == "paypal")
+            //{
+            //    // Optionally handle PayPal success here if necessary
+            //    // In most cases, this would have already been handled in the PaymentWithPayPal action
+            //}
+            if (!string.IsNullOrEmpty(paymentMethod))
+            {
+                // If payment is successful, update the status of the billing policy and save data
+                await SavePaymentDataAsync(paymentMethod);
+            }
+            // Add logging to see if this action is hit
+            Log.Information("PaymentSuccess endpoint hit.");
+
             return View();
         }
+
 
 
 
@@ -152,84 +199,72 @@ namespace Project3.Controllers
             var response = await client.PostAsync(url, content);
             return await response.Content.ReadAsStringAsync();
         }
-        [Route("momopayment")]
-        [HttpPost]
-        public async Task<IActionResult> MomoPayment()
-        {
-            var companysession = HttpContext.Session.GetObject<CompanyBillingPolicy>("companyBilling");
-            double amount1 = companysession.Amount;
+        //[Route("momopayment")]
+        //[HttpPost]
+        //public async Task<IActionResult> MomoPayment()
+        //{
+        //    var companysession = HttpContext.Session.GetObject<CompanyBillingPolicy>("companyBilling");
+        //    double amount1 = companysession.Amount;
 
+        //    string endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
+        //    string partnerCode = "MOMOBKUN20180529";
+        //    string accessKey = "klm05TvNBzhg7h7j";
+        //    string secretKey = "at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa";
+        //    string orderInfo = "Pay via MoMo";
+        //    string orderId = DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
+        //    string redirectUrl = Url.Action("PaymentSuccess", "Payment", null, Request.Scheme);
+        //    string ipnUrl = Url.Action("PaymentNotify", "Payment", null, Request.Scheme); // Updated to handle IPN correctly
+        //    string extraData = "";
+        //    string requestId = DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
+        //    string requestType = "payWithATM"; // captureWallet
 
-            string endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
-            string partnerCode = "MOMOBKUN20180529";
-            string accessKey = "klm05TvNBzhg7h7j";
-            string secretKey = "at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa";
-            string orderInfo = "Pay via MoMo";
-            //string amount = ;
-            string orderId = DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
-            string redirectUrl = Url.Action("PaymentSuccess", "Payment", null, Request.Scheme);
-            string ipnUrl = Url.Action("PaymentFail", "Payment", null, Request.Scheme);
-            string extraData = "";
-            string requestId = DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
-            string requestType = "payWithATM"; //captureWallet
+        //    string rawHash = $"accessKey={accessKey}&amount={amount1.ToString("F0")}&extraData={extraData}&ipnUrl={ipnUrl}&orderId={orderId}&orderInfo={orderInfo}&partnerCode={partnerCode}&redirectUrl={redirectUrl}&requestId={requestId}&requestType={requestType}";
+        //    string signature;
 
-            string rawHash = $"accessKey={accessKey}&amount={amount1.ToString("F0")}&extraData={extraData}&ipnUrl={ipnUrl}&orderId={orderId}&orderInfo={orderInfo}&partnerCode={partnerCode}&redirectUrl={redirectUrl}&requestId={requestId}&requestType={requestType}";
-            string signature;
+        //    using (HMACSHA256 hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secretKey)))
+        //    {
+        //        byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(rawHash));
+        //        signature = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+        //    }
 
-            using (HMACSHA256 hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secretKey)))
-            {
-                byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(rawHash));
-                signature = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-            }
+        //    var data = new
+        //    {
+        //        partnerCode,
+        //        partnerName = "Test",
+        //        storeId = "MomoTestStore",
+        //        requestId,
+        //        amount = amount1.ToString("F0"),
+        //        orderId,
+        //        orderInfo,
+        //        redirectUrl,
+        //        ipnUrl,
+        //        lang = "vi",
+        //        extraData,
+        //        requestType,
+        //        signature
+        //    };
 
-            var data = new
-            {
-                partnerCode,
-                partnerName = "Test",
-                storeId = "MomoTestStore",
-                requestId,
-                amount = amount1.ToString("F0"),
-                orderId,
-                orderInfo,
-                redirectUrl,
-                ipnUrl,
-                lang = "vi",
-                extraData,
-                requestType,
-                signature
-            };
+        //    string jsonData = JsonConvert.SerializeObject(data);
+        //    string result = await ExecPostRequest(endpoint, jsonData);
+        //    var jsonResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(result);
 
-            string jsonData = JsonConvert.SerializeObject(data);
-            string result = await ExecPostRequest(endpoint, jsonData);
-            var jsonResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(result);
-            // Log the entire response to check for keys and values
-            foreach (var key in jsonResult.Keys)
-            {
-                Log.Information($"{key}: {jsonResult[key]}");
-            }
+        //    foreach (var key in jsonResult.Keys)
+        //    {
+        //        Log.Information($"{key}: {jsonResult[key]}");
+        //    }
 
-            // Check if 'payUrl' is present in the response
-            if (jsonResult.ContainsKey("payUrl"))
-            {
-                //var vehicleInformationSession = HttpContext.Session.GetObject<VehicleInformationViewModel>("VehicleInformationData");
-                //var estimateSession = HttpContext.Session.GetObject<EstimateModelView>("EstimateData");
-                //var insuranceProcessSession = HttpContext.Session.GetObject<InsuranceProcessViewModel>("CollectInfoData");
-                //var collectdata = HttpContext.Session.GetObject<InsuranceProcessViewModel>("InsuranceData");
-                
+        //    if (jsonResult.ContainsKey("payUrl"))
+        //    {
+        //        return Redirect(jsonResult["payUrl"]);
+        //    }
+        //    else
+        //    {
+        //        Log.Error("payUrl key not found in MoMo API response.");
+        //        TempData["error"] = "Unable to process payment. Please try again.";
+        //        return RedirectToAction("PaymentFail");
+        //    }
+        //}
 
-                return Redirect(jsonResult["payUrl"]);
-
-            }
-            else
-            {
-                // Log an error message if 'payUrl' is not found
-                Log.Error("payUrl key not found in MoMo API response.");
-                // Handle the error, for example by displaying a message to the user
-                TempData["error"] = "Unable to process payment. Please try again.";
-                return RedirectToAction("PaymentFail");
-            }
-
-        }
         [Route("paymentconfirm")]
         [HttpGet]
         public IActionResult PaymentConfirm()
@@ -237,15 +272,71 @@ namespace Project3.Controllers
             // Handle the payment confirmation
             return View();
         }
-        [Route("paymentnotify")]
+        //[Route("paymentnotify")]
+        //[HttpPost]
+        //public async Task<IActionResult> PaymentNotify()
+        //{
+        //    var form = await Request.ReadFormAsync();
+        //    var resultCode = form["resultCode"];
+        //    var orderId = form["orderId"];
+        //    var requestId = form["requestId"];
+        //    var transId = form["transId"];
+        //    var message = form["message"];
+
+        //    Log.Information($"MoMo Payment Notify - orderId: {orderId}, resultCode: {resultCode}, message: {message}");
+
+        //    if (resultCode == "0") // Payment success
+        //    {
+        //        await SavePaymentDataAsync();
+        //        return Ok();
+        //    }
+        //    else
+        //    {
+        //        Log.Error($"Payment failed with resultCode: {resultCode}, message: {message}");
+        //        return BadRequest();
+        //    }
+        //}
+
+        //[HttpPost]
+        //public async Task<IActionResult> MomoPayment()
+        //{
+        //    // Retrieve the session data
+        //    var companySession = HttpContext.Session.GetObject<CompanyBillingPolicy>("companyBilling");
+
+        //    // Use the payment service to initiate the payment
+        //    string payUrl = await _paymentService.InitiatePayment(
+        //        companySession.Amount,
+        //        Url.Action("PaymentSuccess", "Payment", new { paymentMethod = "MoMo" }, Request.Scheme),
+        //        Url.Action("PaymentNotify", "Payment", null, Request.Scheme)    // The IPN URL for payment notification
+        //    );
+
+        //    // Redirect the user to the MoMo payment URL
+        //    return Redirect(payUrl);
+        //}
         [HttpPost]
-        public IActionResult PaymentNotify()
+        public async Task<IActionResult> MomoPayment()
         {
-            // Handle the IPN (Instant Payment Notification)
-            return Ok();
+            var companySession = HttpContext.Session.GetObject<CompanyBillingPolicy>("companyBilling");
+            string payUrl = await _paymentService.InitiatePayment(companySession.Amount, Url.Action("PaymentSuccess", "Payment", new { paymentMethod = "MoMo" }, Request.Scheme), Url.Action("PaymentNotify", "Payment", null, Request.Scheme));
+            return Redirect(payUrl);
         }
 
+        [Route("PaymentNotify")]
+        [HttpPost]
+        public async Task<IActionResult> PaymentNotify()
+        {
+            var form = await Request.ReadFormAsync();
+            var resultCode = form["resultCode"];
+            var transactionId = form["transId"];
 
+            Log.Information($"Received PaymentNotify - transactionId: {transactionId}, resultCode: {resultCode}");
+
+            if (await _paymentService.ConfirmPayment(transactionId, resultCode))
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
         //[Route("paypalpayment")]
         [HttpGet]
         public async Task<IActionResult> PaymentWithPayPal()
@@ -285,10 +376,10 @@ namespace Project3.Controllers
                         return View("PaymentFail");
                     }
                     // If payment is successful, update the status of the billing policy and save data
-                    await SavePaymentDataAsync();
+                    //await SavePaymentDataAsync("PayPal");
 
                     // Redirect to the PaymentSuccess action
-                    return RedirectToAction("PaymentSuccess");
+                    return RedirectToAction("PaymentSuccess", new { paymentMethod = "PayPal" });
                 }
             }
             catch (Exception ex)

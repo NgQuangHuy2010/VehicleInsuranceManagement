@@ -198,9 +198,31 @@
                     </li>
                     <li>
                         <a asp-controller="CompanyBillingPolicies" asp-action="Index" aria-expanded="false">
-                            <i class="fa fa-file-image-o mr-2"></i><span class="nav-text">Insurance Process</span>
+                            <i class="fa fa-file-image-o mr-2"></i><span class="nav-text">Company Billing Policies</span>
                         </a>
                     </li>
+                    <li>
+                        <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                            <i class="fa fa-user mr-2"></i>
+                            <span class="nav-text">Reports</span>
+                        </a>
+                        @* <ul aria-expanded="false">
+                            <li><a asp-area="System" asp-controller="Reports" asp-action="MonthlySalesReport">Monthly Sales Report</a></li>
+                            <li><a asp-area="System" asp-controller="Reports" asp-action="VehicleAnalysis">Vehicle-Wise Analysis</a></li>
+                            <li><a asp-area="System" asp-controller="Reports" asp-action="Claims">Claims Report</a></li>
+                            <li><a asp-area="System" asp-controller="Reports" asp-action="DueRenewals">Policies Due for Renewal</a></li>
+                            <li><a asp-area="System" asp-controller="Reports" asp-action="PoliciesLapsedReport">Policies Lapsed Report</a></li>
+                        </ul> *@
+                        <ul aria-expanded="false">
+                            <li><a href="~/system/reports/MonthlySalesReport">Monthly Sales Report</a></li>
+                            <li><a href="~/system/reports/VehicleAnalysis">Vehicle-Wise Analysis</a></li>
+                            <li><a href="~/system/reports/Claims">Claims Report</a></li>
+                            <li><a href="~/system/reports/DueRenewals">Policies Due for Renewal</a></li>
+                            <li><a href="~/system/reports/LapsedPolicies">Policies Lapsed Report</a></li>
+                        </ul>
+
+                    </li>
+                    
                     @* @await Component.InvokeAsync("NavigationMenu") *@
 
                     @*  <li>
