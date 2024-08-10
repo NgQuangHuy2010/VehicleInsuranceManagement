@@ -161,7 +161,8 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();//ApplicationUser
-    await CreateRolesAndAdminUser(roleManager, userManager);
+    var context = scope.ServiceProvider.GetRequiredService<VehicleInsuranceManagementContext>();
+    await CreateRolesAndAdminUser(roleManager, userManager, context);
 }
 
 // Configure the HTTP request pipeline
@@ -189,27 +190,49 @@ app.MapControllerRoute(
 app.Run();
 
 // Method to create roles and admin user
-async Task CreateRolesAndAdminUser(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager) //ApplicationUser
+async Task CreateRolesAndAdminUser(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, VehicleInsuranceManagementContext context)
 {
     string[] roleNames = { "Admin", "User", "AdminAccount", "AdminEstimates", "AdminInsuranceProcess", "AdminInsuranceProducts", "AdminVehicleInformations", "AdminCompanyBillingPolicies", "AdminContactUs" };
-    IdentityResult roleResult;
 
     foreach (var roleName in roleNames)
     {
         var roleExist = await roleManager.RoleExistsAsync(roleName);
         if (!roleExist)
         {
-            roleResult = await roleManager.CreateAsync(new IdentityRole(roleName));
+            var role = new IdentityRole(roleName);
+            var roleResult = await roleManager.CreateAsync(role);
+
+            if (roleResult.Succeeded)
+            {
+                Console.WriteLine($"Role '{roleName}' created successfully.");
+
+                // Nếu role là Admin hoặc User, thêm vào bảng NameRole với cùng ID
+                if (roleName == "Admin" || roleName == "User")
+                {
+                    var existingNameRole = context.NameRoles.SingleOrDefault(r => r.Id == role.Id);
+                    if (existingNameRole == null)
+                    {
+                        context.NameRoles.Add(new NameRole { Id = role.Id, NameRole1 = role.Name });
+                        await context.SaveChangesAsync(); // Lưu thay đổi ngay lập tức
+                        Console.WriteLine($"Role '{roleName}' added to NameRole table successfully.");
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Failed to create role '{roleName}': {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+            }
         }
     }
 
-    // Create a default admin user if it does not exist
+    // Tạo admin user mặc định nếu chưa tồn tại
     var admin = new ApplicationUser
     {
         UserName = "huy2010@gmail.com",
         Email = "huy2010@gmail.com",
         Fullname = "Quang Huy",
-        Phone = "0123456789"
+        Phone = "0123456789",
+        EmailConfirmed = true
     };
 
     string adminPassword = "123456h";
@@ -220,8 +243,25 @@ async Task CreateRolesAndAdminUser(RoleManager<IdentityRole> roleManager, UserMa
         var createAdmin = await userManager.CreateAsync(admin, adminPassword);
         if (createAdmin.Succeeded)
         {
-            await userManager.AddToRoleAsync(admin, "Admin");
+            Console.WriteLine("Admin user created successfully.");
+            var addToRoleResult = await userManager.AddToRoleAsync(admin, "Admin");
+            if (addToRoleResult.Succeeded)
+            {
+                Console.WriteLine("Admin user added to 'Admin' role successfully.");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to add admin to 'Admin' role: {string.Join(", ", addToRoleResult.Errors.Select(e => e.Description))}");
+            }
+        }
+        else
+        {
+            Console.WriteLine($"Failed to create admin user: {string.Join(", ", createAdmin.Errors.Select(e => e.Description))}");
         }
     }
-
+    else
+    {
+        Console.WriteLine("Admin user already exists.");
+    }
 }
+
