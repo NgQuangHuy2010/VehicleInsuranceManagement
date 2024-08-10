@@ -10,10 +10,4 @@ public partial class VehiclePolicyType
     public string? PolicyName { get; set; }
 
     public string? PolicyDetails { get; set; }
-
-    public double? VehicleRate { get; set; }
-
-    public virtual ICollection<Estimate> Estimates { get; set; } = new List<Estimate>();
-
-    public virtual ICollection<InsuranceProcess> InsuranceProcesses { get; set; } = new List<InsuranceProcess>();
 }

@@ -155,19 +155,19 @@ namespace Project3.Controllers
         }
         // GET: Estimates/Details/5
         [HttpGet("Details/{id}")]
-        public async Task<IActionResult> Details(int id)
-        {
-            var estimate = await _context.Estimates
-                .Include(e => e.Vehicle)
-                .Include(e => e.Warranty)
-                .Include(e => e.PolicyType)
-                .FirstOrDefaultAsync(m => m.EstimateNumber == id);
-            if (estimate == null)
-            {
-                return NotFound();
-            }
-            return View(estimate);
-        }
+        //public async Task<IActionResult> Details(int id)
+        //{
+        //    //var estimate = await _context.Estimates
+        //        ////.Include(e => e.Vehicle)
+        //        ////.Include(e => e.Warranty)
+        //        //.Include(e => e.PolicyType)
+        //        //.FirstOrDefaultAsync(m => m.EstimateNumber == id);
+        //    if (estimate == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(estimate);
+        //}
 
         // GET: Estimates/Edit/5
         [HttpGet("Edit/{id}")]
@@ -220,20 +220,20 @@ namespace Project3.Controllers
 
         // GET: Estimates/Delete/5
         [HttpGet("Delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
+        //public async Task<IActionResult> Delete(int id)
+        //{
 
-            var estimate = await _context.Estimates
-                .Include(e => e.Vehicle)
-                .Include(e => e.Warranty)
-                .Include(e => e.PolicyType)
-                .FirstOrDefaultAsync(m => m.EstimateNumber == id);
-            if (estimate == null)
-            {
-                return NotFound();
-            }
-            return View(estimate);
-        }
+        //    var estimate = await _context.Estimates
+        //       // .Include(e => e.Vehicle)
+        //        .Include(e => e.Warranty)
+        //        .Include(e => e.PolicyType)
+        //        .FirstOrDefaultAsync(m => m.EstimateNumber == id);
+        //    if (estimate == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(estimate);
+        //}
 
         // POST: Estimates/Delete/5
         [HttpPost, ActionName("Delete")]

@@ -34,10 +34,10 @@ namespace Project3.Areas.System.Controllers
             return View(await _context.ContactUs.ToListAsync());
         }
 
-    
-       
-     
-       
+
+
+
+
 
         [Route("delete")]
         public IActionResult delete(int id)
@@ -81,24 +81,24 @@ namespace Project3.Areas.System.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreateMail(ContactUs mailData)
         {
-            
-                if (!ModelState.IsValid)
-                {
-                return View(mailData);
+
+            if (ModelState.IsValid)
+            {
+                _mailService.SendMail(mailData);
+                mailData.IsReplied = true;
+                TempData["EmailSuccess"] = "Send Mail Success";
+                _context.Update(mailData);
+                _context.SaveChanges();
+
+                return RedirectToAction(nameof(Index));
             }
 
-            _mailService.SendMail(mailData);
-            mailData.IsReplied = true;
-            TempData["EmailSuccess"] = "Send Mail Success";
-            _context.Update(mailData);
-            _context.SaveChanges();
-
-            return RedirectToAction(nameof(Index));
+            return View(Index);
 
 
 
         }
-      
+
         public IActionResult Success()
         {
             return View();

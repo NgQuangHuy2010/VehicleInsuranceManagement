@@ -30,7 +30,7 @@ namespace Project3.Controllers
             _logger = logger;
         }
 
-        GET: VehicleInformations/CarSelection
+       // GET: VehicleInformations/CarSelection
         [HttpGet("CarSelection")]
 
         public async Task<IActionResult> CarSelection()
@@ -87,7 +87,7 @@ namespace Project3.Controllers
                 var sessionData = HttpContext.Session.GetObject<VehicleInformation>("VehicleInformationData");
                 _logger.LogInformation("Session Vehicle: {@SessionData}", sessionData);
 
-                 Redirect to the Estimate form with vehicle information as query parameters
+                // Redirect to the Estimate form with vehicle information as query parameters
                 return RedirectToAction("Create", "Estimates", new
                 {
                     VehicleId = vehicleInformation.Id,
@@ -196,7 +196,7 @@ namespace Project3.Controllers
                             {
                                 Name = v.VehicleModel,
                                 Codename = v.VehicleVersion,
-                                Price = v.VehicleRate.ToString()
+                               // Price = v.VehicleRate.ToString()
                             }).ToList()
                         }).ToList();
 

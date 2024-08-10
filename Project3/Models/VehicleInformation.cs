@@ -15,7 +15,7 @@ public partial class VehicleInformation
 
     public string? VehicleVersion { get; set; }
 
-    public double VehicleRate { get; set; }
+    public decimal? VehicleRate { get; set; }
 
     public string? VehicleBodyNumber { get; set; }
 

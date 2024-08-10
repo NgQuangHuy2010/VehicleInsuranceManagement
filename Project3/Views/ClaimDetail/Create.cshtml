@@ -1,78 +1,79 @@
-﻿@model Project3.Models.ClaimDetail
-
+﻿@model Project3.ModelsView.ClaimDetailViewModel
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/LayoutUser/LayoutUser.cshtml";
+
 }
 
-@* <div class="content-body">
-    <div class="container-fluid">
-        <div class="row page-titles mx-0">
-            <div class="col-sm-6 p-md-0">
-                <div class="welcome-text">
-                    <h4>Claim Detail</h4>
+@{
+    var policyNumberArray = new[] { Model.PolicyNumber };
+    var policyNumberString = Model.PolicyNumber.ToString();
+}
+                            
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Table Contact</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="example" class="display" style="min-width: 845px; color:black;">
+                     
+                         <thead>
+                            <tr>
+
+                                <th>Policy Number</th>
+                                <th>Detail</th>
+
+                            </tr>
+
+                        </thead>
+
+                         @foreach (var item in policyNumberArray) {
+                       
+                        
+                            <td>@item</td>
+                            <td>
+                                <a asp-controller="ClaimDetail" asp-action="Detail" asp-route-id="@Model.PolicyNumber" class="btn btn-primary">
+                                    <i class="fa fa-info-circle"></i> Details
+                                </a>
+                            </td>
+                         }
+
+                      
+
+                       @*   <thead>
+                                    <tr>
+                                        
+                                        <th>ID</th>
+                                        <th>Full Name</th>
+                                       
+                                    </tr>
+
+                                </thead>
+                                <tbody>
+                            @for (int i=0; i<Model.PolicyNumber.Length; i++)
+                            {
+                                        <tr>
+                                            <td>@policyNumberArray</td>
+                                    <td>
+                                    <td>
+                                        <a asp-controller="ClaimDetail" asp-action="Detail" asp-route-id="@policyNumberArray" class="btn btn-primary">
+                                            <i class="fa fa-info-circle"></i> Details
+                                        </a>
+                                    </td></td>
+                                        </tr>
+                            }
+
+                        </tbody>*@
+                    </table>  
+
 
                 </div>
             </div>
-            <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
-                @*  <ol class="breadcrumb">
-
-                <a asp-action="create" class="btn btn-rounded btn-info">
-                <span class="btn-icon-left text-info">
-                <i class="fa fa-plus color-info"></i>
-                </span>Create
-                </a>
-                </ol> 
-            </div>
         </div>
-
-        <div class="row">
-            <div class="col-md-4">
-                <form asp-action="Create" method="post">
-                    <input type="hidden" asp-for="Id" />
-
-                    @Html.AntiForgeryToken()
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="form-group">
-                        <label asp-for="Email" class="control-label"></label>
-                        <input asp-for="Email" class="form-control" readonly />
-
-
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Topic" class="control-label"></label>
-                        <input asp-for="Topic" class="form-control" readonly />
-
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Message" class="control-label"></label>
-                        <input asp-for="Message" class="form-control" readonly />
-
-
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="FullName" class="control-label"></label>
-                        <input asp-for="FullName" class="form-control" readonly />
-
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Title" class="control-label"></label>
-                        <input asp-for="Title" class="form-control" />
-
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Body" class="control-label"></label>
-                        <textarea asp-for="Body" class="form-control"></textarea>
-
-                    </div>
-                    <div class="form-group">
-                        <input type="submit" value="Send Mail" class="btn btn-primary" />
-                    </div>
-
-                </form>
-            </div>
-        </div>
-
     </div>
-</div> *@
+
+
 

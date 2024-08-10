@@ -45,8 +45,6 @@ public partial class VehicleInsuranceManagementContext : DbContext
 
     public virtual DbSet<RolePermission> RolePermissions { get; set; }
 
-    public virtual DbSet<VehicleInfomation> VehicleInfomations { get; set; }
-
     public virtual DbSet<VehicleInformation> VehicleInformations { get; set; }
 
     public virtual DbSet<VehiclePolicyType> VehiclePolicyTypes { get; set; }
@@ -287,23 +285,6 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.HasOne(d => d.RoleNavigation).WithMany(p => p.RolePermissions)
                 .HasForeignKey(d => d.RoleId)
                 .HasConstraintName("Role_Permissions__Role_id__NameRole_id");
-        });
-
-        modelBuilder.Entity<VehicleInfomation>(entity =>
-        {
-            entity.ToTable("vehicle_infomation");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.VehicleBodyNumber).HasColumnName("vehicle_body_number");
-            entity.Property(e => e.VehicleEngineNumber).HasColumnName("vehicle_engine_number");
-            entity.Property(e => e.VehicleModel).HasColumnName("vehicle_model");
-            entity.Property(e => e.VehicleName).HasColumnName("vehicle_name");
-            entity.Property(e => e.VehicleNumber)
-                .HasColumnType("numeric(18, 0)")
-                .HasColumnName("vehicle_number");
-            entity.Property(e => e.VehicleOwnerName).HasColumnName("vehicle_owner_name");
-            entity.Property(e => e.VehicleRate).HasColumnName("vehicle_rate");
-            entity.Property(e => e.VehicleVersion).HasColumnName("vehicle_version");
         });
 
         modelBuilder.Entity<VehicleInformation>(entity =>

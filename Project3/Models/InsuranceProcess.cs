@@ -29,7 +29,7 @@ public partial class InsuranceProcess
 
     public string? VehicleVersion { get; set; }
 
-    public double VehicleRate { get; set; }
+    public double? VehicleRate { get; set; }
 
     public string? VehicleWarranty { get; set; }
 

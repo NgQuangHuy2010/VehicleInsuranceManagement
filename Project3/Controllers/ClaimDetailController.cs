@@ -1,68 +1,74 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Resources;
 using Project3.Models;
+using Project3.ModelsView;
+using Project3.ModelsView.Identity;
+using System.Data.Entity;
+using static System.Net.WebRequestMethods;
 
 namespace Project3.Controllers
 {
     public class ClaimDetailController : Controller
     {
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly VehicleInsuranceManagementContext _context;
 
-        public ClaimDetailController(VehicleInsuranceManagementContext context)
+
+        public ClaimDetailController(UserManager<ApplicationUser> userManager, VehicleInsuranceManagementContext context)
         {
+            _userManager = userManager;
             _context = context;
         }
 
-        // GET: ClaimDetail
-        [Route("Index")]
-        public async Task<IActionResult> Index()
+       
+        public async Task<IActionResult>  Create()
         {
-            return View(await _context.ClaimDetails.ToListAsync());
-        }
-        [Route("Create")]
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Route("Create")]
-        public async Task<IActionResult> Create([Bind("Id,ClaimNumber,PolicyNumber,PolicyStartDate,PolicyEndDate,CustomerName,PlaceOfAccident,DateOfAccident,InsuredAmount,ClaimableAmount")] ClaimDetail claimDetail)
-        {
-            if (ModelState.IsValid)
+            var user = await _userManager.GetUserAsync(User);
+            if (user ==null)
             {
-                _context.Add(claimDetail);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return NotFound("User not found");
             }
-            return View(claimDetail);
-        }
+            var billingInfo = _context.CompanyBillingPolicies
+           .Where(b => b.CustomerId == user.Id)
+           .Select(b => new ClaimDetailViewModel
+           {
+               PolicyNumber = b.PolicyNumber,
 
-        
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var claimDetail = await _context.ClaimDetails.FindAsync(id);
-            if (claimDetail != null)
+           }).ToList()
+           .FirstOrDefault();
+            if (billingInfo == null)
             {
-                _context.ClaimDetails.Remove(claimDetail);
+                return NotFound("Billing information not found");
+            }
+            return View(billingInfo);
+
+            
+        }
+        public async Task<IActionResult> Detail(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest("PolicyNumber is required.");
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            // Truy vấn bảng CompanyBillingPolicies để tìm PolicyNumber tương ứng với id
+            var billingInfo = _context.CompanyBillingPolicies
+                .Where(b => b.PolicyNumber == id)
+                .FirstOrDefault();
+
+            if (billingInfo == null)
+            {
+                return NotFound("No billing information found for the provided PolicyNumber.");
+            }
+
+            // Trả về view với dữ liệu của billingInfo
+            return View(billingInfo);
         }
 
-        private bool ClaimDetailExists(int id)
-        {
-            return _context.ClaimDetails.Any(e => e.Id == id);
-        }
     }
+
 }
+
+
+

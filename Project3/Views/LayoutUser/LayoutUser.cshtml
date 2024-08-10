@@ -80,6 +80,8 @@
 							<li class="nav-item "><a href="" class="btn btn-main-2 btn-icon btn-round-full">@userFullname <i class="icofont-user pl-1  "></i></a></li>
 								<div class="dropdown-menu">
 								<a asp-controller="Profile" asp-action="Index" class="btn btn-link" >Profile</a>
+								<a asp-controller="ClaimDetail" asp-action="Create" class="btn btn-link">Claim Detail</a>
+
 								<form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post">
 										@Html.AntiForgeryToken()
 									<button type="submit" class="btn btn-link ">Logout</button>
