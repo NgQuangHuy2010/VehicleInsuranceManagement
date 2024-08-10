@@ -30,7 +30,7 @@
                                     <div class="row">
                                         <div class="col-lg-6 mb-4">
                                             <div class="form-group">
-                                                <h5><label class="text-label">Name role</label></h5>
+                                                <h5><label class="text-label">Name role</label><span class="text-danger pl-2">&#8727;</span></h5>
                                                 <input type="text" asp-for="NameRole1" class="form-control" />
                                                 <span class="text-danger" asp-validation-for="NameRole1"></span>
                                             </div>
@@ -38,6 +38,7 @@
                                         <div class="col-lg-6 mb-4">
                                             <div class="basic-form">
                                                 <div class="form-group">
+                                                    <span class="text-danger pl-2">&#8727; Please select at least 1 permission</span>
                                                     @foreach (var permission in ViewBag.Permissions)
                                                     {
                                                         <div class="form-check mb-2">

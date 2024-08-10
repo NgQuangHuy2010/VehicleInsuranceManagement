@@ -26,13 +26,7 @@ namespace Project3.Areas.System.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.ContactUs.ToListAsync());
-        }
-
-
-
-
-
-
+        }   
         [Route("delete")]
         public IActionResult delete(int id)
         {

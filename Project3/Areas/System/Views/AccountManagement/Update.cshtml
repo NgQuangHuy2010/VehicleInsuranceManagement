@@ -10,7 +10,7 @@
         <div class="row page-titles mx-0">
             <div class="col-sm-6 p-md-0">
                 <div class="welcome-text">
-                    <h4>Cập nhật tài khoản</h4>
+                    <h4>Update account</h4>
 
                 </div>
             </div>
@@ -30,14 +30,14 @@
                                     <div class="row">
                                         <div class="col-lg-6 mb-4">
                                             <div class="form-group">
-                                                <h5><label class="text-label">Tên người dùng</label></h5>
+                                                <h5><label class="text-label">Full name</label><span class="text-danger pl-2">&#8727;</span></h5>
                                                 <input type="text" asp-for="Fullname" class="form-control" />
                                                 <span class="text-danger" asp-validation-for="Fullname"></span>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 mb-4">
                                             <div class="form-group">
-                                                <h5><label class="text-label">Số điện thoại</label></h5>
+                                                <h5><label class="text-label">Phone</label></h5>
                                                 <input id="single-file-input" type="number" class="form-control" asp-for="Phone" />
                                                 <span class="text-danger" asp-validation-for="Phone"></span>
                                             </div>
@@ -51,16 +51,16 @@
                                     <div class="row">
                                         <div class="col-lg-6 mb-4">
                                             <div class="form-group">
-                                                <h5><label class="text-label">Email</label></h5>
+                                                <h5><label class="text-label">Email</label><span class="text-danger pl-2">&#8727;</span></h5>
                                                 <input type="text" asp-for="Email" class="form-control" />
                                                 <span class="text-danger" asp-validation-for="Email"></span>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 mb-4">
                                             <div class="form-group">
-                                                <h5><label class="text-label">Vai trò</label></h5>
+                                                <h5><label class="text-label">Role</label><span class="text-danger pl-2">&#8727;</span></h5>
                                                 <select asp-for="RoleId" class="form-control" asp-items="ViewBag.Role">
-                                                    <option value="">Chọn vai trò...</option>
+                                                    <option value="">Choose role</option>
                                                 </select>
                                                 <span class="text-danger" asp-validation-for="RoleId"></span>
                                             </div>
@@ -72,7 +72,7 @@
                                     <div class="row">
                                         <div class="col-lg-6 mb-4">
                                             <div class="form-group">
-                                                <h5><label class="text-label">Mật khẩu</label></h5>
+                                                <h5><label class="text-label">Password</label><span class="text-danger pl-2">&#8727; Leave blank if keep original password</span></h5>
                                                 <input type="text" asp-for="Password" class="form-control" />
                                                 <span class="text-danger" asp-validation-for="Password"></span>
                                             </div>
@@ -80,7 +80,7 @@
 
                                         <div class="col-lg-6 mb-4">
                                             <div class="form-group">
-                                                <h5><label class="text-label">Xác nhận mật khẩu</label></h5>
+                                                <h5><label class="text-label">Confirm Password</label><span class="text-danger pl-2">&#8727;</span></h5>
                                                 <input type="text" asp-for="ConfirmPassword" class="form-control" />
                                                 <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
                                             </div>
@@ -90,12 +90,12 @@
                                 </section>
                                 <div class="text-left mt-4 mb-5">
                                     <button class="btn btn-primary btn-sl-sm mr-3" type="submit">
-                                        <span class="mr-2"><i class="fa fa-paper-plane"></i></span> Thêm
+                                        <span class="mr-2"><i class="fa fa-paper-plane"></i></span> Save
                                     </button>
                                     <a class="btn btn-dark btn-sl-sm" asp-action="index">
                                         <span class="mr-2">
                                             <i class="fa fa-times" aria-hidden="true"></i>
-                                        </span> Quay về
+                                        </span> Back
                                     </a>
                                 </div>
                             </div>
