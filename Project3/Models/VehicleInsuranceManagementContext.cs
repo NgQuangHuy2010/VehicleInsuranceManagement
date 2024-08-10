@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Project3.Models;
 
@@ -37,7 +35,7 @@ public partial class VehicleInsuranceManagementContext : DbContext
 
     public virtual DbSet<CompanyExpense> CompanyExpenses { get; set; }
 
-    public virtual DbSet<ContactU> ContactUs { get; set; }
+    public virtual DbSet<ContactUs> ContactUs { get; set; }
 
     public virtual DbSet<Estimate> Estimates { get; set; }
 
@@ -207,7 +205,7 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.Property(e => e.TypeOfExpense).HasColumnName("type_of_expense");
         });
 
-        modelBuilder.Entity<ContactU>(entity =>
+        modelBuilder.Entity<ContactUs>(entity =>
         {
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Phone).HasMaxLength(50);
@@ -222,7 +220,7 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.ToTable("Estimate");
 
             entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
-            entity.Property(e => e.CustomerName)
+            entity.Property(e => e.CustomeName)
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.CustomerId).HasColumnName("CustomerID");

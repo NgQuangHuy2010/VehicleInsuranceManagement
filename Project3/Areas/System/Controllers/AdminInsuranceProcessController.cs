@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Project3.Models;
 using Project3.ModelsView;
 using Project3.ModelsView.Identity;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 
 namespace Project3.Areas.System.Controllers
 {
@@ -31,24 +33,24 @@ namespace Project3.Areas.System.Controllers
             // Map the InsuranceProcess to InsuranceProcessViewModel
             var viewModel = insuranceProcesses.Select(ip =>
             {
-            var billingPolicy = companybillingpolicies.FirstOrDefault(cb => cb.PolicyNumber == ip.PolicyNumber);
-            return new InsuranceProcessViewModel
-            {
-                PolicyNumber = ip.PolicyNumber,
-                CustomerName = ip.CustomerName,
-                VehicleName = ip.VehicleName,
-                PolicyDate = ip.PolicyDate,
-                PolicyDuration = ip.PolicyDuration ?? 12,
-                VehicleModel = ip.VehicleModel,
-                VehicleRate = (float)ip.VehicleRate,
-                CustomerId = ip.CustomerId,
-                CustomerPhoneNumber = ip.CustomerPhoneNumber,
-                VehicleId = ip.VehicleId,
-                WarrantyId = ip.WarrantyId,
-                PolicyTypeId = ip.PolicyTypeId,
-                VehicleBodyNumber = ip.VehicleBodyNumber,
-                VehicleEngineNumber = ip.VehicleEngineNumber
-            };
+                var billingPolicy = companybillingpolicies.FirstOrDefault(cb => cb.PolicyNumber == ip.PolicyNumber);
+                return new InsuranceProcessViewModel
+                {
+                    PolicyNumber = ip.PolicyNumber,
+                    CustomerName = ip.CustomerName,
+                    VehicleName = ip.VehicleName,
+                    PolicyDate = ip.PolicyDate,
+                    PolicyDuration = ip.PolicyDuration ?? 12,
+                    VehicleModel = ip.VehicleModel,
+                    VehicleRate = (float)ip.VehicleRate,
+                    CustomerId = ip.CustomerId,
+                    CustomerPhoneNumber = ip.CustomerPhoneNumber,
+                    VehicleId = ip.VehicleId,
+                    WarrantyId = ip.WarrantyId,
+                    PolicyTypeId = ip.PolicyTypeId,
+                    VehicleBodyNumber = ip.VehicleBodyNumber,
+                    VehicleEngineNumber = ip.VehicleEngineNumber
+                };
             }).ToList();
 
             return View(viewModel);
