@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Project3.Models;
 using Project3.ModelsView;
-using Project3.ModelsView.Identity;
 
 namespace Project3.Controllers
 {
@@ -21,7 +14,7 @@ namespace Project3.Controllers
             _context = context;
         }
 
-      
+
         public IActionResult Create()
         {
             return View();

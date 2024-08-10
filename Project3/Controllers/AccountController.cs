@@ -9,6 +9,8 @@ using System.Security.Claims;
 
 namespace Project3.Controllers
 {
+
+
     public class AccountController : Controller
     {
         VehicleInsuranceManagementContext db = new VehicleInsuranceManagementContext();
@@ -28,7 +30,7 @@ namespace Project3.Controllers
             _emailService = emailService;
         }
 
-
+        [HttpGet]
         [Route("login")]
         public IActionResult Login()
         {
@@ -57,28 +59,27 @@ namespace Project3.Controllers
 
                 if (result.Succeeded) // nếu check thành công
                 {
-                    TempData["SuccessMessage"] = "Login success !!";
-                    return RedirectToAction("Index", "Home");
                     //// tiếp tục tìm email đang đăng nhập 
-                    //var user = await _userManager.FindByEmailAsync(login.Email);
+                    var user = await _userManager.FindByEmailAsync(login.Email);
 
-                    ////kiểm tra nếu role là Admin (cấu hình ở program.cs) 
-                    //if (await _userManager.IsInRoleAsync(user, "Admin"))
-                    //{
-                    //	// return về trang admin 
-                    //	return RedirectToAction("Index", "Dashboard", new { area = "System" });
-                    //}
-                    //else if (!await _userManager.IsInRoleAsync(user, "User"))
-                    //{
-                    //	return RedirectToAction("Index", "Dashboard", new { area = "System" });
+                    //kiểm tra nếu role là Admin (cấu hình ở program.cs) 
+                    if (await _userManager.IsInRoleAsync(user, "Admin"))
+                    {
+                        // return về trang admin 
+                        return RedirectToAction("Index", "Dashboard", new { area = "System" });
+                    }
+                    else if (!await _userManager.IsInRoleAsync(user, "User"))
+                    {
+                        return RedirectToAction("Index", "Dashboard", new { area = "System" });
 
 
-                    //}
-                    //else
-                    //{
-                    //	//nếu ko phải admin về home cho user
-                    //	return RedirectToAction("Index", "Home");
-                    //}
+                    }
+                    else
+                    {
+                        TempData["SuccessMessage"] = "Login success !!";
+                        //nếu ko phải admin về home cho user
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
                 //check fail email and pass
                 ModelState.AddModelError("Email", "Email or password is incorrect!!!");
@@ -452,6 +453,10 @@ namespace Project3.Controllers
             }
         }
 
-
+        //khi ko quyền admin trả về action này 
+        public IActionResult AccessDenied()
+        {
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

@@ -3,10 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project3.Models;
 using Project3.ModelsView;
-using System.Threading.Tasks;
-
 namespace Project3.Areas.System.Controllers
 {
+    [Authorize(Policy = "AuthorizeSystemAreas")]
     [Area("system")]
     [Route("system/insuranceproduct")]
     public class AdminInsuranceProductsController : Controller
