@@ -1,16 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Project3.Models;
 using Project3.ModelsView;
 using Project3.ModelsView.Identity;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Project3.Areas.System.Controllers
 {
-    
+    [Authorize(Policy = "AuthorizeSystemAreas")]
     [Area("system")]
     [Route("system/insuranceprocess")]
     public class AdminInsuranceProcessController : Controller

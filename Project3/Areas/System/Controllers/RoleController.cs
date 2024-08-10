@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +7,7 @@ using Project3.Models;
 using Project3.ModelsView.Admin;
 namespace Project3.Areas.System.Controllers
 {
-    //[Authorize(Policy = "AuthorizeSystemAreas")]
+    [Authorize(Policy = "AuthorizeSystemAreas")]
     [Area("system")]
     [Route("system/role")]
     public class RoleController : Controller
@@ -153,7 +154,7 @@ namespace Project3.Areas.System.Controllers
             // nếu null hoặc ko chọn bất kì quyền nào thì báo lỗi
             if (model.SelectedPermissions == null || !model.SelectedPermissions.Any())
             {
-                ModelState.AddModelError("SelectedPermissions", "Phải chọn ít nhất một quyền.");
+                ModelState.AddModelError("SelectedPermissions", "At least one permission must be selected!!!");
                 // tiếp tục load lại quyền đã có sẵn trong trường hợp khi update ng dùng bỏ trống ko chọn lại gì cả 
                 var allPermissions = await _context.AspNetRoles
                     .Where(r => r.Name != "User" && r.Name != "Admin")
@@ -215,9 +216,8 @@ namespace Project3.Areas.System.Controllers
             var userRoles = _context.AspNetUserRoles.Where(ur => ur.RoleId == id);
             if (userRoles.Any())
             {
-                // Nếu có, thêm lỗi vào ModelState
-                ModelState.AddModelError("", "This role cannot be deleted because it is being used by a user!!");
-
+                // Nếu có, thêm lỗi vào ModelState           
+                TempData["roleerror"] = "This role cannot be deleted because it is being used by a user!!";
                 // Trả về view hiện tại với thông báo lỗi
                 return RedirectToAction("Index");
             }
