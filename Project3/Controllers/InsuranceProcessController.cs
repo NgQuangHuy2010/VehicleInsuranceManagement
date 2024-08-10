@@ -1,34 +1,47 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project3.Models;
 using Project3.ModelsView;
+using Project3.ModelsView.Identity;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Project3.Controllers
 {
-    
+    [Authorize]
+    [Route("InsuranceProcess")]
     public class InsuranceProcessController : Controller
     {
         private readonly VehicleInsuranceManagementContext _context;
         private readonly ILogger<EstimatesController> _logger;
-        public InsuranceProcessController(ILogger<EstimatesController> logger, VehicleInsuranceManagementContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public InsuranceProcessController(UserManager<ApplicationUser> userManager,ILogger<EstimatesController> logger, VehicleInsuranceManagementContext context)
         {
             _context = context;
             _logger = logger;
+            _userManager = userManager;
         }
         [HttpGet("CollectInfo")]
-        public IActionResult CollectInfo()
+        public async Task<IActionResult> CollectInfo()
         {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");  // Redirect to a login page if user is not authenticated
+            }
             var vehicleinfo = HttpContext.Session.GetObject<VehicleInformationViewModel>("VehicleInformationData");
             var estimate = HttpContext.Session.GetObject<EstimateModelView>("EstimateData");
             if (estimate == null)
             {
-                return RedirectToAction("Index", "Home"); // or any appropriate action
+                return RedirectToAction("Create", "Estimate"); // or any appropriate action
             }
             var collectinfo = new CollectInfoViewModel
             {
                 VehicleRate = estimate.VehicleRate,
+                
+
             };
             return View(collectinfo);
         }
@@ -55,6 +68,7 @@ namespace Project3.Controllers
                     AntiTheftDevice = viewModel.AntiTheftDevice,
                     MultiPolicy = viewModel.MultiPolicy,
                     SafeDriver = viewModel.SafeDriver,
+                    SelectedCoverages = viewModel.SelectedCoverages,
                 };
                 // Store the viewModel data in session
                 HttpContext.Session.SetObject("CollectInfoData", collectinfo);
@@ -69,7 +83,7 @@ namespace Project3.Controllers
             return View(viewModel);
         }
 
-        // GET: InsuranceProcess/Create
+        [Route("process")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -102,7 +116,7 @@ namespace Project3.Controllers
             return View(insuranceProcess);
         }
 
-
+        [Route("process")]
         // POST: InsuranceProcess/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -155,115 +169,6 @@ namespace Project3.Controllers
             return View(insuranceProcess);
         }
 
-        // GET: InsuranceProcess/Index
-        //[HttpGet]
-        //public async Task<IActionResult> Index()
-        //{
-        //    var insuranceProcesses = await _context.InsuranceProcesses
-        //        .Include(ip => ip.Vehicle)
-        //        .Include(ip => ip.Warranty)
-        //        .Include(ip => ip.PolicyType)
-        //        .ToListAsync();
-        //    return View(insuranceProcesses);
-        //}
-
-        // GET: InsuranceProcess/Details/5
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Details(int id)
-        //{
-        //    var insuranceProcess = await _context.InsuranceProcesses
-        //        .Include(ip => ip.Vehicle)
-        //        .Include(ip => ip.Warranty)
-        //        .Include(ip => ip.PolicyType)
-        //        .FirstOrDefaultAsync(ip => ip.Id == id);
-
-        //    if (insuranceProcess == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(insuranceProcess);
-        //}
-
-        //// GET: InsuranceProcess/Edit/5
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Edit(int id)
-        //{
-        //    var insuranceProcess = await _context.InsuranceProcesses.FindAsync(id);
-        //    if (insuranceProcess == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(insuranceProcess);
-        //}
-
-        //// POST: InsuranceProcess/Edit/5
-        //[HttpPost("{id}")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int id, [Bind("Id,CustomerId,CustomerName,CustomerAdd,CustomerPhoneNumber,PolicyNumber,PolicyDate,PolicyDuration,VehicleNumber,VehicleName,VehicleModel,VehicleVersion,VehicleRate,VehicleWarranty,VehicleBodyNumber,VehicleEngineNumber,CustomerAddProve,VehicleId,WarrantyId,PolicyTypeId")] InsuranceProcess insuranceProcess)
-        //{
-        //    if (id != insuranceProcess.Id)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            _context.Update(insuranceProcess);
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            if (!InsuranceProcessExists(insuranceProcess.Id))
-        //            {
-        //                return NotFound();
-        //            }
-        //            else
-        //            {
-        //                throw;
-        //            }
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-
-        //    return View(insuranceProcess);
-        //}
-
-        //// GET: InsuranceProcess/Delete/5
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Delete(int id)
-        //{
-        //    var insuranceProcess = await _context.InsuranceProcesses
-        //        .Include(ip => ip.Vehicle)
-        //        .Include(ip => ip.Warranty)
-        //        .Include(ip => ip.PolicyType)
-        //        .FirstOrDefaultAsync(ip => ip.Id == id);
-
-        //    if (insuranceProcess == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(insuranceProcess);
-        //}
-
-        //// POST: InsuranceProcess/Delete/5
-        //[HttpPost("{id}"), ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    var insuranceProcess = await _context.InsuranceProcesses.FindAsync(id);
-        //    _context.InsuranceProcesses.Remove(insuranceProcess);
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
-
-        //private bool InsuranceProcessExists(int id)
-        //{
-        //    return _context.InsuranceProcesses.Any(e => e.Id == id);
-        //}
+        
     }
 }

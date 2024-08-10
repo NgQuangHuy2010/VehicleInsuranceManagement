@@ -5,100 +5,99 @@
     Layout = "~/Views/LayoutUser/LayoutUser.cshtml";
 }
 
-<h4>Insurance Process</h4>
-<hr />
+<div class="container mt-5">
+    <h1 class="text-center text-primary mb-4">Insurance Process Summary</h1>
 
-<div class="container mt-4">
-    <h1 class="text-center mb-4">Summary</h1>
-   
-        <form asp-action="Create" method="post">
-            <div class="row">
-                <!-- Left Column for Dropdowns -->
-                <div class="col-md-6">
-            <div class="form-group">
-                <label asp-for="CustomerId" class="control-label"></label>
-                <input asp-for="CustomerId" class="form-control" readonly />
-                <span asp-validation-for="CustomerId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CustomerName" class="control-label"></label>
-                <input asp-for="CustomerName" class="form-control" readonly />
-                <span asp-validation-for="CustomerName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CustomerPhoneNumber" class="control-label"></label>
-                <input asp-for="CustomerPhoneNumber" class="form-control" readonly />
-                <span asp-validation-for="CustomerPhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="VehicleId" class="control-label"></label>
-                <input asp-for="VehicleId" class="form-control" readonly />
-                <span asp-validation-for="VehicleId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="VehicleName" class="control-label"></label>
-                <input asp-for="VehicleName" class="form-control" readonly />
-                <span asp-validation-for="VehicleName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="VehicleModel" class="control-label"></label>
-                <input asp-for="VehicleModel" class="form-control" readonly />
-                <span asp-validation-for="VehicleModel" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="VehicleRate" class="control-label"></label>
-                <input asp-for="VehicleRate" class="form-control" readonly />
-                <span asp-validation-for="VehicleRate" class="text-danger"></span>
-            </div>
-            </div>
-            <!-- Right Column for Text Inputs -->
+    <form asp-action="Create" method="post">
+        <div class="row">
+            <!-- Left Column -->
             <div class="col-md-6">
-            <div class="form-group">
-                <label asp-for="WarrantyId" class="control-label"></label>
-                <input asp-for="WarrantyId" class="form-control" readonly />
-                <span asp-validation-for="WarrantyId" class="text-danger"></span>
+                <div class="form-group mb-3">
+                    <label asp-for="CustomerId" class="control-label">Customer ID <i class="fa fa-id-badge text-primary"></i></label>
+                    <input asp-for="CustomerId" class="form-control" readonly />
+                    <span asp-validation-for="CustomerId" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="CustomerName" class="control-label">Customer Name <i class="fa fa-user text-primary"></i></label>
+                    <input asp-for="CustomerName" class="form-control" readonly />
+                    <span asp-validation-for="CustomerName" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="CustomerPhoneNumber" class="control-label">Phone Number <i class="fa fa-phone text-primary"></i></label>
+                    <input asp-for="CustomerPhoneNumber" class="form-control" readonly />
+                    <span asp-validation-for="CustomerPhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="VehicleId" class="control-label">Vehicle ID <i class="fa fa-car text-primary"></i></label>
+                    <input asp-for="VehicleId" class="form-control" readonly />
+                    <span asp-validation-for="VehicleId" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="VehicleName" class="control-label">Vehicle Name <i class="fa fa-car text-primary"></i></label>
+                    <input asp-for="VehicleName" class="form-control" readonly />
+                    <span asp-validation-for="VehicleName" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="VehicleModel" class="control-label">Vehicle Model <i class="fa fa-cogs text-primary"></i></label>
+                    <input asp-for="VehicleModel" class="form-control" readonly />
+                    <span asp-validation-for="VehicleModel" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="VehicleRate" class="control-label">Vehicle Rate <i class="fa fa-dollar-sign text-primary"></i></label>
+                    <input asp-for="VehicleRate" class="form-control" readonly />
+                    <span asp-validation-for="VehicleRate" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="PolicyTypeId" class="control-label"></label>
-                <input asp-for="PolicyTypeId" class="form-control" readonly />
-                <span asp-validation-for="PolicyTypeId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PolicyDate" class="control-label"></label>
-                <input asp-for="PolicyDate" class="form-control" readonly />
-                <span asp-validation-for="PolicyDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PolicyDuration" class="control-label"></label>
-                <input asp-for="PolicyDuration" class="form-control" readonly />
-                <span asp-validation-for="PolicyDuration" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="VehicleBodyNumber" class="control-label"></label>
-                <input asp-for="VehicleBodyNumber" class="form-control" readonly />
-                <span asp-validation-for="VehicleBodyNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="VehicleEngineNumber" class="control-label"></label>
-                <input asp-for="VehicleEngineNumber" class="form-control" readonly />
-                <span asp-validation-for="VehicleEngineNumber" class="text-danger"></span>
-            </div>
-            
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-                    <a asp-controller="InsuranceProcess" asp-action="CollectInfo">Back</a>
-            </div>
-                
+
+            <!-- Right Column -->
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label asp-for="WarrantyId" class="control-label">Warranty ID <i class="fa fa-shield-alt text-primary"></i></label>
+                    <input asp-for="WarrantyId" class="form-control" readonly />
+                    <span asp-validation-for="WarrantyId" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="PolicyTypeId" class="control-label">Policy Type ID <i class="fa fa-file-alt text-primary"></i></label>
+                    <input asp-for="PolicyTypeId" class="form-control" readonly />
+                    <span asp-validation-for="PolicyTypeId" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="PolicyDate" class="control-label">Policy Date <i class="fa fa-calendar-alt text-primary"></i></label>
+                    <input asp-for="PolicyDate" class="form-control" readonly />
+                    <span asp-validation-for="PolicyDate" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="PolicyDuration" class="control-label">Policy Duration <i class="fa fa-hourglass-half text-primary"></i></label>
+                    <input asp-for="PolicyDuration" class="form-control" readonly />
+                    <span asp-validation-for="PolicyDuration" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="VehicleBodyNumber" class="control-label">Vehicle Body Number <i class="fa fa-hashtag text-primary"></i></label>
+                    <input asp-for="VehicleBodyNumber" class="form-control" readonly />
+                    <span asp-validation-for="VehicleBodyNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="VehicleEngineNumber" class="control-label">Vehicle Engine Number <i class="fa fa-cogs text-primary"></i></label>
+                    <input asp-for="VehicleEngineNumber" class="form-control" readonly />
+                    <span asp-validation-for="VehicleEngineNumber" class="text-danger"></span>
+                </div>
             </div>
         </div>
-        </form>
- 
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-success btn-lg w-50">
+                <i class="fa fa-check-circle me-2"></i> Confirm Insurance Process
+            </button>
+            <a asp-controller="InsuranceProcess" asp-action="CollectInfo" class="btn btn-secondary btn-lg mt-3 w-50">
+                <i class="fa fa-arrow-left me-2"></i> Back to Collect Info
+            </a>
+        </div>
+    </form>
 </div>
-
-
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+

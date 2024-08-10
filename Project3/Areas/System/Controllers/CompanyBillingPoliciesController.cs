@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Project3.Models;
+using Project3.ModelsView;
 
 namespace Project3.Areas.System.Controllers
 {
+    [Authorize(Policy = "AuthorizeSystemAreas")]
     [Area("system")]
     [Route("system/companybilling")]
     public class CompanyBillingPoliciesController : Controller
@@ -95,7 +94,7 @@ namespace Project3.Areas.System.Controllers
         [Route("edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CustomerId,CustomerName,PolicyNumber,CustomerAddProve,CustomerPhoneNumber,BillNo,VehicleName,VehicleModel,VehicleRate,VehicleBodyNumber,VehicleEngineNumber,Date,Amount,PaymentStatus")] CompanyBillingPolicy companyBillingPolicy)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CustomerId,CustomerName,PolicyNumber,CustomerAddProve,CustomerPhoneNumber,BillNo,VehicleName,VehicleModel,VehicleRate,VehicleBodyNumber,VehicleEngineNumber,Date,Amount,PaymentStatus")] CompanyBillingPolicyViewModel companyBillingPolicy)
         {
             if (id != companyBillingPolicy.Id)
             {
@@ -106,6 +105,20 @@ namespace Project3.Areas.System.Controllers
             {
                 try
                 {
+                    var companybill = new CompanyBillingPolicy
+                    {
+                        CustomerName = companyBillingPolicy.CustomerName,
+                        CustomerAddProve = companyBillingPolicy.CustomerAddProve,
+                        CustomerId = companyBillingPolicy.CustomerId,
+                        CustomerPhoneNumber = companyBillingPolicy.CustomerPhoneNumber,
+                        VehicleName = companyBillingPolicy.VehicleName,
+                        VehicleModel = companyBillingPolicy.VehicleModel,
+                        VehicleBodyNumber = companyBillingPolicy.VehicleBodyNumber,
+
+
+                    };
+
+                    TempData["SuccessMessage"] = "Create new success !!";
                     _context.Update(companyBillingPolicy);
                     await _context.SaveChangesAsync();
                 }

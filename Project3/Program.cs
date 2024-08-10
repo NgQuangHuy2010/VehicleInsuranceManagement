@@ -9,17 +9,12 @@ using Project3.ModelsView.Identity;
 using Project3.Services;
 using Serilog;
 
-    // Uncomment the following line to resolve.
-    // static void Main() {}
-
 var builder = WebApplication.CreateBuilder(args);
-
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
-
 
 builder.Host.UseSerilog();
 // sử dụng 1 chuỗi chung cho EcommerceContext và ApplicationDbContext
@@ -41,13 +36,71 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
-
 // Configure application cookie
 builder.Services.ConfigureApplicationCookie(options =>
 {
-   // options.LoginPath = "/account/login";
-   // options.AccessDeniedPath = "/";
+    options.LoginPath = "/login";
+    options.AccessDeniedPath = "/";
 });
+
+
+//Cấu hình quyền truy cập
+builder.Services.AddAuthorization(options =>
+{
+    //    // Chính sách cho Admin
+    options.AddPolicy("RequireAdminRole", policy =>
+    {
+        policy.RequireRole("Admin");
+    });
+
+    // Chính sách cho ProductManager
+    options.AddPolicy("AdminInsuranceProducts", policy =>
+    {
+        policy.Requirements.Add(new PermissionRequirement("AdminInsuranceProducts"));
+    });
+    options.AddPolicy("AdminEstimates", policy =>
+    {
+        policy.Requirements.Add(new PermissionRequirement("AdminEstimates"));
+    });
+    options.AddPolicy("AdminVehicleInformations", policy =>
+    {
+        policy.Requirements.Add(new PermissionRequirement("AdminVehicleInformations"));
+    });
+    options.AddPolicy("AdminCompanyBillingPolicies", policy =>
+    {
+        policy.Requirements.Add(new PermissionRequirement("AdminCompanyBillingPolicies"));
+    });
+    options.AddPolicy("AdminInsuranceProcess", policy =>
+    {
+        policy.Requirements.Add(new PermissionRequirement("AdminInsuranceProcess"));
+    });
+    options.AddPolicy("AdminContactUs", policy =>
+    {
+        policy.Requirements.Add(new PermissionRequirement("AdminContactUs"));
+    });
+    options.AddPolicy("AdminAccount", policy =>
+    {
+        policy.Requirements.Add(new PermissionRequirement("AdminAccount"));
+    });
+
+    // chặn user truy cập vào System area
+    options.AddPolicy("AuthorizeSystemAreas", policy =>
+    {
+        policy.RequireAssertion(context =>
+        context.User.Identity.IsAuthenticated && // Kiểm tra người dùng đã đăng nhập hay chưa qua identity
+            !context.User.IsInRole("User") // Người dùng thường không được phép
+            || context.User.IsInRole("Admin") // Admin vẫn được phép
+            || context.User.HasClaim(c => c.Type == "AdminInsuranceProducts" && c.Value == "True") // ProductManager vẫn được phép
+            || context.User.HasClaim(c => c.Type == "AdminEstimates" && c.Value == "True") // AccountManager vẫn được phép
+            || context.User.HasClaim(c => c.Type == "AdminVehicleInformations" && c.Value == "True")
+            || context.User.HasClaim(c => c.Type == "AdminCompanyBillingPolicies" && c.Value == "True")
+            || context.User.HasClaim(c => c.Type == "AdminInsuranceProcess" && c.Value == "True")
+            || context.User.HasClaim(c => c.Type == "AdminContactUs" && c.Value == "True")
+            || context.User.HasClaim(c => c.Type == "AdminAccount" && c.Value == "True")
+        );
+    });
+});
+
 
 //đăng ký login google
 //builder.Services.AddAuthentication(options =>
@@ -65,7 +118,14 @@ builder.Services.ConfigureApplicationCookie(options =>
 //    options.ClientSecret = builder.Configuration["GoogleKeys:ClientSecret"];
 //});
 
+
 // Add services to the container.
+// Register HttpClient for MomoPaymentService
+builder.Services.AddHttpClient<MomoPaymentService>();
+
+// Register IPaymentService with MomoPaymentService
+builder.Services.AddScoped<IPaymentService, MomoPaymentService>();
+
 //load thông tin cấu hình và lưu vào đối tượng MailSetting
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 //add dependency inject cho MailService
@@ -132,7 +192,7 @@ app.Run();
 // Method to create roles and admin user
 async Task CreateRolesAndAdminUser(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager) //ApplicationUser
 {
-    string[] roleNames = { "Admin", "User" };
+    string[] roleNames = { "Admin", "User", "AdminAccount", "AdminEstimates", "AdminInsuranceProcess", "AdminInsuranceProducts", "AdminVehicleInformations", "AdminCompanyBillingPolicies", "AdminContactUs" };
     IdentityResult roleResult;
 
     foreach (var roleName in roleNames)
@@ -145,43 +205,24 @@ async Task CreateRolesAndAdminUser(RoleManager<IdentityRole> roleManager, UserMa
     }
 
     // Create a default admin user if it does not exist
-    // var admin = new ApplicationUser
-    // {
-    //     UserName = "huy2010@gmail.com",
-    //     Email = "huy2010@gmail.com",
-    //     Fullname = "Quang Huy",
-    //     Phone = "0123456789"
-    // };
+    var admin = new ApplicationUser
+    {
+        UserName = "huy2010@gmail.com",
+        Email = "huy2010@gmail.com",
+        Fullname = "Quang Huy",
+        Phone = "0123456789"
+    };
 
-    // string adminPassword = "201000";
-    // var _admin = await userManager.FindByEmailAsync("huy2010@gmail.com");
+    string adminPassword = "123456h";
+    var _admin = await userManager.FindByEmailAsync("huy2010@gmail.com");
 
-    // if (_admin == null)
-    // {
-    //     var createAdmin = await userManager.CreateAsync(admin, adminPassword);
-    //     if (createAdmin.Succeeded)
-    //     {
-    //         await userManager.AddToRoleAsync(admin, "Admin");
-    //     }
-    // }
-    // Create a default admin user if it does not exist
-    //var admin = new ApplicationUser
-    //{
-    //    UserName = "admin@example.com",
-    //    Email = "admin@example.com",
-    //    Fullname = "Admin User",
-    //    PhoneNumber = "0123456789"
-    //};
+    if (_admin == null)
+    {
+        var createAdmin = await userManager.CreateAsync(admin, adminPassword);
+        if (createAdmin.Succeeded)
+        {
+            await userManager.AddToRoleAsync(admin, "Admin");
+        }
+    }
 
-    //string adminPassword = "Admin@123";
-    //var _admin = await userManager.FindByEmailAsync("admin@example.com");
-
-    //if (_admin == null)
-    //{
-    //    var createAdmin = await userManager.CreateAsync(admin, adminPassword);
-    //    if (createAdmin.Succeeded)
-    //    {
-    //        await userManager.AddToRoleAsync(admin, "Admin");
-    //    }
-    //}
 }

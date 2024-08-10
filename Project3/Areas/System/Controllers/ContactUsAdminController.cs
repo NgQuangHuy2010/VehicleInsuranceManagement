@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Project3.Models;
 using Project3.ModelsView;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Project3.Areas.System.Controllers
 {
+    [Authorize(Policy = "AuthorizeSystemAreas")]
     [Area("System")]
     [Route("System/ContactAdmin")]
     public class ContactUsAdminController : Controller
@@ -28,7 +22,7 @@ namespace Project3.Areas.System.Controllers
         }
 
         [Route("Index")]
-      
+
         public async Task<IActionResult> Index()
         {
             return View(await _context.ContactUs.ToListAsync());

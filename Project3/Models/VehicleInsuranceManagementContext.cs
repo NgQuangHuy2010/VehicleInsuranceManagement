@@ -31,15 +31,19 @@ public partial class VehicleInsuranceManagementContext : DbContext
 
     public virtual DbSet<ClaimDetail> ClaimDetails { get; set; }
 
+    public virtual DbSet<CollectInfo> CollectInfos { get; set; }
+
     public virtual DbSet<CompanyBillingPolicy> CompanyBillingPolicies { get; set; }
 
     public virtual DbSet<CompanyExpense> CompanyExpenses { get; set; }
 
-    public virtual DbSet<ContactUs> ContactUs { get; set; }
+    public virtual DbSet<ContactU> ContactUs { get; set; }
 
     public virtual DbSet<Estimate> Estimates { get; set; }
 
     public virtual DbSet<InsuranceProcess> InsuranceProcesses { get; set; }
+
+    public virtual DbSet<InsuranceProduct> InsuranceProducts { get; set; }
 
     public virtual DbSet<NameRole> NameRoles { get; set; }
 
@@ -53,7 +57,7 @@ public partial class VehicleInsuranceManagementContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-CUMOSHV\\SQLEXPRESS;Initial Catalog=VehicleInsuranceManagement;Persist Security Info=True;User ID=sa;Password=123;Trust Server Certificate=True");
+        => optionsBuilder.UseSqlServer("Data Source=HUY;Initial Catalog=VehicleInsuranceManagement;Persist Security Info=True;User ID=sa;Password=123;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -152,6 +156,17 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.Property(e => e.PolicyStartDate).HasColumnName("policy_start_date");
         });
 
+        modelBuilder.Entity<CollectInfo>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__CollectI__3214EC07862B6C0B");
+
+            entity.ToTable("CollectInfo");
+
+            entity.Property(e => e.CustomerAdd).HasMaxLength(255);
+            entity.Property(e => e.DriverGender).HasMaxLength(50);
+            entity.Property(e => e.Usage).HasMaxLength(255);
+        });
+
         modelBuilder.Entity<CompanyBillingPolicy>(entity =>
         {
             entity.ToTable("company_billing_policy");
@@ -192,7 +207,7 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.Property(e => e.TypeOfExpense).HasColumnName("type_of_expense");
         });
 
-        modelBuilder.Entity<ContactUs>(entity =>
+        modelBuilder.Entity<ContactU>(entity =>
         {
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Phone).HasMaxLength(50);
@@ -204,8 +219,11 @@ public partial class VehicleInsuranceManagementContext : DbContext
                 .HasNoKey()
                 .ToTable("estimate");
 
-            entity.Property(e => e.CustomeName)
-                .HasMaxLength(50)
+            entity.ToTable("Estimate");
+
+            entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
+            entity.Property(e => e.CustomerName)
+                .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
             entity.Property(e => e.CustomerPhoneNumber)
@@ -258,6 +276,23 @@ public partial class VehicleInsuranceManagementContext : DbContext
                 .HasConstraintName("insurance_process_user_id_AspNetUsers");
         });
 
+        modelBuilder.Entity<InsuranceProduct>(entity =>
+        {
+            entity.HasKey(e => e.InsuranceProductId).HasName("PK__Insuranc__FC79FCCFBDC622B8");
+
+            entity.ToTable("InsuranceProduct");
+
+            entity.HasOne(d => d.PolicyType).WithMany(p => p.InsuranceProducts)
+                .HasForeignKey(d => d.PolicyTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Insurance__Polic__0E04126B");
+
+            entity.HasOne(d => d.Warranty).WithMany(p => p.InsuranceProducts)
+                .HasForeignKey(d => d.WarrantyId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Insurance__Warra__0EF836A4");
+        });
+
         modelBuilder.Entity<NameRole>(entity =>
         {
             entity.ToTable("NameRole");
@@ -277,14 +312,6 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.Property(e => e.RoleId)
                 .HasMaxLength(450)
                 .HasColumnName("role_id");
-
-            entity.HasOne(d => d.Role).WithMany(p => p.RolePermissions)
-                .HasForeignKey(d => d.RoleId)
-                .HasConstraintName("Role_Permissions__role_id__AspNetRoles_Id");
-
-            entity.HasOne(d => d.RoleNavigation).WithMany(p => p.RolePermissions)
-                .HasForeignKey(d => d.RoleId)
-                .HasConstraintName("Role_Permissions__Role_id__NameRole_id");
         });
 
         modelBuilder.Entity<VehicleInformation>(entity =>
@@ -296,13 +323,9 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.Property(e => e.VehicleEngineNumber).HasColumnName("vehicle_engine_number");
             entity.Property(e => e.VehicleModel).HasColumnName("vehicle_model");
             entity.Property(e => e.VehicleName).HasColumnName("vehicle_name");
-            entity.Property(e => e.VehicleNumber)
-                .HasColumnType("numeric(18, 0)")
-                .HasColumnName("vehicle_number");
+            entity.Property(e => e.VehicleNumber).HasColumnName("vehicle_number");
             entity.Property(e => e.VehicleOwnerName).HasColumnName("vehicle_owner_name");
-            entity.Property(e => e.VehicleRate)
-                .HasColumnType("numeric(18, 0)")
-                .HasColumnName("vehicle_rate");
+            entity.Property(e => e.VehicleRate).HasColumnName("vehicle_rate");
             entity.Property(e => e.VehicleVersion).HasColumnName("vehicle_version");
         });
 

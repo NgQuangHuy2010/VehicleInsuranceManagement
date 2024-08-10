@@ -54,4 +54,15 @@
     <None Include="C:\Users\CHUONG\source\repos\NgQuangHuy2010\VehicleInsuranceManagement\Project3\.editorconfig" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Views\Payment\PaymentFail.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Payment\PaymentSuccess.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

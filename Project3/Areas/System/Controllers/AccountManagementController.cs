@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using Project3.ModelsView.Identity;
 
 namespace Project3.Areas.System.Controllers
 {
+    [Authorize(Policy = "AuthorizeSystemAreas")]
     [Area("system")]
     [Route("system/account")]
     public class AccountManagementController : Controller

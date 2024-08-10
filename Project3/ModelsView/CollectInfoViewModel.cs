@@ -38,7 +38,8 @@ namespace Project3.ModelsView
         public bool MultiPolicy { get; set; } // Whether the customer has multiple policies
 
         public bool SafeDriver { get; set; } // Whether the customer is a safe driver
+        public string? SelectedCoverages { get; set; }
 
-        
+
     }
 }
