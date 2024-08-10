@@ -24,4 +24,5 @@ public partial class Estimate
     public int PolicyTypeId { get; set; }
 
     public int VehicleId { get; set; }
+
 }

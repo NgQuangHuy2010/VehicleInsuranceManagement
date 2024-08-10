@@ -23,9 +23,9 @@ namespace Project3.Areas.System.Controllers
         [HttpGet("Index")]
         public async Task<IActionResult> Index()
         {
-            var estimates = await _context.Estimates.Include(e => e.Vehicle)
-                                                    .Include(e => e.PolicyType)
-                                                    .Include(e => e.Warranty)
+            var estimates = await _context.Estimates.Include(e => e.VehicleRate)
+                                                    .Include(e => e.PolicyTypeId)
+                                                    .Include(e => e.WarrantyId)
                                                     .ToListAsync();
             return View(estimates);
         }
@@ -33,9 +33,9 @@ namespace Project3.Areas.System.Controllers
         [HttpGet("Details/{id}")]
         public async Task<IActionResult> Details(int id)
         {
-            var estimate = await _context.Estimates.Include(e => e.Vehicle)
-                                                   .Include(e => e.PolicyType)
-                                                   .Include(e => e.Warranty)
+            var estimate = await _context.Estimates.Include(e => e.VehicleRate)
+                                                   .Include(e => e.PolicyTypeId)
+                                                   .Include(e => e.WarrantyId)
                                                    .FirstOrDefaultAsync(m => m.EstimateNumber == id);
 
             if (estimate == null)
@@ -127,9 +127,9 @@ namespace Project3.Areas.System.Controllers
         [HttpGet("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var estimate = await _context.Estimates.Include(e => e.Vehicle)
-                                                   .Include(e => e.PolicyType)
-                                                   .Include(e => e.Warranty)
+            var estimate = await _context.Estimates.Include(e => e.VehicleRate)
+                                                   .Include(e => e.PolicyTypeId)
+                                                   .Include(e => e.WarrantyId)
                                                    .FirstOrDefaultAsync(m => m.EstimateNumber == id);
 
             if (estimate == null)
