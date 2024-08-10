@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using PayPal.Api;
 using Project3.Helpers;
 using Project3.Models;
@@ -9,15 +8,13 @@ using Project3.ModelsView;
 using Project3.ModelsView.Identity;
 using Project3.Services;
 using Serilog;
-using System.Data.Entity;
 using System.Globalization;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Project3.Controllers
 {
     [Authorize]
-    
+
     public class PaymentController : Controller
     {
         private readonly CarService _carService;
@@ -44,7 +41,7 @@ namespace Project3.Controllers
             return _context.CompanyBillingPolicies.Any(e => e.Id == id);
         }
 
-        
+
         [Route("PaymentFail")]
         public IActionResult PaymentFail()
         {
@@ -74,7 +71,7 @@ namespace Project3.Controllers
                 VehicleName = vehicleInformationSession.VehicleName,
                 VehicleModel = vehicleInformationSession.VehicleModel,
                 VehicleVersion = vehicleInformationSession.VehicleVersion,
-                VehicleRate = vehicleInformationSession.VehicleRate,
+                //VehicleRate = (decimal?)vehicleInformationSession.VehicleRate,
                 VehicleBodyNumber = vehicleInformationSession.VehicleBodyNumber,
                 VehicleEngineNumber = vehicleInformationSession.VehicleEngineNumber,
                 VehicleNumber = vehicleInformationSession.VehicleNumber
@@ -90,7 +87,7 @@ namespace Project3.Controllers
             {
                 CustomerId = estimateSession.CustomerId,
                 EstimateNumber = estimateSession.EstimateNumber,
-                CustomerName = estimateSession.CustomerName,
+                //CustomeName = estimateSession.CustomerName,
                 CustomerPhoneNumber = estimateSession.CustomerPhoneNumber,
                 VehicleName = estimateSession.VehicleName,
                 VehicleModel = estimateSession.VehicleModel,
@@ -154,7 +151,7 @@ namespace Project3.Controllers
                 PaymentStatus = $"Paid With {paymentMethod}"
             };
             _context.CompanyBillingPolicies.Add(companyBillingPolicy);
-            
+
 
             // Save all changes to the database
             await _context.SaveChangesAsync();
@@ -385,7 +382,7 @@ namespace Project3.Controllers
             catch (Exception ex)
             {
                 return View("PaymentFail");
-            }  
+            }
         }
 
         private Payment ExecutePayment(APIContext apiContext, string payerId, string paymentId)

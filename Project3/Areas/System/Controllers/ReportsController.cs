@@ -49,7 +49,7 @@ namespace Project3.Areas.System.Controllers
                 {
                     VehicleModel = g.Key,
                     TotalPolicies = g.Count(),
-                    TotalRevenue = g.Sum(v => v.VehicleRate)
+                    TotalRevenue = (double)g.Sum(v => v.VehicleRate)
                 })
                 .ToListAsync();
 

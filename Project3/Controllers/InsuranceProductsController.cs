@@ -1,34 +1,37 @@
-﻿//using Microsoft.AspNetCore.Authorization;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using Project3;
-//using Project3.Models;
-//using Project3.ModelsView;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Project3.Models;
+using Project3.ModelsView;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Project3;
 
-////[Authorize]
-//[Route("[controller]")]
-//public class InsuranceProductsController : Controller
-//{
-//    private readonly VehicleInsuranceManagementContext _context;
-//    private readonly ILogger<InsuranceProductsController> _logger;
+[Authorize]
+[Route("[controller]")]
+public class InsuranceProductsController : Controller
+{
+    private readonly VehicleInsuranceManagementContext _context;
+    private readonly ILogger<InsuranceProductsController> _logger;
 
-//    public InsuranceProductsController(VehicleInsuranceManagementContext context, ILogger<InsuranceProductsController> logger)
-//    {
-//        _context = context;
-//        _logger = logger;
-//    }
+    public InsuranceProductsController(VehicleInsuranceManagementContext context, ILogger<InsuranceProductsController> logger)
+    {
+        _context = context;
+        _logger = logger;
+    }
 
-//    // GET: InsuranceProducts
-//    [Route("index")]
-//    [HttpGet]
-//    public async Task<IActionResult> Index()
-//    {
-//        // Fetch all policy types and warranties
-//        var policies = await _context.VehiclePolicyTypes.ToListAsync();
-//        var warranties = await _context.VehicleWarranties.ToListAsync();
+    // GET: InsuranceProducts
+    [Route("index")]
+    [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        // Fetch all policy types and warranties
+        var policies = await _context.VehiclePolicyTypes.ToListAsync();
+        var warranties = await _context.VehicleWarranties.ToListAsync();
 
-//        // Create a list of InsuranceProductViewModel to represent the product cards
-//        var insuranceProducts = new List<InsuranceProductViewModel>();
+        // Create a list of InsuranceProductViewModel to represent the product cards
+        var insuranceProducts = new List<InsuranceProductViewModel>();
 
         // Create combinations: pair each policy type with each warranty
         foreach (var policy in policies)
@@ -38,18 +41,18 @@
                 // Adjust the rate based on the warranty type or duration
                 float adjustedRate = (float)policy.VehicleRate;
 
-//                if (warranty.WarrantyDuration.Contains("3"))
-//                {
-//                    adjustedRate = adjustedRate;  // Add $50 for 5-year warranties
-//                }
-//                if (warranty.WarrantyDuration.Contains("5"))
-//                {
-//                    adjustedRate += 50;  // Add $50 for 5-year warranties
-//                }
-//                else if (warranty.WarrantyDuration.Contains("7"))
-//                {
-//                    adjustedRate += 100; // Add $100 for 7-year warranties
-//                }
+                if (warranty.WarrantyDuration.Contains("3"))
+                {
+                    adjustedRate = adjustedRate; // No adjustment needed for 3-year warranties
+                }
+                if (warranty.WarrantyDuration.Contains("5"))
+                {
+                    adjustedRate += 50;  // Add $50 for 5-year warranties
+                }
+                else if (warranty.WarrantyDuration.Contains("7"))
+                {
+                    adjustedRate += 100; // Add $100 for 7-year warranties
+                }
 
                 insuranceProducts.Add(new InsuranceProductViewModel
                 {
@@ -65,65 +68,54 @@
             }
         }
 
-//        return View(insuranceProducts);
-//    }
+        return View(insuranceProducts);
+    }
 
-//    [Route("confirmproduct")]
-//    [HttpGet]
-//    public async Task<IActionResult> Buy(int policyTypeId, int warrantyId)
-//    {
-//        // Fetch the selected policy and warranty from the database
-//        var policy = await _context.VehiclePolicyTypes.FirstOrDefaultAsync(p => p.PolicyTypeId == policyTypeId);
-//        var warranty = await _context.VehicleWarranties.FirstOrDefaultAsync(w => w.WarrantyId == warrantyId);
-
-//        if (policy == null || warranty == null)
-//        {
-//            return NotFound("Policy or Warranty not found.");
-//        }
-
-//        // Create a view model with the selected product details
-//        var product = new InsuranceProductViewModel
-//        {
-//            PolicyTypeId = policy.PolicyTypeId,
-//            PolicyName = policy.PolicyName,
-//            PolicyDetails = policy.PolicyDetails,
-//            WarrantyId = warranty.WarrantyId,
-//            WarrantyType = warranty.WarrantyType,
-//            WarrantyDuration = warranty.WarrantyDuration,
-//            WarrantyDetails = warranty.WarrantyDetails,
-//         //   VehicleRate = (float)policy.VehicleRate
-//        };
-
-//        return View(product); // Return the Buy view with the selected product
-//    }
-
-//    [Route("confirmproduct")]
-//    [HttpPost]
-//    [ValidateAntiForgeryToken]
-//    public async Task<IActionResult> Buy(int policyTypeId, int warrantyId, bool confirm = true)
-//    {
-//        // Fetch the selected policy and warranty from the database
-//        var policy = await _context.VehiclePolicyTypes.FirstOrDefaultAsync(p => p.PolicyTypeId == policyTypeId);
-//        var warranty = await _context.VehicleWarranties.FirstOrDefaultAsync(w => w.WarrantyId == warrantyId);
+    [Route("confirmproduct")]
+    [HttpGet]
+    public async Task<IActionResult> Buy(int policyTypeId, int warrantyId)
+    {
+        // Fetch the selected policy and warranty from the database
+        var policy = await _context.VehiclePolicyTypes.FirstOrDefaultAsync(p => p.PolicyTypeId == policyTypeId);
+        var warranty = await _context.VehicleWarranties.FirstOrDefaultAsync(w => w.WarrantyId == warrantyId);
 
         if (policy == null || warranty == null)
         {
             return NotFound("Policy or Warranty not found.");
         }
-        float adjustedRate = (float)policy.VehicleRate;
 
-        if (warranty.WarrantyDuration.Contains("3"))
+        // Create a view model with the selected product details
+        var product = new InsuranceProductViewModel
         {
-            adjustedRate = adjustedRate;  // Add $50 for 5-year warranties
-        }
-        if (warranty.WarrantyDuration.Contains("5"))
+            PolicyTypeId = policy.PolicyTypeId,
+            PolicyName = policy.PolicyName,
+            PolicyDetails = policy.PolicyDetails,
+            WarrantyId = warranty.WarrantyId,
+            WarrantyType = warranty.WarrantyType,
+            WarrantyDuration = warranty.WarrantyDuration,
+            WarrantyDetails = warranty.WarrantyDetails,
+            VehicleRate = CalculateAdjustedRate((float)policy.VehicleRate, warranty.WarrantyDuration)
+        };
+
+        return View(product); // Return the Buy view with the selected product
+    }
+
+    [Route("confirmproduct")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Buy(int policyTypeId, int warrantyId, bool confirm = true)
+    {
+        // Fetch the selected policy and warranty from the database
+        var policy = await _context.VehiclePolicyTypes.FirstOrDefaultAsync(p => p.PolicyTypeId == policyTypeId);
+        var warranty = await _context.VehicleWarranties.FirstOrDefaultAsync(w => w.WarrantyId == warrantyId);
+
+        if (policy == null || warranty == null)
         {
-            adjustedRate += 50;  // Add $50 for 5-year warranties
+            return NotFound("Policy or Warranty not found.");
         }
-        else if (warranty.WarrantyDuration.Contains("7"))
-        {
-            adjustedRate += 100; // Add $100 for 7-year warranties
-        }
+
+        float adjustedRate = CalculateAdjustedRate((float)policy.VehicleRate, warranty.WarrantyDuration);
+
         // Create a session object to store the selected product
         var productSession = new InsuranceProductViewModel
         {
@@ -134,38 +126,55 @@
             WarrantyType = warranty.WarrantyType,
             WarrantyDuration = warranty.WarrantyDuration,
             WarrantyDetails = warranty.WarrantyDetails,
-            VehicleRate = (float)adjustedRate
+            VehicleRate = adjustedRate
         };
 
-//        // Save the productSession into the session
-//        HttpContext.Session.SetObject("productSession", productSession);
+        // Save the productSession into the session
+        HttpContext.Session.SetObject("productSession", productSession);
 
-//        // Log the session data to console
-//        var sessionData = HttpContext.Session.GetObject<InsuranceProductViewModel>("productSession");
-//        _logger.LogInformation("Session Confirmation: {@SessionData}", sessionData);
-//        // Redirect to confirmation page
-//        return RedirectToAction("Confirmation");
-//    }
+        // Log the session data to console
+        var sessionData = HttpContext.Session.GetObject<InsuranceProductViewModel>("productSession");
+        _logger.LogInformation("Session Confirmation: {@SessionData}", sessionData);
 
-//    [Route("Confirmation")]
-//    [HttpGet]
-//    public IActionResult Confirmation()
-//    {
-//        // Retrieve the productSession if it exists
-//        var productSession = HttpContext.Session.GetObject<InsuranceProductViewModel>("productSession");
+        // Redirect to confirmation page
+        return RedirectToAction("Confirmation");
+    }
 
-//        if (productSession == null)
-//        {
-//            return RedirectToAction("Index"); // Redirect to the product listing if no session is found
-//        }
+    [Route("Confirmation")]
+    [HttpGet]
+    public IActionResult Confirmation()
+    {
+        // Retrieve the productSession if it exists
+        var productSession = HttpContext.Session.GetObject<InsuranceProductViewModel>("productSession");
 
-//        // Check if the user is authenticated
-//        if (!User.Identity.IsAuthenticated)
-//        {
-//            // If the user is not authenticated, redirect them to the login page
-//            return RedirectToAction("Login", "Account");
-//        }
+        if (productSession == null)
+        {
+            return RedirectToAction("Index"); // Redirect to the product listing if no session is found
+        }
 
-//        return View(productSession); // Pass the session data to the view for display
-//    }
-//}
+        // Check if the user is authenticated
+        if (!User.Identity.IsAuthenticated)
+        {
+            // If the user is not authenticated, redirect them to the login page
+            return RedirectToAction("Login", "Account");
+        }
+
+        return View(productSession); // Pass the session data to the view for display
+    }
+
+    private float CalculateAdjustedRate(float baseRate, string warrantyDuration)
+    {
+        float adjustedRate = baseRate;
+
+        if (warrantyDuration.Contains("5"))
+        {
+            adjustedRate += 50;  // Add $50 for 5-year warranties
+        }
+        else if (warrantyDuration.Contains("7"))
+        {
+            adjustedRate += 100; // Add $100 for 7-year warranties
+        }
+
+        return adjustedRate;
+    }
+}

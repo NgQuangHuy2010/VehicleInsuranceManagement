@@ -11,7 +11,7 @@
         <div class="row page-titles mx-0">
             <div class="col-sm-6 p-md-0">
                 <div class="welcome-text">
-                    <h4>Tạo mới tài khoản</h4>
+                    <h4>Create new</h4>
 
                 </div>
             </div>
@@ -31,7 +31,7 @@
                                     <div class="row">
                                         <div class="col-lg-6 mb-4">
                                             <div class="form-group">
-                                                <h5><label class="text-label">Fullname</label></h5>
+                                                <h5><label class="text-label">Fullname</label><span class="text-danger pl-2">&#8727;</span></h5>
                                                 <input type="text" asp-for="Fullname" class="form-control" />
                                                 <span class="text-danger" asp-validation-for="Fullname"></span>
                                             </div>
@@ -52,14 +52,14 @@
                                     <div class="row">
                                         <div class="col-lg-6 mb-4">
                                             <div class="form-group">
-                                                <h5><label class="text-label">Email</label></h5>
+                                                <h5><label class="text-label">Email</label><span class="text-danger pl-2">&#8727;</span></h5>
                                                 <input type="text" asp-for="Email" class="form-control" />
                                                 <span class="text-danger" asp-validation-for="Email"></span>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 mb-4">
                                             <div class="form-group">
-                                                <h5><label class="text-label">Role</label></h5>
+                                                <h5><label class="text-label">Role</label><span class="text-danger pl-2">&#8727;</span></h5>
                                                 <select asp-for="RoleId" class="form-control">
                                                     <option>Chọn vai trò</option>
                                                     @foreach (var role in ViewBag.Role)
@@ -77,7 +77,7 @@
                                     <div class="row">
                                         <div class="col-lg-6 mb-4">
                                             <div class="form-group">
-                                                <h5><label class="text-label">Password</label></h5>
+                                                <h5><label class="text-label">Password</label><span class="text-danger pl-2">&#8727;</span></h5>
                                                 <input type="text" asp-for="Password" class="form-control" />
                                                 <span class="text-danger" asp-validation-for="Password"></span>
                                                 <div class="text-danger">
@@ -98,7 +98,7 @@
 
                                         <div class="col-lg-6 mb-4">
                                             <div class="form-group">
-                                                <h5><label class="text-label">ConfirmPassword</label></h5>
+                                                <h5><label class="text-label">ConfirmPassword</label><span class="text-danger pl-2">&#8727;</span></h5>
                                                 <input type="text" asp-for="ConfirmPassword" class="form-control" />
                                                 <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
                                             </div>

@@ -55,3 +55,11 @@
         </a>
     </li>
 }
+@if (Model.IsAdminContactUs || Model.IsAdmin)
+{
+    <li>
+        <a asp-controller="ContactUsAdmin" asp-action="Index" aria-expanded="false">
+            <i class="fa fa-file-image-o mr-2"></i><span class="nav-text">Contact Us</span>
+        </a>
+    </li>
+}

@@ -1,9 +1,10 @@
-﻿//using Microsoft.AspNetCore.Authorization;
-//using Microsoft.AspNetCore.Identity;
-//using Microsoft.AspNetCore.Mvc;
-//using Project3.Models;
-//using Project3.ModelsView;
-//using Project3.ModelsView.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Project3.Models;
+using Project3.ModelsView;
+using Project3.ModelsView.Identity;
 
 //namespace Project3.Areas.System.Controllers
 //{
