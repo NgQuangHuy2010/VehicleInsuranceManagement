@@ -29,7 +29,7 @@ namespace Project3.Controllers
         {
             if (ModelState.IsValid)
             {
-                var contact = new ContactU
+                var contact = new ContactUs
                 {
                     Email = contactUs.Email,
                     FullName = contactUs.FullName,

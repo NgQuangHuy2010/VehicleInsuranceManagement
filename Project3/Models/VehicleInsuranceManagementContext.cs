@@ -37,7 +37,7 @@ public partial class VehicleInsuranceManagementContext : DbContext
 
     public virtual DbSet<CompanyExpense> CompanyExpenses { get; set; }
 
-    public virtual DbSet<ContactU> ContactUs { get; set; }
+    public virtual DbSet<ContactUs> ContactUs { get; set; }
 
     public virtual DbSet<Estimate> Estimates { get; set; }
 
@@ -207,7 +207,7 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.Property(e => e.TypeOfExpense).HasColumnName("type_of_expense");
         });
 
-        modelBuilder.Entity<ContactU>(entity =>
+        modelBuilder.Entity<ContactUs>(entity =>
         {
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Phone).HasMaxLength(50);
@@ -222,9 +222,9 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.ToTable("Estimate");
 
             entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
-            entity.Property(e => e.CustomerName)
-                .HasMaxLength(100)
-                .IsUnicode(false);
+            //entity.Property(e => e.CustomerName)
+            //    .HasMaxLength(100)
+            //    .IsUnicode(false);
             entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
             entity.Property(e => e.CustomerPhoneNumber)
                 .HasMaxLength(15)
@@ -276,94 +276,98 @@ public partial class VehicleInsuranceManagementContext : DbContext
                 .HasConstraintName("insurance_process_user_id_AspNetUsers");
         });
 
-        modelBuilder.Entity<InsuranceProduct>(entity =>
-        {
-            entity.HasKey(e => e.InsuranceProductId).HasName("PK__Insuranc__FC79FCCFBDC622B8");
+        //modelBuilder.Entity<InsuranceProduct>(entity =>
+        //{
+        //    entity.HasKey(e => e.InsuranceProductId).HasName("PK__Insuranc__FC79FCCFBDC622B8");
 
-            entity.ToTable("InsuranceProduct");
+        //    entity.ToTable("InsuranceProduct");
 
-            entity.HasOne(d => d.PolicyType).WithMany(p => p.InsuranceProducts)
-                .HasForeignKey(d => d.PolicyTypeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Insurance__Polic__0E04126B");
+        //    //  entity.HasOne(d => d.PolicyType).WithMany(p => p.InsuranceProducts)
+        //    //.HasForeignKey(d => d.PolicyTypeId)
+        //    //.OnDelete(DeleteBehavior.ClientSetNull)
+        //    //.HasConstraintName("FK__Insurance__Polic__0E04126B");
 
-            entity.HasOne(d => d.Warranty).WithMany(p => p.InsuranceProducts)
-                .HasForeignKey(d => d.WarrantyId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Insurance__Warra__0EF836A4");
-        });
+        //    //    entity.HasOne(d => d.Warranty).WithMany(p => p.InsuranceProducts)
+        //    //        .HasForeignKey(d => d.WarrantyId)
+        //    //        .OnDelete(DeleteBehavior.ClientSetNull)
+        //    //        .HasConstraintName("FK__Insurance__Warra__0EF836A4");
+        //    //});
 
-        modelBuilder.Entity<NameRole>(entity =>
-        {
-            entity.ToTable("NameRole");
+            modelBuilder.Entity<NameRole>(entity =>
+            {
+                entity.ToTable("NameRole");
 
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.NameRole1).HasColumnName("name_role");
-        });
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.NameRole1).HasColumnName("name_role");
+            });
 
-        modelBuilder.Entity<RolePermission>(entity =>
-        {
-            entity.ToTable("Role_Permissions");
+            modelBuilder.Entity<RolePermission>(entity =>
+            {
+                entity.ToTable("Role_Permissions");
 
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.PermissionsId)
-                .HasMaxLength(450)
-                .HasColumnName("permissions_id");
-            entity.Property(e => e.RoleId)
-                .HasMaxLength(450)
-                .HasColumnName("role_id");
-        });
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.PermissionsId)
+                    .HasMaxLength(450)
+                    .HasColumnName("permissions_id");
+                entity.Property(e => e.RoleId)
+                    .HasMaxLength(450)
+                    .HasColumnName("role_id");
+            });
 
-        modelBuilder.Entity<VehicleInformation>(entity =>
-        {
-            entity.ToTable("vehicle_information");
+            modelBuilder.Entity<VehicleInformation>(entity =>
+            {
+                entity.ToTable("vehicle_information");
 
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.VehicleBodyNumber).HasColumnName("vehicle_body_number");
-            entity.Property(e => e.VehicleEngineNumber).HasColumnName("vehicle_engine_number");
-            entity.Property(e => e.VehicleModel).HasColumnName("vehicle_model");
-            entity.Property(e => e.VehicleName).HasColumnName("vehicle_name");
-            entity.Property(e => e.VehicleNumber).HasColumnName("vehicle_number");
-            entity.Property(e => e.VehicleOwnerName).HasColumnName("vehicle_owner_name");
-            entity.Property(e => e.VehicleRate).HasColumnName("vehicle_rate");
-            entity.Property(e => e.VehicleVersion).HasColumnName("vehicle_version");
-        });
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.VehicleBodyNumber).HasColumnName("vehicle_body_number");
+                entity.Property(e => e.VehicleEngineNumber).HasColumnName("vehicle_engine_number");
+                entity.Property(e => e.VehicleModel).HasColumnName("vehicle_model");
+                entity.Property(e => e.VehicleName).HasColumnName("vehicle_name");
+                entity.Property(e => e.VehicleNumber).HasColumnName("vehicle_number");
+                entity.Property(e => e.VehicleOwnerName).HasColumnName("vehicle_owner_name");
+                entity.Property(e => e.VehicleRate).HasColumnName("vehicle_rate");
+                entity.Property(e => e.VehicleVersion).HasColumnName("vehicle_version");
+            });
 
-        modelBuilder.Entity<VehiclePolicyType>(entity =>
-        {
-            entity.HasKey(e => e.PolicyTypeId);
+            modelBuilder.Entity<VehiclePolicyType>(entity =>
+            {
+                entity.HasKey(e => e.PolicyTypeId);
 
-            entity.ToTable("VehiclePolicyType");
+                entity.ToTable("VehiclePolicyType");
 
-            entity.Property(e => e.PolicyTypeId).HasColumnName("PolicyTypeID");
-            entity.Property(e => e.PolicyDetails)
-                .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.PolicyName)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-        });
+                entity.Property(e => e.PolicyTypeId).HasColumnName("PolicyTypeID");
+                entity.Property(e => e.PolicyDetails)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+                entity.Property(e => e.PolicyName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
 
-        modelBuilder.Entity<VehicleWarranty>(entity =>
-        {
-            entity.HasKey(e => e.WarrantyId);
+            modelBuilder.Entity<VehicleWarranty>(entity =>
+            {
+                entity.HasKey(e => e.WarrantyId);
 
-            entity.ToTable("VehicleWarranty");
+                entity.ToTable("VehicleWarranty");
 
-            entity.Property(e => e.WarrantyId).HasColumnName("WarrantyID");
-            entity.Property(e => e.WarrantyDetails)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.WarrantyDuration)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.WarrantyType)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-        });
+                entity.Property(e => e.WarrantyId).HasColumnName("WarrantyID");
+                entity.Property(e => e.WarrantyDetails)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+                entity.Property(e => e.WarrantyDuration)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+                entity.Property(e => e.WarrantyType)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
 
-        OnModelCreatingPartial(modelBuilder);
-    }
+            OnModelCreatingPartial(modelBuilder);
+        }
+
+
+
+
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
