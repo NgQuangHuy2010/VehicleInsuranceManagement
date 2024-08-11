@@ -13,5 +13,9 @@ public partial class VehicleWarranty
 
     public string? WarrantyDetails { get; set; }
 
+    public virtual ICollection<Estimate> Estimates { get; set; } = new List<Estimate>();
+
+    public virtual ICollection<InsuranceProcess> InsuranceProcesses { get; set; } = new List<InsuranceProcess>();
+
     public virtual ICollection<InsuranceProduct> InsuranceProducts { get; set; } = new List<InsuranceProduct>();
 }

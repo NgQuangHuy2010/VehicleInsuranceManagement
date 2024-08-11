@@ -4,8 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Project3.Models;
 using System.Threading.Tasks;
 
-namespace Project3.Areas.System.Controllers { 
-[Area("system")]
+namespace Project3.Areas.System.Controllers {
+    [Authorize(Policy = "AuthorizeSystemAreas")]
+    [Area("system")]
 [Route("system/vehicleinformation")]
 public class AdminVehicleInformationsController : Controller
 {

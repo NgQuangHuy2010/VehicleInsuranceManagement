@@ -18,10 +18,20 @@
 @if (Model.IsAdminInsuranceProducts || Model.IsAdmin)
 {
     <li>
-        <a asp-controller="AdminInsuranceProducts" asp-action="Index" aria-expanded="false">
-            <i class="fa fa-file-image-o mr-2"></i><span class="nav-text">Insurance Products</span>
+        <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+            <i class="fa fa-user mr-2"></i>
+            <span class="nav-text">Insurance Products</span>
         </a>
+        <ul aria-expanded="false">
+            <li><a asp-controller="AdminInsuranceProducts" asp-action="Index">Insurance Products</a></li>
+            <li><a asp-controller="VehiclePolicyTypes" asp-action="index">VehiclePolicyTypes</a></li>
+            <li><a asp-controller="VehicleWarranties" asp-action="index">VehicleWarranties</a></li>
+
+        </ul>
     </li>
+
+
+
 }
 @if (Model.IsAdminVehicleInformations || Model.IsAdmin)
 {
@@ -63,3 +73,8 @@
         </a>
     </li>
 }
+
+
+
+
+

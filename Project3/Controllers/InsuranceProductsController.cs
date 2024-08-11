@@ -1,14 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Project3;
 using Project3.Models;
 using Project3.ModelsView;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using Project3;
 
 [Authorize]
 [Route("[controller]")]
@@ -136,7 +132,7 @@ public class InsuranceProductsController : Controller
             return NotFound("Policy or Warranty not found.");
         }
 
-       // float adjustedRate = CalculateAdjustedRate((float)policy.VehicleRate, warranty.WarrantyDuration);
+        float adjustedRate = CalculateAdjustedRate((float)policy.VehicleRate, warranty.WarrantyDuration);
 
         // Get the image URL from the map
         _policyImageMap.TryGetValue(policy.PolicyTypeId, out string imageUrl);

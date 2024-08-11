@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project3.Models;
 using System.Threading.Tasks;
@@ -6,8 +7,8 @@ using System.Threading.Tasks;
 namespace Project3.Areas.System.Controllers
 {
 
-
-[Area("system")]
+    [Authorize(Policy = "AuthorizeSystemAreas")]
+    [Area("system")]
 [Route("system/companybilling")]
 public class CompanyExpensesController : Controller
 {

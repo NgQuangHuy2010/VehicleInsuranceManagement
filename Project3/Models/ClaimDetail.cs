@@ -9,11 +9,11 @@ public partial class ClaimDetail
 
     public decimal? ClaimNumber { get; set; }
 
-    public string? PolicyNumber { get; set; }
+    public decimal? PolicyNumber { get; set; }
 
-    public DateTime? PolicyStartDate { get; set; }
+    public DateOnly? PolicyStartDate { get; set; }
 
-    public DateTime? PolicyEndDate { get; set; }
+    public DateOnly? PolicyEndDate { get; set; }
 
     public string? CustomerName { get; set; }
 

@@ -6,7 +6,7 @@
 
 namespace Project3.Areas.System.Controllers
 {
-    //[Authorize(Policy = "AuthorizeSystemAreas")]
+    [Authorize(Policy = "AuthorizeSystemAreas")]
     [Area("system")]
     [Route("system/estimates")]
     public class AdminEstimatesController : Controller
