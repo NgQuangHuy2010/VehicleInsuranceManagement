@@ -29,7 +29,7 @@ public partial class InsuranceProcess
 
     public string? VehicleVersion { get; set; }
 
-    public double? VehicleRate { get; set; }
+    public double VehicleRate { get; set; }
 
     public string? VehicleWarranty { get; set; }
 
@@ -46,4 +46,10 @@ public partial class InsuranceProcess
     public int PolicyTypeId { get; set; }
 
     public virtual AspNetUser? Customer { get; set; }
+
+    public virtual VehiclePolicyType PolicyType { get; set; } = null!;
+
+    public virtual VehicleInformation Vehicle { get; set; } = null!;
+
+    public virtual VehicleWarranty? Warranty { get; set; }
 }

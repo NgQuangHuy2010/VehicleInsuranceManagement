@@ -10,11 +10,12 @@
         <div class="col-md-6">
             <div class="card text-center shadow-sm">
                 <div class="card-body">
-                    <img src="~/images/confirmation.jpg" class="card-img-top mb-4" alt="Confirmation Image" />
+                    <!-- Display the same product image that was shown in the Index view -->
+                    <img src="@Url.Content(Model.ImageUrl)" class="card-img-top mb-4" alt="Product Image" />
                     <h2 class="card-title text-primary mb-4">@ViewData["Title"]</h2>
                     <p class="card-text">Thank you for your purchase!</p>
 
-                    <h3 class="mb-3">Estimation</h3>
+                    <h3 class="mb-3">Confirmation</h3>
                     <h5 class="card-title">@Model.PolicyName</h5>
                     <p class="card-text">@Model.PolicyDetails</p>
                     <p class="card-text"><strong>Warranty:</strong> @Model.WarrantyType (@Model.WarrantyDuration months)</p>

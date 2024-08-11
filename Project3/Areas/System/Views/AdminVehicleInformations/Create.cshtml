@@ -5,12 +5,12 @@
     Layout = "~/Areas/System/Views/Layout/LayoutAdmin.cshtml";
 }
 
-<div class="container mt-5">
+<div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow-sm">
-                <div class="card-header bg-info text-white">
-                    <h4 class="card-title">@ViewData["Title"]</h4>
+                <div class="card-header bg-info text-white text-center">
+                    <h2>@ViewData["Title"]</h2>
                 </div>
                 <div class="card-body">
                     <form asp-action="Create">

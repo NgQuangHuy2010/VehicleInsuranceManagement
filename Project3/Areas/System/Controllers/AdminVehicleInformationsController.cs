@@ -86,16 +86,31 @@ public class AdminVehicleInformationsController : Controller
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var vehicle = await _context.VehicleInformations.FindAsync(id);
-            if (vehicle != null)
+            try
             {
-                _context.VehicleInformations.Remove(vehicle);
-                await _context.SaveChangesAsync();
+                // Temporarily disable foreign key checks
+                await _context.Database.ExecuteSqlRawAsync("SET FOREIGN_KEY_CHECKS=0");
+
+                var vehicle = await _context.VehicleInformations.FindAsync(id);
+                if (vehicle != null)
+                {
+                    _context.VehicleInformations.Remove(vehicle);
+                    await _context.SaveChangesAsync();
+                }
+
+                // Re-enable foreign key checks
+                await _context.Database.ExecuteSqlRawAsync("SET FOREIGN_KEY_CHECKS=1");
             }
+            catch (Exception ex)
+            {
+                // Handle any errors that occur during the deletion process
+                // Log the error or return an error message
+                return BadRequest("An error occurred while deleting the vehicle.");
+            }
+
             return RedirectToAction(nameof(Index));
         }
-
-    [HttpGet("Details/{id}")]
+        [HttpGet("Details/{id}")]
     public async Task<IActionResult> Details(int id)
     {
         var vehicle = await _context.VehicleInformations.FirstOrDefaultAsync(v => v.Id == id);

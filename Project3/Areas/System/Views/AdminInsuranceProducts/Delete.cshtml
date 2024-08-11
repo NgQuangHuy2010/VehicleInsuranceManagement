@@ -4,34 +4,41 @@
     Layout = "~/Areas/System/Views/Layout/LayoutAdmin.cshtml";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-danger text-white text-center">
-                    <h2>@ViewData["Title"]</h2>
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="row page-titles mx-0">
+            <div class="col-sm-6 p-md-0">
+                <div class="welcome-text">
+                    <h4>@ViewData["Title"]</h4>
                 </div>
-                <div class="card-body">
-                    <div class="form-group">
-                        <label>Policy Name:</label>
-                        <p>@Model.PolicyName</p>
-                    </div>
-                    <div class="form-group">
-                        <label>Policy Details:</label>
-                        <p>@Model.PolicyDetails</p>
-                    </div>
-                    <div class="form-group">
-                        <label>Vehicle Rate:</label>
-                        <p>@Model.VehicleRate</p>
-                    </div>
-                    <form asp-action="DeleteConfirmed" method="post">
-                        <input type="hidden" asp-for="PolicyTypeId" />
-                        <div class="alert alert-danger" role="alert">
-                            Are you sure you want to delete this insurance product?
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Policy Name:</label>
+                            <p>@Model.PolicyName</p>
                         </div>
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                        <a href="@Url.Action("Index")" class="btn btn-secondary">Cancel</a>
-                    </form>
+                        <div class="form-group">
+                            <label>Policy Details:</label>
+                            <p>@Model.PolicyDetails</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Vehicle Rate:</label>
+                            <p>@Model.VehicleRate</p>
+                        </div>
+                        <form asp-action="DeleteConfirmed" method="post">
+                            <input type="hidden" asp-for="PolicyTypeId" />
+                            <div class="alert alert-danger" role="alert">
+                                Are you sure you want to delete this insurance product?
+                            </div>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <a href="@Url.Action("Index")" class="btn btn-secondary">Cancel</a>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

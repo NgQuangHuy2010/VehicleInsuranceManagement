@@ -11,9 +11,6 @@ public partial class VehicleInformationViewModel
     [Required]
     public string? VehicleName { get; set; }
 
-    //[Required]
-    //public string? VehicleOwnerName { get; set; }
-
     [Required]
     public string? VehicleModel { get; set; }
 

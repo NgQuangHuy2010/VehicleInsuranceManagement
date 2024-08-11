@@ -14,4 +14,6 @@ public partial class AspNetRole
     public string? ConcurrencyStamp { get; set; }
 
     public virtual ICollection<AspNetRoleClaim> AspNetRoleClaims { get; set; } = new List<AspNetRoleClaim>();
+
+    public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
 }

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Project3.ModelsView.Identity;
 using Humanizer;
 using Microsoft.AspNetCore.Authorization;
+using System.Web.Providers.Entities;
 namespace Project3.Controllers
 {
     [Authorize]
@@ -25,19 +26,28 @@ namespace Project3.Controllers
             _logger = logger;
         }
 
-       
-        [HttpGet("Create")]
-        public async Task<IActionResult> Create() {
 
-            
-            var policytypename = await _context.VehiclePolicyTypes.ToListAsync();
-            var warrantyname = await _context.VehicleWarranties.ToListAsync();
+        [HttpGet("Create")]
+        public async Task<IActionResult> Create()
+        {
             var sessionData = HttpContext.Session.GetObject<VehicleInformationViewModel>("VehicleInformationData");
             var user = await _userManager.GetUserAsync(User);
             var productSession = HttpContext.Session.GetObject<InsuranceProductViewModel>("productSession");
+
             if (user == null)
             {
                 return RedirectToAction("Login", "Account");
+            }
+
+            // Fetch the policy type and warranty information
+            var policyType = await _context.VehiclePolicyTypes.FindAsync(productSession.PolicyTypeId);
+            var warranty = await _context.VehicleWarranties.FindAsync(productSession.WarrantyId);
+
+            // Ensure these properties are not null before passing to the view
+            if (policyType == null || warranty == null)
+            {
+                ModelState.AddModelError(string.Empty, "Policy Type or Warranty details could not be found.");
+                return View();
             }
 
             var viewModel = new EstimateModelView
@@ -50,39 +60,55 @@ namespace Project3.Controllers
                 VehicleModel = sessionData.VehicleModel,
                 VehicleVersion = sessionData.VehicleVersion,
                 VehicleRate = sessionData.VehicleRate,
-                PolicyTypeId = productSession.PolicyTypeId,  
-                WarrantyId = productSession.WarrantyId
-
+                PolicyTypeId = productSession.PolicyTypeId,
+                PolicyTypeName = policyType.PolicyName,  // Set policy type name
+                PolicyTypeDetails = policyType.PolicyDetails,  // Set policy type details
+                WarrantyId = productSession.WarrantyId,
+                WarrantyType = warranty.WarrantyType,  // Set warranty type
+                WarrantyDetails = warranty.WarrantyDetails  // Set warranty details
             };
-            
+
+            _logger.LogInformation("Warranty Type: {WarrantyType}, Warranty Details: {WarrantyDetails}", viewModel.WarrantyType, viewModel.WarrantyDetails);
+            _logger.LogInformation("Policy Type Name: {PolicyTypeName}, Policy Type Details: {PolicyTypeDetails}", viewModel.PolicyTypeName, viewModel.PolicyTypeDetails);
+
             return View(viewModel);
         }
+
 
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(EstimateModelView viewModel)
         {
-            var productSession = HttpContext.Session.GetObject<InsuranceProductViewModel>("productSession");
-
-            if (ModelState.IsValid)
+            
+            
+            var user = await _userManager.GetUserAsync(User);
+             if (ModelState.IsValid)
             {
                 try
                 {
+                    var sessionData = HttpContext.Session.GetObject<VehicleInformationViewModel>("VehicleInformationData");
+                    var productSession = HttpContext.Session.GetObject<InsuranceProductViewModel>("productSession");
+                    var policyType = await _context.VehiclePolicyTypes.FindAsync(productSession.PolicyTypeId);
+                    var warranty = await _context.VehicleWarranties.FindAsync(productSession.WarrantyId);
                     // This line checks if the PolicyTypeId exists in the database, but the result is not used
-                    viewModel.Policies = await _context.VehiclePolicyTypes.AnyAsync(c => c.PolicyTypeId == viewModel.PolicyTypeId);
+                    viewModel.HasActivePolicies = await _context.VehiclePolicyTypes.AnyAsync(c => c.PolicyTypeId == viewModel.PolicyTypeId);
 
                     var estimate = new EstimateModelView
                     {
-                        CustomerId = viewModel.CustomerId,
-                        EstimateNumber = viewModel.EstimateNumber,
-                        CustomerName = viewModel.CustomerName,
-                        CustomerPhoneNumber = viewModel.CustomerPhoneNumber,
-                        VehicleName = viewModel.VehicleName,
-                        VehicleModel = viewModel.VehicleModel,
-                        VehicleVersion = viewModel.VehicleVersion,
-                        VehicleRate = viewModel.VehicleRate,
+                        CustomerId = user.Id,
+                        CustomerName = user.Fullname,
+                        CustomerPhoneNumber = user.Phone,
+                        VehicleId = sessionData.Id,
+                        VehicleName = sessionData.VehicleName,
+                        VehicleModel = sessionData.VehicleModel,
+                        VehicleVersion = sessionData.VehicleVersion,
+                        VehicleRate = sessionData.VehicleRate,
                         PolicyTypeId = productSession.PolicyTypeId,
-                        WarrantyId = productSession.WarrantyId
+                        PolicyTypeName = policyType.PolicyName,  // Set policy type name
+                        PolicyTypeDetails = policyType.PolicyDetails,  // Set policy type details
+                        WarrantyId = productSession.WarrantyId,
+                        WarrantyType = warranty.WarrantyType,  // Set warranty type
+                        WarrantyDetails = warranty.WarrantyDetails
                     };
                     
                     // Log successful creation
@@ -92,7 +118,7 @@ namespace Project3.Controllers
                     HttpContext.Session.SetObject("EstimateData", estimate);
 
                     // Log the session data to console
-                    var sessionData = HttpContext.Session.GetObject<EstimateModelView>("EstimateData");
+                    
                     _logger.LogInformation("Session Estimate: {@SessionData}", sessionData);
 
                     // Redirect to InsuranceProcess Create view

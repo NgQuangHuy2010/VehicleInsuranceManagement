@@ -12,5 +12,6 @@
         public string? WarrantyDetails { get; set; }  // Detailed description of the warranty
 
         public float VehicleRate { get; set; }  // The rate or cost associated with the insurance product
+        public string? ImageUrl { get; set; }  // URL of the image associated with the product
     }
 }

@@ -9,7 +9,7 @@ public partial class Estimate
 
     public int EstimateNumber { get; set; }
 
-    public string? CustomeName { get; set; }
+    public string? CustomerName { get; set; }
 
     public string? CustomerPhoneNumber { get; set; }
 
@@ -25,4 +25,9 @@ public partial class Estimate
 
     public int VehicleId { get; set; }
 
+    public virtual VehiclePolicyType PolicyType { get; set; } = null!;
+
+    public virtual VehicleInformation Vehicle { get; set; } = null!;
+
+    public virtual VehicleWarranty? Warranty { get; set; }
 }

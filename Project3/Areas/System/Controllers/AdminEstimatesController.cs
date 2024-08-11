@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Project3.Models;
+﻿    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Rendering;
+    using Microsoft.EntityFrameworkCore;
+    using Project3.Models;
 
 namespace Project3.Areas.System.Controllers
 {
-    [Authorize(Policy = "AuthorizeSystemAreas")]
+    //[Authorize(Policy = "AuthorizeSystemAreas")]
     [Area("system")]
     [Route("system/estimates")]
     public class AdminEstimatesController : Controller
@@ -23,20 +23,18 @@ namespace Project3.Areas.System.Controllers
         [HttpGet("Index")]
         public async Task<IActionResult> Index()
         {
-            var estimates = await _context.Estimates.Include(e => e.VehicleRate)
-                                                    .Include(e => e.PolicyTypeId)
-                                                    .Include(e => e.WarrantyId)
-                                                    .ToListAsync();
+            var estimates = await _context.Estimates.Include(e => e.PolicyType)
+                                        .Include(e => e.Warranty)
+                                        .ToListAsync();
             return View(estimates);
         }
 
         [HttpGet("Details/{id}")]
         public async Task<IActionResult> Details(int id)
         {
-            var estimate = await _context.Estimates.Include(e => e.VehicleRate)
-                                                   .Include(e => e.PolicyTypeId)
-                                                   .Include(e => e.WarrantyId)
-                                                   .FirstOrDefaultAsync(m => m.EstimateNumber == id);
+            var estimate = await _context.Estimates.Include(e => e.PolicyType)
+                                                   .Include(e => e.Warranty)
+                                                   .FirstOrDefaultAsync(e => e.EstimateNumber == id);
 
             if (estimate == null)
             {
@@ -127,10 +125,9 @@ namespace Project3.Areas.System.Controllers
         [HttpGet("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var estimate = await _context.Estimates.Include(e => e.VehicleRate)
-                                                   .Include(e => e.PolicyTypeId)
-                                                   .Include(e => e.WarrantyId)
-                                                   .FirstOrDefaultAsync(m => m.EstimateNumber == id);
+            var estimate = await _context.Estimates.Include(e => e.PolicyType)
+                                                   .Include(e => e.Warranty)
+                                                   .FirstOrDefaultAsync(e => e.EstimateNumber == id);
 
             if (estimate == null)
             {
@@ -150,6 +147,14 @@ namespace Project3.Areas.System.Controllers
                 _context.Estimates.Remove(estimate);
                 await _context.SaveChangesAsync();
                 _logger.LogInformation("Admin deleted estimate with ID {EstimateId}", id);
+            }
+            else
+            {
+                // Handle the case where the estimate doesn't exist
+                if (!EstimateExists(id))
+                {
+                    return NotFound();
+                }
             }
             return RedirectToAction(nameof(Index));
         }

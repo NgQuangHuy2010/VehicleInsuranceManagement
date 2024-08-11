@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project3.Models;
 using Project3.ModelsView;
+using System.Linq;
+using System.Threading.Tasks;
+
 namespace Project3.Areas.System.Controllers
 {
-    [Authorize(Policy = "AuthorizeSystemAreas")]
-    [Area("system")]
-    [Route("system/insuranceproduct")]
+    [Area("System")]
+    [Route("System/InsuranceProduct")]
     public class AdminInsuranceProductsController : Controller
     {
         private readonly VehicleInsuranceManagementContext _context;
@@ -20,56 +21,30 @@ namespace Project3.Areas.System.Controllers
         [HttpGet("Index")]
         public async Task<IActionResult> Index()
         {
-            // Fetch all policy types and warranties
+            // Fetch all policy types and warranties separately
             var policyTypes = await _context.VehiclePolicyTypes.ToListAsync();
             var warranties = await _context.VehicleWarranties.ToListAsync();
 
             // Combine the data into a list of view models
-            var insuranceProducts = policyTypes.Select(policy =>
+            var insuranceProducts = policyTypes.Select(policy => new InsuranceProductViewModel
             {
-                // Match warranties based on some other criteria
-                var matchingWarranty = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policy.PolicyName));
-
-                return new InsuranceProductViewModel
-                {
-                    PolicyTypeId = policy.PolicyTypeId,
-                    PolicyName = policy.PolicyName,
-                    PolicyDetails = policy.PolicyDetails,
-                    VehicleRate = (float)(policy.VehicleRate ?? 0),
-                    WarrantyId = matchingWarranty?.WarrantyId ?? 0,
-                    WarrantyType = matchingWarranty?.WarrantyType,
-                    WarrantyDuration = matchingWarranty?.WarrantyDuration,
-                    WarrantyDetails = matchingWarranty?.WarrantyDetails
-                };
+                PolicyTypeId = policy.PolicyTypeId,
+                PolicyName = policy.PolicyName,
+                PolicyDetails = policy.PolicyDetails,
+                VehicleRate = (float)(policy.VehicleRate ?? 0),
+                WarrantyId = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policy.PolicyName))?.WarrantyId ?? 0,
+                WarrantyType = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policy.PolicyName))?.WarrantyType,
+                WarrantyDuration = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policy.PolicyName))?.WarrantyDuration,
+                WarrantyDetails = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policy.PolicyName))?.WarrantyDetails
             }).ToList();
 
             return View(insuranceProducts);
         }
 
         [HttpGet("Create")]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            // Fetch all policy types and warranties from the database
-            var policyTypes = await _context.VehiclePolicyTypes.ToListAsync();
-            var warranties = await _context.VehicleWarranties.ToListAsync();
-
-            // This could be replaced by a ViewModel to combine data from both tables
-            var viewModel = new InsuranceProductViewModel
-            {
-                // Initialize the properties based on the fetched data
-                // Adjust this according to how you want to display data
-                // Example: Using SelectList for dropdowns if required in the view
-                PolicyTypeId = policyTypes.FirstOrDefault()?.PolicyTypeId ?? 0,
-                PolicyName = policyTypes.FirstOrDefault()?.PolicyName,
-                PolicyDetails = policyTypes.FirstOrDefault()?.PolicyDetails,
-                WarrantyId = warranties.FirstOrDefault()?.WarrantyId ?? 0,
-                WarrantyType = warranties.FirstOrDefault()?.WarrantyType,
-                WarrantyDuration = warranties.FirstOrDefault()?.WarrantyDuration,
-                WarrantyDetails = warranties.FirstOrDefault()?.WarrantyDetails,
-                VehicleRate = (float)(policyTypes.FirstOrDefault()?.VehicleRate ?? 0)
-            };
-
-            return View(viewModel);
+            return View(new InsuranceProductViewModel());
         }
 
         [HttpPost("Create")]
@@ -78,68 +53,22 @@ namespace Project3.Areas.System.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
+                var policyType = new VehiclePolicyType
                 {
+                    PolicyName = viewModel.PolicyName,
+                    PolicyDetails = viewModel.PolicyDetails,
+                    VehicleRate = viewModel.VehicleRate
+                };
 
-                    // Add logic to save the new policy or warranty, if that's the intent
-                    var policyType = new VehiclePolicyType
-                    {
-                        PolicyName = viewModel.PolicyName,
-                        PolicyDetails = viewModel.PolicyDetails,
-                        VehicleRate = viewModel.VehicleRate
-                    };
+                _context.VehiclePolicyTypes.Add(policyType);
+                await _context.SaveChangesAsync();
 
-                    _context.VehiclePolicyTypes.Add(policyType);
-                    await _context.SaveChangesAsync();
-
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (Exception ex)
-                {
-
-                    ModelState.AddModelError(string.Empty, "An error occurred while creating the product.");
-                }
+                return RedirectToAction(nameof(Index));
             }
-
-            // If the ModelState is invalid or an error occurs, re-fetch the data for the view
-            var policyTypes = await _context.VehiclePolicyTypes.ToListAsync();
-            var warranties = await _context.VehicleWarranties.ToListAsync();
-
-            viewModel.PolicyTypeId = policyTypes.FirstOrDefault()?.PolicyTypeId ?? 0;
-            viewModel.WarrantyId = warranties.FirstOrDefault()?.WarrantyId ?? 0;
-
-            return View(viewModel);
-        }
-        // GET: System/InsuranceProducts/Details/5
-        [HttpGet("Details/{id}")]
-        public async Task<IActionResult> Details(int id)
-        {
-            // Fetch the policy type by ID
-            var policyType = await _context.VehiclePolicyTypes.FindAsync(id);
-            if (policyType == null)
-            {
-                return NotFound();
-            }
-
-            // Fetch warranties (you might want to apply logic to pick the right one)
-            var warranty = await _context.VehicleWarranties.FirstOrDefaultAsync();
-
-            var viewModel = new InsuranceProductViewModel
-            {
-                PolicyTypeId = policyType.PolicyTypeId,
-                PolicyName = policyType.PolicyName,
-                PolicyDetails = policyType.PolicyDetails,
-                VehicleRate = (float)(policyType.VehicleRate ?? 0),
-                WarrantyId = warranty?.WarrantyId ?? 0,
-                WarrantyType = warranty?.WarrantyType,
-                WarrantyDuration = warranty?.WarrantyDuration,
-                WarrantyDetails = warranty?.WarrantyDetails
-            };
 
             return View(viewModel);
         }
 
-        // GET: System/InsuranceProducts/Edit/5
         [HttpGet("Edit/{id}")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -149,6 +78,7 @@ namespace Project3.Areas.System.Controllers
                 return NotFound();
             }
 
+            // Fetch all warranties (you can apply more specific logic as needed)
             var warranties = await _context.VehicleWarranties.ToListAsync();
 
             var viewModel = new InsuranceProductViewModel
@@ -156,17 +86,16 @@ namespace Project3.Areas.System.Controllers
                 PolicyTypeId = policyType.PolicyTypeId,
                 PolicyName = policyType.PolicyName,
                 PolicyDetails = policyType.PolicyDetails,
-                WarrantyId = warranties.FirstOrDefault()?.WarrantyId ?? 0,
-                WarrantyType = warranties.FirstOrDefault()?.WarrantyType,
-                WarrantyDuration = warranties.FirstOrDefault()?.WarrantyDuration,
-                WarrantyDetails = warranties.FirstOrDefault()?.WarrantyDetails,
+                WarrantyId = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policyType.PolicyName))?.WarrantyId ?? 0,
+                WarrantyType = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policyType.PolicyName))?.WarrantyType,
+                WarrantyDuration = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policyType.PolicyName))?.WarrantyDuration,
+                WarrantyDetails = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policyType.PolicyName))?.WarrantyDetails,
                 VehicleRate = (float)policyType.VehicleRate
             };
 
             return View(viewModel);
         }
 
-        // POST: System/InsuranceProducts/Edit/5
         [HttpPost("Edit/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, InsuranceProductViewModel viewModel)
@@ -178,60 +107,31 @@ namespace Project3.Areas.System.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                var policyType = await _context.VehiclePolicyTypes.FindAsync(id);
+                if (policyType == null)
                 {
-                    var policyType = await _context.VehiclePolicyTypes.FindAsync(id);
-                    if (policyType == null)
-                    {
-                        return NotFound();
-                    }
-
-                    policyType.PolicyName = viewModel.PolicyName;
-                    policyType.PolicyDetails = viewModel.PolicyDetails;
-                    policyType.VehicleRate = viewModel.VehicleRate;
-
-                    _context.Update(policyType);
-                    await _context.SaveChangesAsync();
-
-                    return RedirectToAction(nameof(Index));
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PolicyTypeExists(viewModel.PolicyTypeId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+
+                policyType.PolicyName = viewModel.PolicyName;
+                policyType.PolicyDetails = viewModel.PolicyDetails;
+                policyType.VehicleRate = viewModel.VehicleRate;
+
+                _context.Update(policyType);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
             }
 
             return View(viewModel);
         }
 
-        // GET: System/InsuranceProducts/Delete/5
-        [HttpGet("Delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var policyType = await _context.VehiclePolicyTypes
-                .FirstOrDefaultAsync(m => m.PolicyTypeId == id);
-
-            if (policyType == null)
-            {
-                return NotFound();
-            }
-
-            return View(policyType);
-        }
-
-        // POST: System/InsuranceProducts/Delete/5
-        [HttpPost("Delete/{id}"), ActionName("Delete")]
+        [HttpPost("Delete/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var policyType = await _context.VehiclePolicyTypes.FindAsync(id);
+
             if (policyType != null)
             {
                 _context.VehiclePolicyTypes.Remove(policyType);
@@ -239,6 +139,37 @@ namespace Project3.Areas.System.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet("Details/{id}")]
+        public async Task<IActionResult> Details(int id)
+        {
+            // Find the policy type by its ID
+            var policyType = await _context.VehiclePolicyTypes.FindAsync(id);
+            if (policyType == null)
+            {
+                return NotFound();
+            }
+
+            // Fetch the associated warranty details (or all warranties, if needed)
+            var warranties = await _context.VehicleWarranties.ToListAsync();
+            var matchingWarranty = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policyType.PolicyName));
+
+            // Create a view model to pass the details to the view
+            var viewModel = new InsuranceProductViewModel
+            {
+                PolicyTypeId = policyType.PolicyTypeId,
+                PolicyName = policyType.PolicyName,
+                PolicyDetails = policyType.PolicyDetails,
+                WarrantyId = matchingWarranty?.WarrantyId ?? 0,
+                WarrantyType = matchingWarranty?.WarrantyType,
+                WarrantyDuration = matchingWarranty?.WarrantyDuration,
+                WarrantyDetails = matchingWarranty?.WarrantyDetails,
+                VehicleRate = (float)(policyType.VehicleRate ?? 0)
+            };
+
+            // Pass the view model to the view
+            return View(viewModel);
         }
 
         private bool PolicyTypeExists(int id)

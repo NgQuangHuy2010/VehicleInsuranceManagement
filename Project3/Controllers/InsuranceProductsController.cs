@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Project3.Models;
 using Project3.ModelsView;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Project3;
 
@@ -14,14 +16,35 @@ public class InsuranceProductsController : Controller
 {
     private readonly VehicleInsuranceManagementContext _context;
     private readonly ILogger<InsuranceProductsController> _logger;
+    private readonly Dictionary<int, string> _policyImageMap;
 
-    public InsuranceProductsController(VehicleInsuranceManagementContext context, ILogger<InsuranceProductsController> logger)
+    public InsuranceProductsController(VehicleInsuranceManagementContext context, ILogger<InsuranceProductsController> logger, IWebHostEnvironment env)
     {
         _context = context;
         _logger = logger;
+
+        // Load image mappings from JSON configuration file in wwwroot
+        try
+        {
+            var jsonFilePath = Path.Combine(env.WebRootPath, "policyImages.json");
+            if (System.IO.File.Exists(jsonFilePath))
+            {
+                var json = System.IO.File.ReadAllText(jsonFilePath);
+                _policyImageMap = JsonConvert.DeserializeObject<Dictionary<int, string>>(json);
+            }
+            else
+            {
+                _logger.LogError("The JSON file 'policyImages.json' was not found at {Path}.", jsonFilePath);
+                _policyImageMap = new Dictionary<int, string>(); // Fallback to empty dictionary
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while reading the 'policyImages.json' file.");
+            _policyImageMap = new Dictionary<int, string>(); // Fallback to empty dictionary
+        }
     }
 
-    // GET: InsuranceProducts
     [Route("index")]
     [HttpGet]
     public async Task<IActionResult> Index()
@@ -39,21 +62,15 @@ public class InsuranceProductsController : Controller
             foreach (var warranty in warranties)
             {
                 // Adjust the rate based on the warranty type or duration
-                float adjustedRate = (float)policy.VehicleRate;
+                float adjustedRate = CalculateAdjustedRate((float)policy.VehicleRate, warranty.WarrantyDuration);
 
-                if (warranty.WarrantyDuration.Contains("3"))
+                // Get the image URL from the map
+                if (!_policyImageMap.TryGetValue(policy.PolicyTypeId, out string imageUrl))
                 {
-                    adjustedRate = adjustedRate; // No adjustment needed for 3-year warranties
-                }
-                if (warranty.WarrantyDuration.Contains("5"))
-                {
-                    adjustedRate += 50;  // Add $50 for 5-year warranties
-                }
-                else if (warranty.WarrantyDuration.Contains("7"))
-                {
-                    adjustedRate += 100; // Add $100 for 7-year warranties
+                    imageUrl = "/images/default-product.jpg"; // Default image if no match found
                 }
 
+                // Add the product to the list
                 insuranceProducts.Add(new InsuranceProductViewModel
                 {
                     PolicyTypeId = policy.PolicyTypeId,
@@ -63,7 +80,8 @@ public class InsuranceProductsController : Controller
                     WarrantyType = warranty.WarrantyType,
                     WarrantyDuration = warranty.WarrantyDuration,
                     WarrantyDetails = warranty.WarrantyDetails,
-                    VehicleRate = adjustedRate // Use the adjusted rate
+                    VehicleRate = adjustedRate, // Use the adjusted rate
+                    ImageUrl = imageUrl // Use the image URL from the configuration
                 });
             }
         }
@@ -84,6 +102,9 @@ public class InsuranceProductsController : Controller
             return NotFound("Policy or Warranty not found.");
         }
 
+        // Get the image URL from the map
+        _policyImageMap.TryGetValue(policy.PolicyTypeId, out string imageUrl);
+
         // Create a view model with the selected product details
         var product = new InsuranceProductViewModel
         {
@@ -94,7 +115,8 @@ public class InsuranceProductsController : Controller
             WarrantyType = warranty.WarrantyType,
             WarrantyDuration = warranty.WarrantyDuration,
             WarrantyDetails = warranty.WarrantyDetails,
-            VehicleRate = CalculateAdjustedRate((float)policy.VehicleRate, warranty.WarrantyDuration)
+            VehicleRate = CalculateAdjustedRate((float)policy.VehicleRate, warranty.WarrantyDuration),
+            ImageUrl = imageUrl // Pass the image URL
         };
 
         return View(product); // Return the Buy view with the selected product
@@ -116,7 +138,10 @@ public class InsuranceProductsController : Controller
 
         float adjustedRate = CalculateAdjustedRate((float)policy.VehicleRate, warranty.WarrantyDuration);
 
-        // Create a session object to store the selected product
+        // Get the image URL from the map
+        _policyImageMap.TryGetValue(policy.PolicyTypeId, out string imageUrl);
+
+        // Create a session object to store the selected product, including ImageUrl
         var productSession = new InsuranceProductViewModel
         {
             PolicyTypeId = policy.PolicyTypeId,
@@ -126,7 +151,8 @@ public class InsuranceProductsController : Controller
             WarrantyType = warranty.WarrantyType,
             WarrantyDuration = warranty.WarrantyDuration,
             WarrantyDetails = warranty.WarrantyDetails,
-            VehicleRate = adjustedRate
+            VehicleRate = adjustedRate,
+            ImageUrl = imageUrl // Include the ImageUrl
         };
 
         // Save the productSession into the session

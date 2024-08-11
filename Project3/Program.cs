@@ -44,62 +44,62 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 
-//Cấu hình quyền truy cập
-builder.Services.AddAuthorization(options =>
-{
-    //    // Chính sách cho Admin
-    options.AddPolicy("RequireAdminRole", policy =>
-    {
-        policy.RequireRole("Admin");
-    });
+////Cấu hình quyền truy cập
+//builder.Services.AddAuthorization(options =>
+//{
+//    //    // Chính sách cho Admin
+//    options.AddPolicy("RequireAdminRole", policy =>
+//    {
+//        policy.RequireRole("Admin");
+//    });
 
-    // Chính sách cho ProductManager
-    options.AddPolicy("AdminInsuranceProducts", policy =>
-    {
-        policy.Requirements.Add(new PermissionRequirement("AdminInsuranceProducts"));
-    });
-    options.AddPolicy("AdminEstimates", policy =>
-    {
-        policy.Requirements.Add(new PermissionRequirement("AdminEstimates"));
-    });
-    options.AddPolicy("AdminVehicleInformations", policy =>
-    {
-        policy.Requirements.Add(new PermissionRequirement("AdminVehicleInformations"));
-    });
-    options.AddPolicy("AdminCompanyBillingPolicies", policy =>
-    {
-        policy.Requirements.Add(new PermissionRequirement("AdminCompanyBillingPolicies"));
-    });
-    options.AddPolicy("AdminInsuranceProcess", policy =>
-    {
-        policy.Requirements.Add(new PermissionRequirement("AdminInsuranceProcess"));
-    });
-    options.AddPolicy("AdminContactUs", policy =>
-    {
-        policy.Requirements.Add(new PermissionRequirement("AdminContactUs"));
-    });
-    options.AddPolicy("AdminAccount", policy =>
-    {
-        policy.Requirements.Add(new PermissionRequirement("AdminAccount"));
-    });
+//    // Chính sách cho ProductManager
+//    options.AddPolicy("AdminInsuranceProducts", policy =>
+//    {
+//        policy.Requirements.Add(new PermissionRequirement("AdminInsuranceProducts"));
+//    });
+//    options.AddPolicy("AdminEstimates", policy =>
+//    {
+//        policy.Requirements.Add(new PermissionRequirement("AdminEstimates"));
+//    });
+//    options.AddPolicy("AdminVehicleInformations", policy =>
+//    {
+//        policy.Requirements.Add(new PermissionRequirement("AdminVehicleInformations"));
+//    });
+//    options.AddPolicy("AdminCompanyBillingPolicies", policy =>
+//    {
+//        policy.Requirements.Add(new PermissionRequirement("AdminCompanyBillingPolicies"));
+//    });
+//    options.AddPolicy("AdminInsuranceProcess", policy =>
+//    {
+//        policy.Requirements.Add(new PermissionRequirement("AdminInsuranceProcess"));
+//    });
+//    options.AddPolicy("AdminContactUs", policy =>
+//    {
+//        policy.Requirements.Add(new PermissionRequirement("AdminContactUs"));
+//    });
+//    options.AddPolicy("AdminAccount", policy =>
+//    {
+//        policy.Requirements.Add(new PermissionRequirement("AdminAccount"));
+//    });
 
-    // chặn user truy cập vào System area
-    options.AddPolicy("AuthorizeSystemAreas", policy =>
-    {
-        policy.RequireAssertion(context =>
-        context.User.Identity.IsAuthenticated && // Kiểm tra người dùng đã đăng nhập hay chưa qua identity
-            !context.User.IsInRole("User") // Người dùng thường không được phép
-            || context.User.IsInRole("Admin") // Admin vẫn được phép
-            || context.User.HasClaim(c => c.Type == "AdminInsuranceProducts" && c.Value == "True") // ProductManager vẫn được phép
-            || context.User.HasClaim(c => c.Type == "AdminEstimates" && c.Value == "True") // AccountManager vẫn được phép
-            || context.User.HasClaim(c => c.Type == "AdminVehicleInformations" && c.Value == "True")
-            || context.User.HasClaim(c => c.Type == "AdminCompanyBillingPolicies" && c.Value == "True")
-            || context.User.HasClaim(c => c.Type == "AdminInsuranceProcess" && c.Value == "True")
-            || context.User.HasClaim(c => c.Type == "AdminContactUs" && c.Value == "True")
-            || context.User.HasClaim(c => c.Type == "AdminAccount" && c.Value == "True")
-        );
-    });
-});
+//    // chặn user truy cập vào System area
+//    options.AddPolicy("AuthorizeSystemAreas", policy =>
+//    {
+//        policy.RequireAssertion(context =>
+//        context.User.Identity.IsAuthenticated && // Kiểm tra người dùng đã đăng nhập hay chưa qua identity
+//            !context.User.IsInRole("User") // Người dùng thường không được phép
+//            || context.User.IsInRole("Admin") // Admin vẫn được phép
+//            || context.User.HasClaim(c => c.Type == "AdminInsuranceProducts" && c.Value == "True") // ProductManager vẫn được phép
+//            || context.User.HasClaim(c => c.Type == "AdminEstimates" && c.Value == "True") // AccountManager vẫn được phép
+//            || context.User.HasClaim(c => c.Type == "AdminVehicleInformations" && c.Value == "True")
+//            || context.User.HasClaim(c => c.Type == "AdminCompanyBillingPolicies" && c.Value == "True")
+//            || context.User.HasClaim(c => c.Type == "AdminInsuranceProcess" && c.Value == "True")
+//            || context.User.HasClaim(c => c.Type == "AdminContactUs" && c.Value == "True")
+//            || context.User.HasClaim(c => c.Type == "AdminAccount" && c.Value == "True")
+//        );
+//    });
+//});
 
 
 //đăng ký login google
@@ -191,8 +191,8 @@ app.Run();
 
 // Method to create roles and admin user
 async Task CreateRolesAndAdminUser(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager) //ApplicationUser
-{
-    string[] roleNames = { "Admin", "User", "AdminAccount", "AdminEstimates", "AdminInsuranceProcess", "AdminInsuranceProducts", "AdminVehicleInformations", "AdminCompanyBillingPolicies", "AdminContactUs" };
+{ /*"AdminEstimates", "AdminInsuranceProcess", "AdminInsuranceProducts", "AdminVehicleInformations", "AdminCompanyBillingPolicies"*/
+    string[] roleNames = { "Admin", "User", "AdminAccount", "AdminContactUs" };
     IdentityResult roleResult;
 
     foreach (var roleName in roleNames)

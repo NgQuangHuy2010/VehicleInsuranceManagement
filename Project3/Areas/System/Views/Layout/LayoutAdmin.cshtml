@@ -202,6 +202,16 @@
                         </a>
                     </li>
                     <li>
+                        <a asp-controller="VehiclePolicyTypes" asp-action="index" aria-expanded="false">
+                            <i class="fa fa-file-image-o mr-2"></i><span class="nav-text">Vehicle Policy Types</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="VehicleWarranties" asp-action="index" aria-expanded="false">
+                            <i class="fa fa-file-image-o mr-2"></i><span class="nav-text">Vehicle Warranty Types</span>
+                        </a>
+                    </li>
+                    <li>
                         <a class="has-arrow" href="javascript:void()" aria-expanded="false">
                             <i class="fa fa-user mr-2"></i>
                             <span class="nav-text">Reports</span>
@@ -269,7 +279,7 @@
 
             </div>
         </div>
-        <div class="content">
+        <div class="content" style="margin-top: 50px">
             @RenderBody()
         </div>
     </div>

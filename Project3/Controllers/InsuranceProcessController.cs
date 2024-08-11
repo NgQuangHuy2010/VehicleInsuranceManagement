@@ -87,6 +87,8 @@ namespace Project3.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            Random random = new Random();
+            string randomNumber = random.Next(10000000, 99999999).ToString();
             var estimate = HttpContext.Session.GetObject<EstimateModelView>("EstimateData");
             var vehicleinfo = HttpContext.Session.GetObject<VehicleInformationViewModel>("VehicleInformationData");
 
@@ -105,6 +107,7 @@ namespace Project3.Controllers
                 VehicleModel = estimate.VehicleModel,
                 VehicleRate = estimate.VehicleRate,
                 WarrantyId = estimate.WarrantyId,
+                PolicyNumber = randomNumber,
                 PolicyTypeId = estimate.PolicyTypeId,
                 PolicyDate = DateTime.Now.ToString("yyyy-MM-dd"),
                 PolicyDuration = 12, // Default duration, can be adjusted

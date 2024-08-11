@@ -16,7 +16,9 @@
                 var item = Model.ElementAt(i + j);
                 <div class="col-md-4 mb-4">
                     <div class="card shadow-sm h-100">
-                        <img src="~/images/insurance-product.jpg" class="card-img-top" alt="Insurance Product Image" />
+                        <!-- Use the ImageUrl property to display the correct image for each product -->
+                        <img src="@Url.Content(item.ImageUrl)" class="card-img-top" alt="Insurance Product Image" />
+
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title text-primary">@item.PolicyName</h5>
                             <p class="card-text flex-grow-1">@item.PolicyDetails</p>

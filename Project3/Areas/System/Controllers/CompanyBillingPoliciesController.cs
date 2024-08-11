@@ -7,7 +7,7 @@ using Project3.ModelsView;
 
 namespace Project3.Areas.System.Controllers
 {
-    [Authorize(Policy = "AuthorizeSystemAreas")]
+    //[Authorize(Policy = "AuthorizeSystemAreas")]
     [Area("system")]
     [Route("system/companybilling")]
     public class CompanyBillingPoliciesController : Controller

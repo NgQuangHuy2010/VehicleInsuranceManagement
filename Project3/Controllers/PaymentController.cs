@@ -74,7 +74,7 @@ namespace Project3.Controllers
                 VehicleName = vehicleInformationSession.VehicleName,
                 VehicleModel = vehicleInformationSession.VehicleModel,
                 VehicleVersion = vehicleInformationSession.VehicleVersion,
-                VehicleRate = (decimal?)vehicleInformationSession.VehicleRate,
+                VehicleRate = vehicleInformationSession.VehicleRate,
                 VehicleBodyNumber = vehicleInformationSession.VehicleBodyNumber,
                 VehicleEngineNumber = vehicleInformationSession.VehicleEngineNumber,
                 VehicleNumber = vehicleInformationSession.VehicleNumber
@@ -90,7 +90,7 @@ namespace Project3.Controllers
             {
                 CustomerId = estimateSession.CustomerId,
                 EstimateNumber = estimateSession.EstimateNumber,
-                CustomeName = estimateSession.CustomerName,
+                CustomerName = estimateSession.CustomerName,
                 CustomerPhoneNumber = estimateSession.CustomerPhoneNumber,
                 VehicleName = estimateSession.VehicleName,
                 VehicleModel = estimateSession.VehicleModel,

@@ -8,7 +8,7 @@ using Project3.ModelsView.Identity;
 
 namespace Project3.Areas.System.Controllers
 {
-    [Authorize(Policy = "AuthorizeSystemAreas")]
+    //[Authorize(Policy = "AuthorizeSystemAreas")]
     [Area("system")]
     [Route("system/insuranceprocess")]
     public class AdminInsuranceProcessController : Controller

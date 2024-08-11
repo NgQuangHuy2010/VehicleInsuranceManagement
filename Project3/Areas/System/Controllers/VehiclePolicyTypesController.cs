@@ -9,7 +9,8 @@ using Project3.Models;
 
 namespace Project3.Areas.System.Controllers
 {
-    [Area("System")]
+    [Area("system")]
+    [Route("system/vehiclepolicytypes")]
     public class VehiclePolicyTypesController : Controller
     {
         private readonly VehicleInsuranceManagementContext _context;
@@ -18,7 +19,8 @@ namespace Project3.Areas.System.Controllers
         {
             _context = context;
         }
-
+        [Route("index")]
+        [HttpGet]
         // GET: System/VehiclePolicyTypes
         public async Task<IActionResult> Index()
         {
@@ -26,6 +28,8 @@ namespace Project3.Areas.System.Controllers
         }
 
         // GET: System/VehiclePolicyTypes/Details/5
+        [Route("details/{id}")]
+        [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -42,8 +46,9 @@ namespace Project3.Areas.System.Controllers
 
             return View(vehiclePolicyType);
         }
-
+        [Route("create")]
         // GET: System/VehiclePolicyTypes/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
@@ -52,9 +57,10 @@ namespace Project3.Areas.System.Controllers
         // POST: System/VehiclePolicyTypes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Route("create")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PolicyTypeId,PolicyName,PolicyDetails")] VehiclePolicyType vehiclePolicyType)
+        public async Task<IActionResult> Create([Bind("PolicyTypeId,PolicyName,PolicyDetails,VehicleRate")] VehiclePolicyType vehiclePolicyType)
         {
             if (ModelState.IsValid)
             {
@@ -65,6 +71,8 @@ namespace Project3.Areas.System.Controllers
             return View(vehiclePolicyType);
         }
 
+        [Route("edit/{id}")]
+        [HttpGet]
         // GET: System/VehiclePolicyTypes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -84,9 +92,10 @@ namespace Project3.Areas.System.Controllers
         // POST: System/VehiclePolicyTypes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Route("edit/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PolicyTypeId,PolicyName,PolicyDetails")] VehiclePolicyType vehiclePolicyType)
+        public async Task<IActionResult> Edit(int id, [Bind("PolicyTypeId,PolicyName,PolicyDetails,VehicleRate")] VehiclePolicyType vehiclePolicyType)
         {
             if (id != vehiclePolicyType.PolicyTypeId)
             {
@@ -115,7 +124,8 @@ namespace Project3.Areas.System.Controllers
             }
             return View(vehiclePolicyType);
         }
-
+        [Route("delete/{id}")]
+        [HttpGet]
         // GET: System/VehiclePolicyTypes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -135,7 +145,8 @@ namespace Project3.Areas.System.Controllers
         }
 
         // POST: System/VehiclePolicyTypes/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [Route("delete/{id}")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
