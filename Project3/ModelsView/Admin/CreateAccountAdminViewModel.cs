@@ -9,7 +9,7 @@ namespace Project3.ModelsView.Admin
         public string? Id { get; set; }
         [Required]
         public string? Fullname { get; set; }
-
+        [RegularExpression(@"^(?!0000000000$)(?!\d{11,}$)(?!\d*([0-9])\1{9})0[2-9][0-9]{8}$", ErrorMessage = "Incorrect phone number format ")]
         public string? Phone { get; set; }
 
         [Required]

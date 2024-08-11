@@ -136,7 +136,7 @@ public class InsuranceProductsController : Controller
             return NotFound("Policy or Warranty not found.");
         }
 
-        float adjustedRate = CalculateAdjustedRate((float)policy.VehicleRate, warranty.WarrantyDuration);
+       // float adjustedRate = CalculateAdjustedRate((float)policy.VehicleRate, warranty.WarrantyDuration);
 
         // Get the image URL from the map
         _policyImageMap.TryGetValue(policy.PolicyTypeId, out string imageUrl);

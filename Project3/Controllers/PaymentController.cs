@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using PayPal.Api;
 using Project3.Helpers;
 using Project3.Models;
@@ -9,15 +8,13 @@ using Project3.ModelsView;
 using Project3.ModelsView.Identity;
 using Project3.Services;
 using Serilog;
-using System.Data.Entity;
 using System.Globalization;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Project3.Controllers
 {
     [Authorize]
-    
+
     public class PaymentController : Controller
     {
         private readonly CarService _carService;
@@ -44,7 +41,7 @@ namespace Project3.Controllers
             return _context.CompanyBillingPolicies.Any(e => e.Id == id);
         }
 
-        
+
         [Route("PaymentFail")]
         public IActionResult PaymentFail()
         {
@@ -77,7 +74,7 @@ namespace Project3.Controllers
                 VehicleRate = vehicleInformationSession.VehicleRate,
                 VehicleBodyNumber = vehicleInformationSession.VehicleBodyNumber,
                 VehicleEngineNumber = vehicleInformationSession.VehicleEngineNumber,
-                VehicleNumber = vehicleInformationSession.VehicleNumber
+                //VehicleNumber = vehicleInformationSession.VehicleNumber,
             };
 
             _context.VehicleInformations.Add(vehicleInformation);
@@ -154,7 +151,7 @@ namespace Project3.Controllers
                 PaymentStatus = $"Paid With {paymentMethod}"
             };
             _context.CompanyBillingPolicies.Add(companyBillingPolicy);
-            
+
 
             // Save all changes to the database
             await _context.SaveChangesAsync();
@@ -385,7 +382,7 @@ namespace Project3.Controllers
             catch (Exception ex)
             {
                 return View("PaymentFail");
-            }  
+            }
         }
 
         private Payment ExecutePayment(APIContext apiContext, string payerId, string paymentId)

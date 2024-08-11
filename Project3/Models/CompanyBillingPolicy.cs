@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Project3.ModelsView;
+using System;
 using System.Collections.Generic;
 
 namespace Project3.Models;
@@ -36,4 +37,6 @@ public partial class CompanyBillingPolicy
     public string? PaymentStatus { get; set; }
 
     public virtual AspNetUser? Customer { get; set; }
+
+    public virtual ClaimDetailViewModel Claim { get; set; } = null!;
 }

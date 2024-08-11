@@ -166,41 +166,7 @@
                             <i class="fa fa-file-image-o mr-2"></i><span class="nav-text">Dashboard</span>
                         </a>
                     </li>
-                    <li>
-                        <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                            <i class="fa fa-user mr-2"></i>
-                            <span class="nav-text">Account Management</span>
-                        </a>
-                        <ul aria-expanded="false">
-                            <li><a asp-action="Index" asp-controller="AccountManagement">List of accounts</a></li>
-                            <li><a asp-controller="Role" asp-action="Index">Decentralization</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a asp-controller="AdminInsuranceProducts" asp-action="Index" aria-expanded="false">
-                            <i class="fa fa-file-image-o mr-2"></i><span class="nav-text">Insurance Products</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-controller="AdminVehicleInformations" asp-action="Index" aria-expanded="false">
-                            <i class="fa fa-file-image-o mr-2"></i><span class="nav-text">Vehicle Information</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-controller="AdminEstimates" asp-action="Index" aria-expanded="false">
-                            <i class="fa fa-file-image-o mr-2"></i><span class="nav-text">Estimatation</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-controller="AdminInsuranceProcess" asp-action="Index" aria-expanded="false">
-                            <i class="fa fa-file-image-o mr-2"></i><span class="nav-text">Insurance Process</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-controller="CompanyBillingPolicies" asp-action="Index" aria-expanded="false">
-                            <i class="fa fa-file-image-o mr-2"></i><span class="nav-text">Company Billing Policies</span>
-                        </a>
-                    </li>
+                     @await Component.InvokeAsync("NavigationMenu") 
                     <li>
                         <a asp-controller="VehiclePolicyTypes" asp-action="index" aria-expanded="false">
                             <i class="fa fa-file-image-o mr-2"></i><span class="nav-text">Vehicle Policy Types</span>

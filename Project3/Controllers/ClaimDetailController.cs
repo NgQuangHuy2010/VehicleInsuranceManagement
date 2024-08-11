@@ -21,54 +21,88 @@ namespace Project3.Controllers
             _context = context;
         }
 
-       
-        public async Task<IActionResult>  Create()
+
+        public async Task<IActionResult> Create()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user ==null)
+            if (user == null)
             {
                 return NotFound("User not found");
             }
-            var billingInfo = _context.CompanyBillingPolicies
-           .Where(b => b.CustomerId == user.Id)
-           .Select(b => new ClaimDetailViewModel
-           {
-               PolicyNumber = b.PolicyNumber,
 
-           }).ToList()
-           .FirstOrDefault();
-            if (billingInfo == null)
+            // Trước tiên, lấy dữ liệu từ cơ sở dữ liệu một cách bất đồng bộ
+            var billingInfo = await _context.CompanyBillingPolicies
+                .Where(b => b.CustomerId == user.Id)
+                .ToListAsync(); // Lấy toàn bộ dữ liệu trước khi sử dụng Select
+
+            // Sau khi dữ liệu đã được tải, bạn có thể chuyển đổi thành ViewModel
+            var billingInfoViewModel = billingInfo.Select(b => new ClaimDetailViewModel
+            {
+                PolicyNumber = b.PolicyNumber,
+                Id = b.Id
+            }).ToList();
+
+            if (!billingInfoViewModel.Any())
             {
                 return NotFound("Billing information not found");
             }
-            return View(billingInfo);
 
-            
+            return View(billingInfoViewModel);
         }
-        public async Task<IActionResult> Detail(string id)
+
+
+        public async Task<IActionResult> Detail(int id)
         {
-            if (string.IsNullOrEmpty(id))
+            var claim = await _context.CompanyBillingPolicies.FindAsync(id);
+            if (claim == null)
             {
-                return BadRequest("PolicyNumber is required.");
+                return NotFound("Claim not found");
             }
 
-            // Truy vấn bảng CompanyBillingPolicies để tìm PolicyNumber tương ứng với id
-            var billingInfo = _context.CompanyBillingPolicies
-                .Where(b => b.PolicyNumber == id)
-                .FirstOrDefault();
-
-            if (billingInfo == null)
-            {
-                return NotFound("No billing information found for the provided PolicyNumber.");
-            }
-
-            // Trả về view với dữ liệu của billingInfo
-            return View(billingInfo);
+            // Trả về view với dữ liệu của claim
+            return View(claim);
         }
 
-    }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Detail(ClaimDetailViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var claimDetail = new ClaimDetail
+                {
+                    PolicyNumber = model.PolicyNumber,
+                    CustomerName = model.CustomerName,
+                    PlaceOfAccident = model.PlaceOfAccident,
+                    DateOfAccident = model.DateOfAccident,
+                    InsuredAmount = model.Amount, // Giả sử InsuredAmount là số tiền bảo hiểm trong bảng ClaimDetail
+                    ClaimableAmount = CalculateClaimableAmount(model.Amount), // Tính toán số tiền được bồi thường nếu cần
+                    PolicyStartDate = model.Date,
+                   // PolicyEndDate = model.PolicyEndDate,
+                };
+
+                // Thêm bản ghi vào bảng ClaimDetail
+                _context.ClaimDetails.Add(claimDetail);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Create");
+            }
+
+            // Nếu có lỗi, hiển thị lại form với lỗi
+            return View(model);
+        }
+
+        // Ví dụ về phương thức để tính toán số tiền được bồi thường (nếu có logic)
+        private decimal? CalculateClaimableAmount(decimal? amount)
+        {
+            // Tính toán số tiền được bồi thường theo logic cụ thể
+            return amount * 0.8m; // Ví dụ: 80% của số tiền bảo hiểm
+        }
+    }
 }
+
+
 
 
 

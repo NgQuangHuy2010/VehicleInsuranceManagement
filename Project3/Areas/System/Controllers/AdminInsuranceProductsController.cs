@@ -28,14 +28,20 @@ namespace Project3.Areas.System.Controllers
             // Combine the data into a list of view models
             var insuranceProducts = policyTypes.Select(policy => new InsuranceProductViewModel
             {
-                PolicyTypeId = policy.PolicyTypeId,
-                PolicyName = policy.PolicyName,
-                PolicyDetails = policy.PolicyDetails,
-                VehicleRate = (float)(policy.VehicleRate ?? 0),
-                WarrantyId = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policy.PolicyName))?.WarrantyId ?? 0,
-                WarrantyType = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policy.PolicyName))?.WarrantyType,
-                WarrantyDuration = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policy.PolicyName))?.WarrantyDuration,
-                WarrantyDetails = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policy.PolicyName))?.WarrantyDetails
+                // Match warranties based on some other criteria
+                var matchingWarranty = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policy.PolicyName));
+
+                return new InsuranceProductViewModel
+                {
+                    PolicyTypeId = policy.PolicyTypeId,
+                    PolicyName = policy.PolicyName,
+                    PolicyDetails = policy.PolicyDetails,
+                    VehicleRate = (float)(policy.VehicleRate ?? 0),
+                    WarrantyId = matchingWarranty?.WarrantyId ?? 0,
+                    WarrantyType = matchingWarranty?.WarrantyType,
+                    WarrantyDuration = matchingWarranty?.WarrantyDuration,
+                    WarrantyDetails = matchingWarranty?.WarrantyDetails
+                };
             }).ToList();
 
             return View(insuranceProducts);
@@ -44,7 +50,27 @@ namespace Project3.Areas.System.Controllers
         [HttpGet("Create")]
         public IActionResult Create()
         {
-            return View(new InsuranceProductViewModel());
+            // Fetch all policy types and warranties from the database
+            var policyTypes = await _context.VehiclePolicyTypes.ToListAsync();
+            var warranties = await _context.VehicleWarranties.ToListAsync();
+
+            // This could be replaced by a ViewModel to combine data from both tables
+            var viewModel = new InsuranceProductViewModel
+            {
+                // Initialize the properties based on the fetched data
+                // Adjust this according to how you want to display data
+                // Example: Using SelectList for dropdowns if required in the view
+                PolicyTypeId = policyTypes.FirstOrDefault()?.PolicyTypeId ?? 0,
+                PolicyName = policyTypes.FirstOrDefault()?.PolicyName,
+                PolicyDetails = policyTypes.FirstOrDefault()?.PolicyDetails,
+                WarrantyId = warranties.FirstOrDefault()?.WarrantyId ?? 0,
+                WarrantyType = warranties.FirstOrDefault()?.WarrantyType,
+                WarrantyDuration = warranties.FirstOrDefault()?.WarrantyDuration,
+                WarrantyDetails = warranties.FirstOrDefault()?.WarrantyDetails,
+                VehicleRate = (float)(policyTypes.FirstOrDefault()?.VehicleRate ?? 0)
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost("Create")]
@@ -53,12 +79,16 @@ namespace Project3.Areas.System.Controllers
         {
             if (ModelState.IsValid)
             {
-                var policyType = new VehiclePolicyType
+                try
                 {
-                    PolicyName = viewModel.PolicyName,
-                    PolicyDetails = viewModel.PolicyDetails,
-                    VehicleRate = viewModel.VehicleRate
-                };
+
+                    // Add logic to save the new policy or warranty, if that's the intent
+                    var policyType = new VehiclePolicyType
+                    {
+                        PolicyName = viewModel.PolicyName,
+                        PolicyDetails = viewModel.PolicyDetails,
+                        VehicleRate = viewModel.VehicleRate
+                    };
 
                 _context.VehiclePolicyTypes.Add(policyType);
                 await _context.SaveChangesAsync();
@@ -69,6 +99,25 @@ namespace Project3.Areas.System.Controllers
             return View(viewModel);
         }
 
+            // Fetch warranties (you might want to apply logic to pick the right one)
+            var warranty = await _context.VehicleWarranties.FirstOrDefaultAsync();
+
+            var viewModel = new InsuranceProductViewModel
+            {
+                PolicyTypeId = policyType.PolicyTypeId,
+                PolicyName = policyType.PolicyName,
+                PolicyDetails = policyType.PolicyDetails,
+                VehicleRate = (float)(policyType.VehicleRate ?? 0),
+                WarrantyId = warranty?.WarrantyId ?? 0,
+                WarrantyType = warranty?.WarrantyType,
+                WarrantyDuration = warranty?.WarrantyDuration,
+                WarrantyDetails = warranty?.WarrantyDetails
+            };
+
+            return View(viewModel);
+        }
+
+        // GET: System/InsuranceProducts/Edit/5
         [HttpGet("Edit/{id}")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -86,10 +135,10 @@ namespace Project3.Areas.System.Controllers
                 PolicyTypeId = policyType.PolicyTypeId,
                 PolicyName = policyType.PolicyName,
                 PolicyDetails = policyType.PolicyDetails,
-                WarrantyId = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policyType.PolicyName))?.WarrantyId ?? 0,
-                WarrantyType = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policyType.PolicyName))?.WarrantyType,
-                WarrantyDuration = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policyType.PolicyName))?.WarrantyDuration,
-                WarrantyDetails = warranties.FirstOrDefault(w => w.WarrantyType.Contains(policyType.PolicyName))?.WarrantyDetails,
+                WarrantyId = warranties.FirstOrDefault()?.WarrantyId ?? 0,
+                WarrantyType = warranties.FirstOrDefault()?.WarrantyType,
+                WarrantyDuration = warranties.FirstOrDefault()?.WarrantyDuration,
+                WarrantyDetails = warranties.FirstOrDefault()?.WarrantyDetails,
                 VehicleRate = (float)policyType.VehicleRate
             };
 
@@ -113,9 +162,9 @@ namespace Project3.Areas.System.Controllers
                     return NotFound();
                 }
 
-                policyType.PolicyName = viewModel.PolicyName;
-                policyType.PolicyDetails = viewModel.PolicyDetails;
-                policyType.VehicleRate = viewModel.VehicleRate;
+                    policyType.PolicyName = viewModel.PolicyName;
+                    policyType.PolicyDetails = viewModel.PolicyDetails;
+                    policyType.VehicleRate = viewModel.VehicleRate;
 
                 _context.Update(policyType);
                 await _context.SaveChangesAsync();
