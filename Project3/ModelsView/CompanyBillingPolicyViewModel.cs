@@ -40,8 +40,10 @@ namespace Project3.ModelsView
         
         public float  Amount { get; set; }
         
-        public string? PaymentStatus { get; set; } 
+        public string? PaymentStatus { get; set; }
 
+        public string? PlaceOfAccident { get; set; }
 
+        public string? DateOfAccident { get; set; }
     }
 }

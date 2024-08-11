@@ -1,79 +1,28 @@
-﻿@model Project3.ModelsView.ClaimDetailViewModel
+﻿@model IEnumerable<Project3.ModelsView.ClaimDetailViewModel>
+
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/LayoutUser/LayoutUser.cshtml";
 
 }
 
-@{
-    var policyNumberArray = new[] { Model.PolicyNumber };
-    var policyNumberString = Model.PolicyNumber.ToString();
-}
-                            
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="card-title">Table Contact</h4>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table id="example" class="display" style="min-width: 845px; color:black;">
-                     
-                         <thead>
-                            <tr>
 
-                                <th>Policy Number</th>
-                                <th>Detail</th>
-
-                            </tr>
-
-                        </thead>
-
-                         @foreach (var item in policyNumberArray) {
-                       
-                        
-                            <td>@item</td>
-                            <td>
-                                <a asp-controller="ClaimDetail" asp-action="Detail" asp-route-id="@Model.PolicyNumber" class="btn btn-primary">
-                                    <i class="fa fa-info-circle"></i> Details
-                                </a>
-                            </td>
-                         }
-
-                      
-
-                       @*   <thead>
-                                    <tr>
-                                        
-                                        <th>ID</th>
-                                        <th>Full Name</th>
-                                       
-                                    </tr>
-
-                                </thead>
-                                <tbody>
-                            @for (int i=0; i<Model.PolicyNumber.Length; i++)
-                            {
-                                        <tr>
-                                            <td>@policyNumberArray</td>
-                                    <td>
-                                    <td>
-                                        <a asp-controller="ClaimDetail" asp-action="Detail" asp-route-id="@policyNumberArray" class="btn btn-primary">
-                                            <i class="fa fa-info-circle"></i> Details
-                                        </a>
-                                    </td></td>
-                                        </tr>
-                            }
-
-                        </tbody>*@
-                    </table>  
-
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
+                           
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Policy Number</th>
+            <th scope="col">Detail</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var claim in Model)
+        {
+            <tr>
+                <td>@claim.PolicyNumber</td>
+                <td><a asp-action="Detail" asp-route-id="@claim.Id" >Claim</a></td>
+            </tr>
+        }
+       
+    </tbody>
+</table>

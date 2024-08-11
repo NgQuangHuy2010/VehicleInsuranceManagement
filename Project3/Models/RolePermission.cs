@@ -10,4 +10,8 @@ public partial class RolePermission
     public string? PermissionsId { get; set; }
 
     public string? RoleId { get; set; }
+
+    public virtual AspNetRole? Role { get; set; }
+
+    public virtual NameRole? RoleNavigation { get; set; }
 }

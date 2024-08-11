@@ -74,7 +74,7 @@ namespace Project3.Controllers
                 //VehicleRate = (decimal?)vehicleInformationSession.VehicleRate,
                 VehicleBodyNumber = vehicleInformationSession.VehicleBodyNumber,
                 VehicleEngineNumber = vehicleInformationSession.VehicleEngineNumber,
-                VehicleNumber = vehicleInformationSession.VehicleNumber
+                //VehicleNumber = vehicleInformationSession.VehicleNumber,
             };
 
             _context.VehicleInformations.Add(vehicleInformation);

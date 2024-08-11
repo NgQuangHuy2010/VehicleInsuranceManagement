@@ -35,7 +35,7 @@ namespace Project3.Areas.System.Controllers
                     PolicyTypeId = policy.PolicyTypeId,
                     PolicyName = policy.PolicyName,
                     PolicyDetails = policy.PolicyDetails,
-                    VehicleRate = (float)(policy.VehicleRate ?? 0),
+                    //VehicleRate = (float)(policy.VehicleRate ?? 0),
                     WarrantyId = matchingWarranty?.WarrantyId ?? 0,
                     WarrantyType = matchingWarranty?.WarrantyType,
                     WarrantyDuration = matchingWarranty?.WarrantyDuration,
@@ -66,7 +66,7 @@ namespace Project3.Areas.System.Controllers
                 WarrantyType = warranties.FirstOrDefault()?.WarrantyType,
                 WarrantyDuration = warranties.FirstOrDefault()?.WarrantyDuration,
                 WarrantyDetails = warranties.FirstOrDefault()?.WarrantyDetails,
-                VehicleRate = (float)(policyTypes.FirstOrDefault()?.VehicleRate ?? 0)
+               // VehicleRate = (float)(policyTypes.FirstOrDefault()?.VehicleRate ?? 0)
             };
 
             return View(viewModel);
@@ -86,7 +86,7 @@ namespace Project3.Areas.System.Controllers
                     {
                         PolicyName = viewModel.PolicyName,
                         PolicyDetails = viewModel.PolicyDetails,
-                        VehicleRate = viewModel.VehicleRate
+                       // Vehicle = viewModel.VehicleRate
                     };
 
                     _context.VehiclePolicyTypes.Add(policyType);
@@ -129,7 +129,7 @@ namespace Project3.Areas.System.Controllers
                 PolicyTypeId = policyType.PolicyTypeId,
                 PolicyName = policyType.PolicyName,
                 PolicyDetails = policyType.PolicyDetails,
-                VehicleRate = (float)(policyType.VehicleRate ?? 0),
+              //  VehicleRate = (float)(policyType.VehicleRate ?? 0),
                 WarrantyId = warranty?.WarrantyId ?? 0,
                 WarrantyType = warranty?.WarrantyType,
                 WarrantyDuration = warranty?.WarrantyDuration,
@@ -160,7 +160,7 @@ namespace Project3.Areas.System.Controllers
                 WarrantyType = warranties.FirstOrDefault()?.WarrantyType,
                 WarrantyDuration = warranties.FirstOrDefault()?.WarrantyDuration,
                 WarrantyDetails = warranties.FirstOrDefault()?.WarrantyDetails,
-                VehicleRate = (float)policyType.VehicleRate
+              //  VehicleRate = (float)policyType.VehicleRate
             };
 
             return View(viewModel);
@@ -188,7 +188,7 @@ namespace Project3.Areas.System.Controllers
 
                     policyType.PolicyName = viewModel.PolicyName;
                     policyType.PolicyDetails = viewModel.PolicyDetails;
-                    policyType.VehicleRate = viewModel.VehicleRate;
+                   // policyType.VehicleRate = viewModel.VehicleRate;
 
                     _context.Update(policyType);
                     await _context.SaveChangesAsync();

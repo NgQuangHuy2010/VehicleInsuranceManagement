@@ -34,39 +34,39 @@ public class InsuranceProductsController : Controller
         var insuranceProducts = new List<InsuranceProductViewModel>();
 
         // Create combinations: pair each policy type with each warranty
-        foreach (var policy in policies)
-        {
-            foreach (var warranty in warranties)
-            {
-                // Adjust the rate based on the warranty type or duration
-                float adjustedRate = (float)policy.VehicleRate;
+        //foreach (var policy in policies)
+        //{
+        //    foreach (var warranty in warranties)
+        //    {
+        //        // Adjust the rate based on the warranty type or duration
+        //      //  float adjustedRate = (float)policy.VehicleRate;
 
-                if (warranty.WarrantyDuration.Contains("3"))
-                {
-                    adjustedRate = adjustedRate; // No adjustment needed for 3-year warranties
-                }
-                if (warranty.WarrantyDuration.Contains("5"))
-                {
-                    adjustedRate += 50;  // Add $50 for 5-year warranties
-                }
-                else if (warranty.WarrantyDuration.Contains("7"))
-                {
-                    adjustedRate += 100; // Add $100 for 7-year warranties
-                }
+        //        if (warranty.WarrantyDuration.Contains("3"))
+        //        {
+        //    //        adjustedRate = adjustedRate; // No adjustment needed for 3-year warranties
+        //        }
+        //        if (warranty.WarrantyDuration.Contains("5"))
+        //        {
+        //            adjustedRate += 50;  // Add $50 for 5-year warranties
+        //        }
+        //        else if (warranty.WarrantyDuration.Contains("7"))
+        //        {
+        //            adjustedRate += 100; // Add $100 for 7-year warranties
+        //        }
 
-                insuranceProducts.Add(new InsuranceProductViewModel
-                {
-                    PolicyTypeId = policy.PolicyTypeId,
-                    PolicyName = policy.PolicyName,
-                    PolicyDetails = policy.PolicyDetails,
-                    WarrantyId = warranty.WarrantyId,
-                    WarrantyType = warranty.WarrantyType,
-                    WarrantyDuration = warranty.WarrantyDuration,
-                    WarrantyDetails = warranty.WarrantyDetails,
-                    VehicleRate = adjustedRate // Use the adjusted rate
-                });
-            }
-        }
+        //        insuranceProducts.Add(new InsuranceProductViewModel
+        //        {
+        //            PolicyTypeId = policy.PolicyTypeId,
+        //            PolicyName = policy.PolicyName,
+        //            PolicyDetails = policy.PolicyDetails,
+        //            WarrantyId = warranty.WarrantyId,
+        //            WarrantyType = warranty.WarrantyType,
+        //            WarrantyDuration = warranty.WarrantyDuration,
+        //            WarrantyDetails = warranty.WarrantyDetails,
+        //            VehicleRate = adjustedRate // Use the adjusted rate
+        //        });
+        //    }
+       // }
 
         return View(insuranceProducts);
     }
@@ -94,7 +94,7 @@ public class InsuranceProductsController : Controller
             WarrantyType = warranty.WarrantyType,
             WarrantyDuration = warranty.WarrantyDuration,
             WarrantyDetails = warranty.WarrantyDetails,
-            VehicleRate = CalculateAdjustedRate((float)policy.VehicleRate, warranty.WarrantyDuration)
+       //     VehicleRate = CalculateAdjustedRate((float)policy.VehicleRate, warranty.WarrantyDuration)
         };
 
         return View(product); // Return the Buy view with the selected product
@@ -114,7 +114,7 @@ public class InsuranceProductsController : Controller
             return NotFound("Policy or Warranty not found.");
         }
 
-        float adjustedRate = CalculateAdjustedRate((float)policy.VehicleRate, warranty.WarrantyDuration);
+       // float adjustedRate = CalculateAdjustedRate((float)policy.VehicleRate, warranty.WarrantyDuration);
 
         // Create a session object to store the selected product
         var productSession = new InsuranceProductViewModel
@@ -126,7 +126,7 @@ public class InsuranceProductsController : Controller
             WarrantyType = warranty.WarrantyType,
             WarrantyDuration = warranty.WarrantyDuration,
             WarrantyDetails = warranty.WarrantyDetails,
-            VehicleRate = adjustedRate
+          //  VehicleRate = adjustedRate
         };
 
         // Save the productSession into the session

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace Project3.Models;
 
@@ -29,9 +31,13 @@ public partial class VehicleInsuranceManagementContext : DbContext
 
     public virtual DbSet<ClaimDetail> ClaimDetails { get; set; }
 
+    public virtual DbSet<CollectInfo> CollectInfos { get; set; }
+
     public virtual DbSet<CompanyBillingPolicy> CompanyBillingPolicies { get; set; }
 
     public virtual DbSet<CompanyExpense> CompanyExpenses { get; set; }
+
+    public virtual DbSet<CompanyExpense1> CompanyExpenses1 { get; set; }
 
     public virtual DbSet<ContactUs> ContactUs { get; set; }
 
@@ -53,7 +59,7 @@ public partial class VehicleInsuranceManagementContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=HUY;Initial Catalog=VehicleInsuranceManagement;Persist Security Info=True;User ID=sa;Password=123;Trust Server Certificate=True");
+        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-CUMOSHV\\SQLEXPRESS;Initial Catalog=VehicleInsuranceManagement;Persist Security Info=True;User ID=sa;Password=123;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -145,11 +151,26 @@ public partial class VehicleInsuranceManagementContext : DbContext
                 .HasColumnType("numeric(18, 0)")
                 .HasColumnName("insured_amount");
             entity.Property(e => e.PlaceOfAccident).HasColumnName("place_of_accident");
-            entity.Property(e => e.PolicyEndDate).HasColumnName("policy_end_date");
+            entity.Property(e => e.PolicyEndDate)
+                .HasColumnType("datetime")
+                .HasColumnName("policy_end_date");
             entity.Property(e => e.PolicyNumber)
-                .HasColumnType("numeric(18, 0)")
+                .HasMaxLength(50)
                 .HasColumnName("policy_number");
-            entity.Property(e => e.PolicyStartDate).HasColumnName("policy_start_date");
+            entity.Property(e => e.PolicyStartDate)
+                .HasColumnType("datetime")
+                .HasColumnName("policy_start_date");
+        });
+
+        modelBuilder.Entity<CollectInfo>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__CollectI__3214EC075C7C0CFA");
+
+            entity.ToTable("CollectInfo");
+
+            entity.Property(e => e.CustomerAdd).HasMaxLength(255);
+            entity.Property(e => e.DriverGender).HasMaxLength(50);
+            entity.Property(e => e.Usage).HasMaxLength(255);
         });
 
         modelBuilder.Entity<CompanyBillingPolicy>(entity =>
@@ -192,22 +213,35 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.Property(e => e.TypeOfExpense).HasColumnName("type_of_expense");
         });
 
+        modelBuilder.Entity<CompanyExpense1>(entity =>
+        {
+            entity.HasKey(e => e.ExpenseId).HasName("PK__CompanyE__1445CFD382F60C0A");
+
+            entity.ToTable("CompanyExpenses");
+
+            entity.Property(e => e.AmountOfExpense).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.DateOfExpense).HasColumnType("datetime");
+            entity.Property(e => e.TypeOfExpense)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+        });
+
         modelBuilder.Entity<ContactUs>(entity =>
         {
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Topic).HasMaxLength(50);
+            entity.Property(e => e.Phone).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Estimate>(entity =>
         {
-            entity.HasKey(e => e.EstimateNumber).HasName("PK__Estimate__0B3C03911EA713CC");
+            entity
+                .HasNoKey()
+                .ToTable("estimate");
 
-            entity.ToTable("Estimate");
-
-            entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
-            entity.Property(e => e.CustomerName)
-                .HasMaxLength(100)
+            entity.Property(e => e.CustomeName)
+                .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
             entity.Property(e => e.CustomerPhoneNumber)
                 .HasMaxLength(15)
                 .IsUnicode(false);
@@ -219,20 +253,6 @@ public partial class VehicleInsuranceManagementContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.WarrantyId).HasColumnName("WarrantyID");
-
-            entity.HasOne(d => d.PolicyType).WithMany(p => p.Estimates)
-                .HasForeignKey(d => d.PolicyTypeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Estimate__Policy__540C7B00");
-
-            entity.HasOne(d => d.Vehicle).WithMany(p => p.Estimates)
-                .HasForeignKey(d => d.VehicleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Estimate_vehicle_information");
-
-            entity.HasOne(d => d.Warranty).WithMany(p => p.Estimates)
-                .HasForeignKey(d => d.WarrantyId)
-                .HasConstraintName("FK__Estimate__Warran__531856C7");
         });
 
         modelBuilder.Entity<InsuranceProcess>(entity =>
@@ -247,7 +267,7 @@ public partial class VehicleInsuranceManagementContext : DbContext
                 .HasColumnName("customer_id");
             entity.Property(e => e.CustomerName).HasColumnName("customer_name");
             entity.Property(e => e.CustomerPhoneNumber)
-                .HasMaxLength(15)
+                .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("customer_phone_number");
             entity.Property(e => e.PolicyDate).HasColumnName("policy_date");
@@ -270,101 +290,97 @@ public partial class VehicleInsuranceManagementContext : DbContext
             entity.HasOne(d => d.Customer).WithMany(p => p.InsuranceProcesses)
                 .HasForeignKey(d => d.CustomerId)
                 .HasConstraintName("insurance_process_user_id_AspNetUsers");
-
-            entity.HasOne(d => d.PolicyType).WithMany(p => p.InsuranceProcesses)
-                .HasForeignKey(d => d.PolicyTypeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_insurance_process_VehiclePolicyType");
-
-            entity.HasOne(d => d.Vehicle).WithMany(p => p.InsuranceProcesses)
-                .HasForeignKey(d => d.VehicleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_insurance_process_vehicle_information");
-
-            entity.HasOne(d => d.Warranty).WithMany(p => p.InsuranceProcesses)
-                .HasForeignKey(d => d.WarrantyId)
-                .HasConstraintName("FK_insurance_process_VehicleWarranty");
         });
 
         modelBuilder.Entity<InsuranceProduct>(entity =>
         {
-            entity.HasKey(e => e.InsuranceProductId).HasName("PK__Insuranc__FC79FCCF979D818B");
+            entity.HasKey(e => e.InsuranceProductId).HasName("PK__Insuranc__FC79FCCF23A380D6");
 
-        //    entity.ToTable("InsuranceProduct");
+            entity.ToTable("InsuranceProduct");
 
             entity.HasOne(d => d.PolicyType).WithMany(p => p.InsuranceProducts)
                 .HasForeignKey(d => d.PolicyTypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Insurance__Polic__02925FBF");
+                .HasConstraintName("FK__Insurance__Polic__2B0A656D");
 
             entity.HasOne(d => d.Warranty).WithMany(p => p.InsuranceProducts)
                 .HasForeignKey(d => d.WarrantyId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Insurance__Warra__038683F8");
+                .HasConstraintName("FK__Insurance__Warra__2BFE89A6");
         });
 
-            modelBuilder.Entity<NameRole>(entity =>
-            {
-                entity.ToTable("NameRole");
+        modelBuilder.Entity<NameRole>(entity =>
+        {
+            entity.ToTable("NameRole");
 
-                entity.Property(e => e.Id).HasColumnName("id");
-                entity.Property(e => e.NameRole1).HasColumnName("name_role");
-            });
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.NameRole1).HasColumnName("name_role");
+        });
 
-            modelBuilder.Entity<RolePermission>(entity =>
-            {
-                entity.ToTable("Role_Permissions");
+        modelBuilder.Entity<RolePermission>(entity =>
+        {
+            entity.ToTable("Role_Permissions");
 
-                entity.Property(e => e.Id).HasColumnName("id");
-                entity.Property(e => e.PermissionsId)
-                    .HasMaxLength(450)
-                    .HasColumnName("permissions_id");
-                entity.Property(e => e.RoleId)
-                    .HasMaxLength(450)
-                    .HasColumnName("role_id");
-            });
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.PermissionsId)
+                .HasMaxLength(450)
+                .HasColumnName("permissions_id");
+            entity.Property(e => e.RoleId)
+                .HasMaxLength(450)
+                .HasColumnName("role_id");
 
-            modelBuilder.Entity<VehicleInformation>(entity =>
-            {
-                entity.ToTable("vehicle_information");
+            entity.HasOne(d => d.Role).WithMany(p => p.RolePermissions)
+                .HasForeignKey(d => d.RoleId)
+                .HasConstraintName("Role_Permissions__role_id__AspNetRoles_Id");
 
-                entity.Property(e => e.Id).HasColumnName("id");
-                entity.Property(e => e.VehicleBodyNumber).HasColumnName("vehicle_body_number");
-                entity.Property(e => e.VehicleEngineNumber).HasColumnName("vehicle_engine_number");
-                entity.Property(e => e.VehicleModel).HasColumnName("vehicle_model");
-                entity.Property(e => e.VehicleName).HasColumnName("vehicle_name");
-                entity.Property(e => e.VehicleNumber).HasColumnName("vehicle_number");
-                entity.Property(e => e.VehicleOwnerName).HasColumnName("vehicle_owner_name");
-                entity.Property(e => e.VehicleRate).HasColumnName("vehicle_rate");
-                entity.Property(e => e.VehicleVersion).HasColumnName("vehicle_version");
-            });
+            entity.HasOne(d => d.RoleNavigation).WithMany(p => p.RolePermissions)
+                .HasForeignKey(d => d.RoleId)
+                .HasConstraintName("Role_Permissions__Role_id__NameRole_id");
+        });
+
+        modelBuilder.Entity<VehicleInformation>(entity =>
+        {
+            entity.ToTable("vehicle_information");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.VehicleBodyNumber).HasColumnName("vehicle_body_number");
+            entity.Property(e => e.VehicleEngineNumber).HasColumnName("vehicle_engine_number");
+            entity.Property(e => e.VehicleModel).HasColumnName("vehicle_model");
+            entity.Property(e => e.VehicleName).HasColumnName("vehicle_name");
+            entity.Property(e => e.VehicleNumber)
+                .HasColumnType("numeric(18, 0)")
+                .HasColumnName("vehicle_number");
+            entity.Property(e => e.VehicleOwnerName).HasColumnName("vehicle_owner_name");
+            entity.Property(e => e.VehicleRate)
+                .HasColumnType("numeric(18, 0)")
+                .HasColumnName("vehicle_rate");
+            entity.Property(e => e.VehicleVersion).HasColumnName("vehicle_version");
+        });
 
         modelBuilder.Entity<VehiclePolicyType>(entity =>
         {
-            entity.HasKey(e => e.PolicyTypeId).HasName("PK__VehicleP__90DE2D5EDDAC1272");
+            entity.HasKey(e => e.PolicyTypeId);
 
-                entity.ToTable("VehiclePolicyType");
+            entity.ToTable("VehiclePolicyType");
 
-                entity.Property(e => e.PolicyTypeId).HasColumnName("PolicyTypeID");
-                entity.Property(e => e.PolicyDetails)
-                    .HasMaxLength(255)
-                    .IsUnicode(false);
-                entity.Property(e => e.PolicyName)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-            });
+            entity.Property(e => e.PolicyTypeId).HasColumnName("PolicyTypeID");
+            entity.Property(e => e.PolicyDetails)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.PolicyName)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+        });
 
         modelBuilder.Entity<VehicleWarranty>(entity =>
         {
-            entity.HasKey(e => e.WarrantyId).HasName("PK__VehicleW__2ED318F3BB5B91D9");
+            entity.HasKey(e => e.WarrantyId);
 
-                entity.ToTable("VehicleWarranty");
+            entity.ToTable("VehicleWarranty");
 
-            entity.Property(e => e.WarrantyId)
-                .ValueGeneratedNever()
-                .HasColumnName("WarrantyID");
+            entity.Property(e => e.WarrantyId).HasColumnName("WarrantyID");
             entity.Property(e => e.WarrantyDetails)
-                .HasMaxLength(255)
+                .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.WarrantyDuration)
                 .HasMaxLength(50)
@@ -374,12 +390,8 @@ public partial class VehicleInsuranceManagementContext : DbContext
                 .IsUnicode(false);
         });
 
-            OnModelCreatingPartial(modelBuilder);
-        }
-
-
-
-
+        OnModelCreatingPartial(modelBuilder);
+    }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
